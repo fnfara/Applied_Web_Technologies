@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IP Анализатор</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Inter:wght@400;500;600&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --border: #30363d;
+    --accent: #58a6ff;
+    --accent2: #3fb950;
+    --accent3: #d2a8ff;
+    --accent4: #ffa657;
+    --text: #e6edf3;
+    --muted: #8b949e;
+    --danger: #f85149;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 16px;
+  }
+
+  h1 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: -0.5px;
+    margin-bottom: 6px;
+  }
+
+  .subtitle {
+    font-size: 0.82rem;
+    color: var(--muted);
+    margin-bottom: 32px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 24px;
+    width: 100%;
+    max-width: 680px;
+    margin-bottom: 20px;
+  }
+
+  .card-title {
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--muted);
+    margin-bottom: 14px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .input-row {
+    display: flex;
+    gap: 10px;
+    align-items: stretch;
+  }
+
+  input[type="text"] {
+    flex: 1;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.05rem;
+    padding: 12px 16px;
+    outline: none;
+    transition: border-color 0.2s;
+    letter-spacing: 0.5px;
+  }
+
+  input[type="text"]:focus { border-color: var(--accent); }
+  input[type="text"].error { border-color: var(--danger); }
+
+  button.analyze-btn {
+    background: var(--accent);
+    color: #0d1117;
+    border: none;
+    border-radius: 7px;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    font-size: 0.88rem;
+    padding: 12px 22px;
+    cursor: pointer;
+    transition: opacity 0.15s;
+    white-space: nowrap;
+  }
+
+  button.analyze-btn:hover { opacity: 0.85; }
+
+  .error-msg {
+    color: var(--danger);
+    font-size: 0.8rem;
+    margin-top: 8px;
+    font-family: 'JetBrains Mono', monospace;
+    min-height: 18px;
+  }
+
+  .section { margin-bottom: 22px; }
+  .section:last-child { margin-bottom: 0; }
+
+  .section-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--muted);
+    margin-bottom: 10px;
+    font-family: 'JetBrains Mono', monospace;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .rows { display: flex; flex-direction: column; gap: 6px; }
+
+  .row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 9px 12px;
+    border-radius: 6px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    gap: 12px;
+  }
+
+  .row-label {
+    font-size: 0.82rem;
+    color: var(--muted);
+    flex-shrink: 0;
+  }
+
+  .row-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.88rem;
+    color: var(--text);
+    text-align: right;
+  }
+
+  .badge {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 20px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.82rem;
+    font-weight: 600;
+  }
+
+  .badge-a { background: rgba(255,166,87,0.15); color: var(--accent4); border: 1px solid rgba(255,166,87,0.3); }
+  .badge-b { background: rgba(88,166,255,0.15); color: var(--accent); border: 1px solid rgba(88,166,255,0.3); }
+  .badge-c { background: rgba(63,185,80,0.15); color: var(--accent2); border: 1px solid rgba(63,185,80,0.3); }
+  .badge-d { background: rgba(210,168,255,0.15); color: var(--accent3); border: 1px solid rgba(210,168,255,0.3); }
+  .badge-e { background: rgba(248,81,73,0.15); color: var(--danger); border: 1px solid rgba(248,81,73,0.3); }
+
+  .result-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    width: 100%;
+    max-width: 680px;
+    display: none;
+    animation: fadeIn 0.3s ease;
+  }
+
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+  .result-card.visible { display: block; }
+
+  .result-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 18px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .result-ip {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--accent);
+  }
+
+  .result-ip span { color: var(--muted); }
+
+  .tabs {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 18px;
+  }
+
+  .tab {
+    padding: 6px 14px;
+    border-radius: 6px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    font-family: 'JetBrains Mono', monospace;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--muted);
+    transition: all 0.15s;
+  }
+
+  .tab.active {
+    background: var(--accent);
+    color: #0d1117;
+    border-color: var(--accent);
+  }
+
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  .divider { height: 1px; background: var(--border); margin: 16px 0; }
+
+  .highlight-net { color: var(--accent2); }
+  .highlight-host { color: var(--accent4); }
+
+  .bit-visual {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 10px 12px;
+    word-break: break-all;
+    line-height: 1.9;
+    margin-top: 8px;
+  }
+
+  .examples {
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin-top: 10px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .examples span {
+    color: var(--accent);
+    cursor: pointer;
+  }
+
+  .examples span:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+
+<h1>// IP Анализатор</h1>
+<p class="subtitle">Определение сетевых параметров IPv4</p>
+
+<div class="card">
+  <div class="card-title">Ввод адреса</div>
+  <div class="input-row">
+    <input type="text" id="ipInput" placeholder="192.168.5.107/23" autocomplete="off" spellcheck="false">
+    <button class="analyze-btn" onclick="analyze()">Анализ</button>
+  </div>
+  <div class="error-msg" id="errMsg"></div>
+  <div class="examples">
+    Примеры:
+    <span onclick="setExample('192.168.5.107/23')">192.168.5.107/23</span> ·
+    <span onclick="setExample('10.0.0.5/8')">10.0.0.5/8</span> ·
+    <span onclick="setExample('172.16.4.2/12')">172.16.4.2/12</span> ·
+    <span onclick="setExample('8.8.8.8/24')">8.8.8.8/24</span>
+  </div>
+</div>
+
+<div class="result-card" id="result">
+  <div class="result-header">
+    <div class="result-ip" id="resultTitle"></div>
+    <div id="classBadge"></div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('noMask', this)">Без маски</button>
+    <button class="tab" onclick="switchTab('withMask', this)">С маской</button>
+    <button class="tab" onclick="switchTab('info', this)">Детали</button>
+  </div>
+
+  <div class="tab-content active" id="tab-noMask">
+    <div class="section">
+      <div class="section-label">Без наложения маски (по классу)</div>
+      <div class="rows" id="noMaskRows"></div>
+    </div>
+  </div>
+
+  <div class="tab-content" id="tab-withMask">
+    <div class="section">
+      <div class="section-label">С учётом маски /<span id="prefixLabel"></span></div>
+      <div class="rows" id="withMaskRows"></div>
+    </div>
+  </div>
+
+  <div class="tab-content" id="tab-info">
+    <div class="section">
+      <div class="section-label">Маска подсети</div>
+      <div class="rows" id="maskRows"></div>
+    </div>
+    <div class="divider"></div>
+    <div class="section">
+      <div class="section-label">Двоичное представление</div>
+      <div id="binaryView"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+function setExample(val) {
+  document.getElementById('ipInput').value = val;
+  analyze();
+}
+
+function switchTab(tabId, btn) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + tabId).classList.add('active');
+  btn.classList.add('active');
+}
+
+function toBin(n) { return n.toString(2).padStart(8, '0'); }
+function toIP(arr) { return arr.join('.'); }
+
+function getClass(first) {
+  if (first >= 0 && first <= 126) return 'A';
+  if (first === 127) return 'loopback';
+  if (first >= 128 && first <= 191) return 'B';
+  if (first >= 192 && first <= 223) return 'C';
+  if (first >= 224 && first <= 239) return 'D';
+  if (first >= 240 && first <= 255) return 'E';
+  return '?';
+}
+
+function classDefaults(cls) {
+  const map = {
+    'A': { netBits: 8,  defaultMask: [255,0,0,0],     range: ['0.0.0.0','127.255.255.255'] },
+    'B': { netBits: 16, defaultMask: [255,255,0,0],   range: ['128.0.0.0','191.255.255.255'] },
+    'C': { netBits: 24, defaultMask: [255,255,255,0], range: ['192.0.0.0','223.255.255.255'] },
+    'D': { netBits: null, defaultMask: null, range: ['224.0.0.0','239.255.255.255'] },
+    'E': { netBits: null, defaultMask: null, range: ['240.0.0.0','255.255.255.255'] },
+    'loopback': { netBits: 8, defaultMask: [255,0,0,0], range: ['127.0.0.0','127.255.255.255'] },
+  };
+  return map[cls] || null;
+}
+
+function prefixToMask(prefix) {
+  return [0,1,2,3].map(i => {
+    let bits = Math.min(8, Math.max(0, prefix - i*8));
+    return (0xFF << (8-bits)) & 0xFF;
+  });
+}
+
+function maskToWild(mask) { return mask.map(b => 255 - b); }
+function applyMask(ip, mask) { return ip.map((b,i) => b & mask[i]); }
+
+function row(label, value) {
+  return `<div class="row"><span class="row-label">${label}</span><span class="row-value">${value}</span></div>`;
+}
+
+function addIP(arr, n) {
+  let result = [...arr];
+  for (let i = 3; i >= 0 && n > 0; i--) {
+    let sum = result[i] + n;
+    result[i] = sum & 0xFF;
+    n = sum >> 8;
+  }
+  return result;
+}
+
+function analyze() {
+  const raw = document.getElementById('ipInput').value.trim();
+  const inp = document.getElementById('ipInput');
+  const err = document.getElementById('errMsg');
+  inp.classList.remove('error');
+  err.textContent = '';
+
+  const match = raw.match(/^(\d+)\.(\d+)\.(\d+)\.(\d+)\/(\d+)$/);
+  if (!match) {
+    inp.classList.add('error');
+    err.textContent = 'Формат: A.B.C.D/prefix (например 192.168.5.107/23)';
+    document.getElementById('result').classList.remove('visible');
+    return;
+  }
+
+  const ip = [+match[1], +match[2], +match[3], +match[4]];
+  const prefix = +match[5];
+
+  if (ip.some(b => b > 255)) {
+    inp.classList.add('error');
+    err.textContent = 'Октеты должны быть от 0 до 255';
+    document.getElementById('result').classList.remove('visible');
+    return;
+  }
+  if (prefix < 0 || prefix > 32) {
+    inp.classList.add('error');
+    err.textContent = 'Префикс должен быть от 0 до 32';
+    document.getElementById('result').classList.remove('visible');
+    return;
+  }
+
+  const cls = getClass(ip[0]);
+  const def = classDefaults(cls);
+  const mask = prefixToMask(prefix);
+  const wild = maskToWild(mask);
+  const netAddr = applyMask(ip, mask);
+  const bcast = netAddr.map((b,i) => b | wild[i]);
+
+  // класс по адресу сети (для вкладки "С маской")
+  const clsNet = getClass(netAddr[0]);
+  const clsNetLabel = clsNet === 'loopback' ? 'A (loopback)' : clsNet;
+  const badgeKeyNet = clsNet === 'loopback' ? 'd' : clsNet.toLowerCase();
+
+  // ---- БЕЗ МАСКИ ----
+  let noMaskHTML = '';
+  const clsLabel = cls === 'loopback' ? 'A (loopback)' : cls;
+  const badgeKey = cls === 'loopback' ? 'd' : cls.toLowerCase();
+  noMaskHTML += row('Класс', `<span class="badge badge-${badgeKey}">${clsLabel}</span>`);
+
+  if (def && def.netBits) {
+    const nb = def.netBits / 8; // octets for network
+    const netNoMask = ip.slice(0, nb).concat(Array(4-nb).fill(0));
+    const hostPartRaw = ip.slice(nb);
+    const hostPart = Array(nb).fill(0).concat(hostPartRaw);
+    const bcastNoMask = ip.slice(0, nb).concat(Array(4-nb).fill(255));
+    const firstHost = [...netNoMask]; firstHost[3] = firstHost[3] === 0 ? 1 : firstHost[3];
+    const lastHost = [...bcastNoMask]; lastHost[3] = 254;
+    const totalHosts = Math.pow(2, 32 - def.netBits) - 2;
+
+    const firstNoMask = addIP(netNoMask, 1);
+    const lastNoMask = addIP(bcastNoMask, -1);
+    noMaskHTML += row('Номер сети', `<span class="highlight-net">${toIP(netNoMask)}</span>`);
+    noMaskHTML += row('Номер узла', `<span class="highlight-host">${toIP(hostPart)}</span>`);
+    noMaskHTML += row('Маска по умолчанию', toIP(def.defaultMask) + ` /${def.netBits}`);
+    noMaskHTML += row('Начало диапазона', `<span class="highlight-net">${toIP(firstNoMask)}</span>`);
+    noMaskHTML += row('Конец диапазона', `<span class="highlight-host">${toIP(lastNoMask)}</span>`);
+    noMaskHTML += row('Диапазон IP-адресов', `${toIP(firstNoMask)} — ${toIP(lastNoMask)}`);
+    noMaskHTML += row('Кол-во хостов', totalHosts.toLocaleString('ru'));
+    noMaskHTML += row('Диапазон класса', `${def.range[0]} — ${def.range[1]}`);
+  } else {
+    noMaskHTML += row('Примечание', cls === 'D' ? 'Multicast (нет деления на сеть/узел)' : 'Зарезервировано IANA');
+    noMaskHTML += row('Диапазон класса', `${def.range[0]} — ${def.range[1]}`);
+  }
+
+  // ---- С МАСКОЙ ----
+  let withMaskHTML = '';
+  withMaskHTML += row('Класс', `<span class="badge badge-${badgeKeyNet}">${clsNetLabel}</span>`);
+  withMaskHTML += row('Маска подсети', toIP(mask) + ` /${prefix}`);
+  withMaskHTML += row('Номер сети', `<span class="highlight-net">${toIP(netAddr)}</span>`);
+  const hostWithMask = ip.map((b,i) => b & wild[i]);
+  withMaskHTML += row('Номер узла (host part)', `<span class="highlight-host">${toIP(hostWithMask)}</span>`);
+
+  if (prefix <= 30) {
+    const firstH = addIP(netAddr, 1);
+    const lastH = addIP(bcast, -1);
+    const hosts = Math.pow(2, 32 - prefix) - 2;
+    withMaskHTML += row('Начало диапазона', `<span class="highlight-net">${toIP(firstH)}</span>`);
+    withMaskHTML += row('Конец диапазона', `<span class="highlight-host">${toIP(lastH)}</span>`);
+    withMaskHTML += row('Диапазон IP-адресов', `${toIP(firstH)} — ${toIP(lastH)}`);
+    withMaskHTML += row('Кол-во хостов', hosts.toLocaleString('ru'));
+  } else if (prefix === 31) {
+    withMaskHTML += row('Начало диапазона', `<span class="highlight-net">${toIP(netAddr)}</span>`);
+    withMaskHTML += row('Конец диапазона', `<span class="highlight-host">${toIP(bcast)}</span>`);
+    withMaskHTML += row('Диапазон IP-адресов', `${toIP(netAddr)} — ${toIP(bcast)}`);
+    withMaskHTML += row('Кол-во хостов', '2 (RFC 3021)');
+  } else {
+    withMaskHTML += row('Начало диапазона', `<span class="highlight-net">${toIP(ip)}</span>`);
+    withMaskHTML += row('Конец диапазона', `<span class="highlight-host">${toIP(ip)}</span>`);
+    withMaskHTML += row('Диапазон IP-адресов', toIP(ip));
+    withMaskHTML += row('Кол-во хостов', '1');
+  }
+
+  // ---- МАСКА ----
+  let maskHTML = '';
+  maskHTML += row('Префикс', `/${prefix}`);
+  maskHTML += row('Маска (десятичная)', toIP(mask));
+  maskHTML += row('Маска (бинарная)', mask.map(toBin).join('.'));
+
+  // ---- BINARY VIEW ----
+  const ipBin = ip.map(toBin);
+  const maskBin = mask.map(toBin);
+  const netBin = netAddr.map(toBin);
+
+  function colorBin(binStr, maskBinStr) {
+    return binStr.split('').map((bit, i) =>
+      maskBinStr[i] === '1'
+        ? `<span class="highlight-net">${bit}</span>`
+        : `<span class="highlight-host">${bit}</span>`
+    ).join('');
+  }
+
+  let binaryHTML = `<div style="margin-bottom:8px;font-size:0.75rem;color:var(--muted)">
+    <span class="highlight-net">■</span> сетевая часть &nbsp; <span class="highlight-host">■</span> узловая часть
+  </div>`;
+  binaryHTML += `<div class="bit-visual">`;
+  binaryHTML += `<div>IP &nbsp;&nbsp;&nbsp;: ${ipBin.map((b,i) => colorBin(b, maskBin[i])).join('.')}</div>`;
+  binaryHTML += `<div>Маска: ${maskBin.join('.')}</div>`;
+  binaryHTML += `<div>Сеть : ${netBin.join('.')}</div>`;
+  binaryHTML += `</div>`;
+
+  // Render
+  const badgeMapFull = { A:'badge-a', B:'badge-b', C:'badge-c', D:'badge-d', E:'badge-e', loopback:'badge-d' };
+  document.getElementById('classBadge').innerHTML = `<span class="badge ${badgeMapFull[cls]||'badge-c'}">Класс ${clsLabel}</span>`;
+  document.getElementById('resultTitle').innerHTML = `${toIP(ip)}<span>/${prefix}</span>`;
+  document.getElementById('prefixLabel').textContent = prefix;
+
+  document.getElementById('noMaskRows').innerHTML = noMaskHTML;
+  document.getElementById('withMaskRows').innerHTML = withMaskHTML;
+  document.getElementById('maskRows').innerHTML = maskHTML;
+  document.getElementById('binaryView').innerHTML = binaryHTML;
+
+  document.getElementById('result').classList.add('visible');
+
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-noMask').classList.add('active');
+  document.querySelectorAll('.tab')[0].classList.add('active');
+}
+
+document.getElementById('ipInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') analyze();
+});
+</script>
+</body>
+</html>
