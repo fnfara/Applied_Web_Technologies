@@ -1,1 +1,1 @@
-The tasks are given by MSU Leactures: Web Application Technologies
+The tasks are given by MSU Lectures: Web Application Technologies
