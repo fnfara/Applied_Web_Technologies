@@ -1,0 +1,2671 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Учебный сайт по HTML — теги, атрибуты, примеры">
+  <meta name="keywords" content="HTML, теги, веб-программирование, обучение">
+  <meta name="author" content="HTML Tutorial">
+  <title>Учебник HTML — Полное руководство</title>
+</head>
+<body bgcolor="#f5f5f0" text="#1a1a1a" link="#1a4a8a" vlink="#6a1a8a" alink="#cc3300">
+
+<!-- ============================================================
+     ШАПКА САЙТА
+     ============================================================ -->
+<table width="100%" border="0" cellpadding="0" cellspacing="0" bgcolor="#1a3a6a">
+  <tr>
+    <td>
+      <table width="960" border="0" cellpadding="20" cellspacing="0" align="center">
+        <tr>
+          <td>
+            <font face="Georgia, serif" color="#ffffff" size="6">
+              <b>&#60;HTML&#62; Учебник</b>
+            </font>
+            <br>
+            <font face="Verdana, sans-serif" color="#aaccee" size="2">
+              Полное руководство по языку разметки гипертекста
+            </font>
+          </td>
+          <td align="right" valign="middle">
+            <font face="Courier New, monospace" color="#ffcc66" size="4">
+              <b>&lt;!DOCTYPE HTML&gt;</b>
+            </font>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+
+<!-- ============================================================
+     НАВИГАЦИЯ
+     ============================================================ -->
+<table width="100%" border="0" cellpadding="0" cellspacing="0" bgcolor="#2a5a9a">
+  <tr>
+    <td align="center">
+      <table width="960" border="0" cellpadding="8" cellspacing="0">
+        <tr>
+          <td>
+            <font face="Verdana, sans-serif" size="2">
+              <b>
+                <a href="#intro"><font color="#ffffff">&#127968; Введение</font></a>
+                &nbsp;&nbsp;|&nbsp;&nbsp;
+                <a href="#section-doc"><font color="#ffffff">&#128196; Документ</font></a>
+                &nbsp;&nbsp;|&nbsp;&nbsp;
+                <a href="#section-text"><font color="#ffffff">&#128210; Текст</font></a>
+                &nbsp;&nbsp;|&nbsp;&nbsp;
+                <a href="#section-lists"><font color="#ffffff">&#128221; Списки</font></a>
+                &nbsp;&nbsp;|&nbsp;&nbsp;
+                <a href="#section-links"><font color="#ffffff">&#128279; Ссылки</font></a>
+                &nbsp;&nbsp;|&nbsp;&nbsp;
+                <a href="#section-media"><font color="#ffffff">&#127916; Медиа</font></a>
+                &nbsp;&nbsp;|&nbsp;&nbsp;
+                <a href="#section-tables"><font color="#ffffff">&#128200; Таблицы</font></a>
+                &nbsp;&nbsp;|&nbsp;&nbsp;
+                <a href="#section-forms"><font color="#ffffff">&#128203; Формы</font></a>
+                &nbsp;&nbsp;|&nbsp;&nbsp;
+                <a href="#section-css"><font color="#ffffff">&#127912; CSS</font></a>
+              </b>
+            </font>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+
+<!-- ============================================================
+     ОСНОВНОЙ КОНТЕНТ
+     ============================================================ -->
+<table width="100%" border="0" cellpadding="10" cellspacing="10" align="left">
+  <tr>
+
+    <!-- БОКОВАЯ ПАНЕЛЬ -->
+    <td width="220" valign="top">
+      <br>
+
+      <!-- Оглавление -->
+      <table width="220" border="2" cellpadding="10" cellspacing="0" bordercolor="#1a3a6a" bgcolor="#eef3fa">
+        <tr bgcolor="#1a3a6a">
+          <td>
+            <font face="Verdana, sans-serif" color="#ffffff" size="2"><b>&#128366; СОДЕРЖАНИЕ</b></font>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <font face="Verdana, sans-serif" size="2">
+              <b><a href="#intro">1. Введение в HTML</a></b><br>
+              &nbsp;&nbsp;<a href="#intro-history">— История</a><br>
+              &nbsp;&nbsp;<a href="#intro-structure">— Структура</a><br>
+              <br>
+              <b><a href="#section-doc">2. Теги документа</a></b><br>
+              &nbsp;&nbsp;<a href="#tag-doctype">&lt;!DOCTYPE&gt;</a><br>
+              &nbsp;&nbsp;<a href="#tag-html">&lt;html&gt;</a><br>
+              &nbsp;&nbsp;<a href="#tag-head">&lt;head&gt;</a><br>
+              &nbsp;&nbsp;<a href="#tag-body">&lt;body&gt;</a><br>
+              &nbsp;&nbsp;<a href="#tag-header">&lt;header&gt;</a><br>
+              &nbsp;&nbsp;<a href="#tag-footer">&lt;footer&gt;</a><br>
+              &nbsp;&nbsp;<a href="#tag-nav">&lt;nav&gt;</a><br>
+              &nbsp;&nbsp;<a href="#tag-section">&lt;section&gt;</a><br>
+              &nbsp;&nbsp;<a href="#tag-article">&lt;article&gt;</a><br>
+              &nbsp;&nbsp;<a href="#tag-aside">&lt;aside&gt;</a><br>
+              <br>
+              <b><a href="#section-text">3. Теги текста</a></b><br>
+              &nbsp;&nbsp;<a href="#text-headings">Заголовки Hx</a><br>
+              &nbsp;&nbsp;<a href="#text-format">Форматирование</a><br>
+              &nbsp;&nbsp;<a href="#text-semantic">Семантика</a><br>
+              <br>
+              <b><a href="#section-lists">4. Списки</a></b><br>
+              &nbsp;&nbsp;<a href="#list-ul">Маркированный</a><br>
+              &nbsp;&nbsp;<a href="#list-ol">Нумерованный</a><br>
+              &nbsp;&nbsp;<a href="#list-dl">Определений</a><br>
+              <br>
+              <b><a href="#section-links">5. Ссылки</a></b><br>
+              <br>
+              <b><a href="#section-media">6. Медиа</a></b><br>
+              &nbsp;&nbsp;<a href="#media-img">Изображения</a><br>
+              &nbsp;&nbsp;<a href="#media-audio">Аудио</a><br>
+              &nbsp;&nbsp;<a href="#media-video">Видео</a><br>
+              <br>
+              <b><a href="#section-tables">7. Таблицы</a></b><br>
+              <br>
+              <b><a href="#section-forms">8. Формы</a></b><br>
+              <br>
+              <b><a href="#section-css">9. Основы CSS</a></b><br>
+            </font>
+          </td>
+        </tr>
+      </table>
+
+      <br>
+
+      <!-- Подсказка -->
+      <table width="220" border="2" cellpadding="10" cellspacing="0" bordercolor="#cc6600" bgcolor="#fff8ee">
+        <tr bgcolor="#cc6600">
+          <td>
+            <font face="Verdana, sans-serif" color="#ffffff" size="2"><b>&#128161; СОВЕТ</b></font>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <font face="Verdana, sans-serif" size="1" color="#663300">
+              Изучайте HTML на практике! Создавайте небольшие страницы и экспериментируйте с тегами. Теория без практики не даёт результата.
+            </font>
+          </td>
+        </tr>
+      </table>
+
+      <br>
+
+      <!-- Быстрый справочник -->
+      <table width="220" border="2" cellpadding="10" cellspacing="0" bordercolor="#2a7a2a" bgcolor="#eefaee">
+        <tr bgcolor="#2a7a2a">
+          <td>
+            <font face="Verdana, sans-serif" color="#ffffff" size="2"><b>&#9889; БЫСТРЫЙ СТАРТ</b></font>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <font face="Courier New, monospace" size="1" color="#1a4a1a">
+              &lt;!DOCTYPE html&gt;<br>
+              &lt;html&gt;<br>
+              &nbsp;&lt;head&gt;<br>
+              &nbsp;&nbsp;&lt;title&gt;Моя страница&lt;/title&gt;<br>
+              &nbsp;&lt;/head&gt;<br>
+              &nbsp;&lt;body&gt;<br>
+              &nbsp;&nbsp;&lt;h1&gt;Привет!&lt;/h1&gt;<br>
+              &nbsp;&lt;/body&gt;<br>
+              &lt;/html&gt;
+            </font>
+          </td>
+        </tr>
+      </table>
+
+    </td>
+
+    <!-- ОСНОВНОЙ КОНТЕНТ -->
+    <td valign="top">
+      <br>
+
+      <!-- ======================================================
+           РАЗДЕЛ 1: ВВЕДЕНИЕ
+           ====================================================== -->
+      <a name="intro"></a>
+      <table width="100%" border="0" cellpadding="15" cellspacing="0" bgcolor="#1a3a6a">
+        <tr>
+          <td>
+            <font face="Georgia, serif" color="#ffffff" size="5"><b>1. Введение в HTML</b></font>
+          </td>
+        </tr>
+      </table>
+
+      <table width="100%" border="1" cellpadding="15" cellspacing="0" bordercolor="#aaaacc" bgcolor="#ffffff">
+        <tr>
+          <td>
+            <a name="intro-history"></a>
+            <h2><font face="Georgia, serif" color="#1a3a6a">Что такое HTML?</font></h2>
+            <p>
+              <font face="Verdana, sans-serif" size="2">
+                <b>HTML</b> (<em>HyperText Markup Language</em>) — язык разметки гипертекста, который является основой всех веб-страниц в интернете. HTML был создан <b>Тимом Бернерсом-Ли</b> в 1991 году.
+              </font>
+            </p>
+            <p>
+              <font face="Verdana, sans-serif" size="2">
+                HTML — это <strong>не язык программирования</strong>, а язык <em>разметки</em>. Он описывает структуру и содержание веб-страницы с помощью специальных меток — <strong>тегов</strong>.
+              </font>
+            </p>
+
+            <hr color="#aaaacc" size="1">
+
+            <a name="intro-structure"></a>
+            <h3><font face="Georgia, serif" color="#1a3a6a">Синтаксис тегов</font></h3>
+
+            <table width="100%" border="1" cellpadding="10" cellspacing="0" bordercolor="#cccccc" bgcolor="#f8f8f8">
+              <tr bgcolor="#e8e8f0">
+                <th align="left"><font face="Verdana, sans-serif" size="2">Тип тега</font></th>
+                <th align="left"><font face="Verdana, sans-serif" size="2">Синтаксис</font></th>
+                <th align="left"><font face="Verdana, sans-serif" size="2">Пример</font></th>
+              </tr>
+              <tr>
+                <td><font face="Verdana, sans-serif" size="2">Парный (открывающий + закрывающий)</font></td>
+                <td><font face="Courier New" size="2">&lt;тег&gt;содержимое&lt;/тег&gt;</font></td>
+                <td><font face="Courier New" size="2">&lt;p&gt;Текст&lt;/p&gt;</font></td>
+              </tr>
+              <tr bgcolor="#f5f5ff">
+                <td><font face="Verdana, sans-serif" size="2">Одиночный (самозакрывающийся)</font></td>
+                <td><font face="Courier New" size="2">&lt;тег&gt; или &lt;тег /&gt;</font></td>
+                <td><font face="Courier New" size="2">&lt;br&gt; &lt;img&gt; &lt;hr&gt;</font></td>
+              </tr>
+              <tr>
+                <td><font face="Verdana, sans-serif" size="2">Тег с атрибутом</font></td>
+                <td><font face="Courier New" size="2">&lt;тег атрибут="значение"&gt;</font></td>
+                <td><font face="Courier New" size="2">&lt;a href="url"&gt;</font></td>
+              </tr>
+            </table>
+
+            <br>
+            <table width="100%" border="2" cellpadding="10" cellspacing="0" bordercolor="#cc6600" bgcolor="#fff8ee">
+              <tr>
+                <td>
+                  <font face="Verdana, sans-serif" size="2" color="#663300">
+                    <b>&#128161; Важно:</b> HTML не чувствителен к регистру — <code>&lt;P&gt;</code> и <code>&lt;p&gt;</code> одно и то же. Однако рекомендуется писать теги строчными буквами.
+                  </font>
+                </td>
+              </tr>
+            </table>
+
+          </td>
+        </tr>
+      </table>
+
+      <br>
+
+      <!-- ======================================================
+           РАЗДЕЛ 2: ТЕГИ ДОКУМЕНТА
+           ====================================================== -->
+      <a name="section-doc"></a>
+      <table width="100%" border="0" cellpadding="15" cellspacing="0" bgcolor="#1a3a6a">
+        <tr>
+          <td>
+            <font face="Georgia, serif" color="#ffffff" size="5"><b>2. Теги для работы с документом</b></font>
+          </td>
+        </tr>
+      </table>
+
+      <table width="100%" border="1" cellpadding="15" cellspacing="0" bordercolor="#aaaacc" bgcolor="#ffffff">
+        <tr>
+          <td>
+
+            <!-- DOCTYPE -->
+            <a name="tag-doctype"></a>
+            <table width="100%" border="0" cellpadding="8" cellspacing="0" bgcolor="#eef3fa">
+              <tr>
+                <td>
+                  <font face="Courier New, monospace" size="4" color="#1a3a6a"><b>&lt;!DOCTYPE&gt;</b></font>
+                  <font face="Verdana, sans-serif" size="1" color="#666666">&nbsp;— объявление типа документа</font>
+                </td>
+              </tr>
+            </table>
+            <p>
+              <font face="Verdana, sans-serif" size="2">
+                Первый тег в любом HTML-документе. Сообщает браузеру, какую версию HTML использовать. <b>Не является обычным тегом</b> — это инструкция для браузера.
+              </font>
+            </p>
+            <table width="100%" border="1" cellpadding="8" cellspacing="0" bordercolor="#cccccc" bgcolor="#f0f4f0">
+              <tr>
+                <td><font face="Verdana, sans-serif" size="2" color="#2a6a2a"><b>&#128196; Пример:</b></font></td>
+              </tr>
+              <tr>
+                <td><font face="Courier New" size="2">&lt;!DOCTYPE html&gt; &nbsp;&nbsp;&nbsp;&lt;!-- HTML5 --&gt;</font><br>
+                  <font face="Courier New" size="2">&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"&gt; &nbsp;&nbsp;&nbsp;&lt;!-- HTML 4.01 --&gt;</font>
+                </td>
+              </tr>
+            </table>
+
+            <hr color="#cccccc" size="1">
+
+            <!-- HTML -->
+            <a name="tag-html"></a>
+            <table width="100%" border="0" cellpadding="8" cellspacing="0" bgcolor="#eef3fa">
+              <tr>
+                <td>
+                  <font face="Courier New, monospace" size="4" color="#1a3a6a"><b>&lt;html&gt; ... &lt;/html&gt;</b></font>
+                  <font face="Verdana, sans-serif" size="1" color="#666666">&nbsp;— корневой элемент</font>
+                </td>
+              </tr>
+            </table>
+            <p>
+              <font face="Verdana, sans-serif" size="2">
+                Главный контейнер страницы. Всё содержимое HTML-документа размещается внутри этого тега.
+              </font>
+            </p>
+            <table width="100%" border="1" cellpadding="8" cellspacing="0" bordercolor="#cccccc">
+              <tr bgcolor="#e8eef8">
+                <th><font face="Verdana, sans-serif" size="2">Атрибут</font></th>
+                <th><font face="Verdana, sans-serif" size="2">Описание</font></th>
+                <th><font face="Verdana, sans-serif" size="2">Пример</font></th>
+              </tr>
+              <tr>
+                <td><font face="Courier New" size="2">lang</font></td>
+                <td><font face="Verdana, sans-serif" size="2">Язык документа</font></td>
+                <td><font face="Courier New" size="2">lang="ru"</font></td>
+              </tr>
+              <tr bgcolor="#f5f5ff">
+                <td><font face="Courier New" size="2">xmlns</font></td>
+                <td><font face="Verdana, sans-serif" size="2">Пространство имён (для XHTML)</font></td>
+                <td><font face="Courier New" size="2">xmlns="http://www.w3.org/1999/xhtml"</font></td>
+              </tr>
+              <tr>
+                <td><font face="Courier New" size="2">manifest</font></td>
+                <td><font face="Verdana, sans-serif" size="2">Файл манифеста для офлайн-приложений</font></td>
+                <td><font face="Courier New" size="2">manifest="app.appcache"</font></td>
+              </tr>
+            </table>
+
+            <hr color="#cccccc" size="1">
+
+            <!-- HEAD -->
+            <a name="tag-head"></a>
+            <table width="100%" border="0" cellpadding="8" cellspacing="0" bgcolor="#eef3fa">
+              <tr>
+                <td>
+                  <font face="Courier New, monospace" size="4" color="#1a3a6a"><b>&lt;head&gt; ... &lt;/head&gt;</b></font>
+                  <font face="Verdana, sans-serif" size="1" color="#666666">&nbsp;— невидимая часть документа</font>
+                </td>
+              </tr>
+            </table>
+            <p>
+              <font face="Verdana, sans-serif" size="2">
+                Содержит служебную информацию о документе. Содержимое тега <code>&lt;head&gt;</code> <b>не отображается</b> на странице. Внутри размещаются: <code>&lt;title&gt;</code>, <code>&lt;meta&gt;</code>, <code>&lt;link&gt;</code>, <code>&lt;style&gt;</code>, <code>&lt;script&gt;</code>.
+              </font>
+            </p>
+            <table width="100%" border="1" cellpadding="8" cellspacing="0" bordercolor="#cccccc" bgcolor="#f0f4f0">
+              <tr>
+                <td><font face="Verdana, sans-serif" size="2" color="#2a6a2a"><b>&#128196; Пример:</b></font></td>
+              </tr>
+              <tr>
+                <td>
+                  <font face="Courier New" size="2">
+                    &lt;head&gt;<br>
+                    &nbsp;&nbsp;&lt;meta charset="UTF-8"&gt;<br>
+                    &nbsp;&nbsp;&lt;title&gt;Название страницы&lt;/title&gt;<br>
+                    &nbsp;&nbsp;&lt;link rel="stylesheet" href="style.css"&gt;<br>
+                    &lt;/head&gt;
+                  </font>
+                </td>
+              </tr>
+            </table>
+
+            <hr color="#cccccc" size="1">
+
+            <!-- BODY -->
+            <a name="tag-body"></a>
+            <table width="100%" border="0" cellpadding="8" cellspacing="0" bgcolor="#eef3fa">
+              <tr>
+                <td>
+                  <font face="Courier New, monospace" size="4" color="#1a3a6a"><b>&lt;body&gt; ... &lt;/body&gt;</b></font>
+                  <font face="Verdana, sans-serif" size="1" color="#666666">&nbsp;— видимая часть страницы</font>
+                </td>
+              </tr>
+            </table>
+            <p>
+              <font face="Verdana, sans-serif" size="2">
+                Всё, что видит пользователь на странице, находится внутри тега <code>&lt;body&gt;</code>. Это основной контейнер для отображаемого содержимого.
+              </font>
+            </p>
+            <table width="100%" border="1" cellpadding="8" cellspacing="0" bordercolor="#cccccc">
+              <tr bgcolor="#e8eef8">
+                <th><font face="Verdana, sans-serif" size="2">Атрибут</font></th>
+                <th><font face="Verdana, sans-serif" size="2">Описание</font></th>
+              </tr>
+              <tr>
+                <td><font face="Courier New" size="2">bgcolor</font></td>
+                <td><font face="Verdana, sans-serif" size="2">Цвет фона страницы</font></td>
+              </tr>
+              <tr bgcolor="#f5f5ff">
+                <td><font face="Courier New" size="2">background</font></td>
+                <td><font face="Verdana, sans-serif" size="2">Фоновый рисунок</font></td>
+              </tr>
+              <tr>
+                <td><font face="Courier New" size="2">text</font></td>
+                <td><font face="Verdana, sans-serif" size="2">Цвет текста</font></td>
+              </tr>
+              <tr bgcolor="#f5f5ff">
+                <td><font face="Courier New" size="2">link</font></td>
+                <td><font face="Verdana, sans-serif" size="2">Цвет непосещённых ссылок</font></td>
+              </tr>
+              <tr>
+                <td><font face="Courier New" size="2">vlink</font></td>
+                <td><font face="Verdana, sans-serif" size="2">Цвет посещённых ссылок</font></td>
+              </tr>
+              <tr bgcolor="#f5f5ff">
+                <td><font face="Courier New" size="2">alink</font></td>
+                <td><font face="Verdana, sans-serif" size="2">Цвет активной (нажатой) ссылки</font></td>
+              </tr>
+              <tr>
+                <td><font face="Courier New" size="2">leftmargin / rightmargin / topmargin / bottommargin</font></td>
+                <td><font face="Verdana, sans-serif" size="2">Отступы от краёв окна</font></td>
+              </tr>
+            </table>
+
+            <hr color="#cccccc" size="1">
+
+            <!-- HEADER / FOOTER / NAV / SECTION / ARTICLE / ASIDE -->
+            <a name="tag-header"></a>
+            <h3><font face="Georgia, serif" color="#1a3a6a">Семантические теги HTML5</font></h3>
+            <p>
+              <font face="Verdana, sans-serif" size="2">
+                В HTML5 появились теги для более <em>осмысленной</em> разметки страницы. Они помогают браузерам, поисковым системам и программам чтения с экрана лучше понимать структуру страницы.
+              </font>
+            </p>
+
+            <table width="100%" border="1" cellpadding="10" cellspacing="0" bordercolor="#cccccc">
+              <tr bgcolor="#1a3a6a">
+                <th><font face="Verdana, sans-serif" size="2" color="#ffffff">Тег</font></th>
+                <th><font face="Verdana, sans-serif" size="2" color="#ffffff">Назначение</font></th>
+                <th><font face="Verdana, sans-serif" size="2" color="#ffffff">Пример использования</font></th>
+              </tr>
+              <tr>
+                <td><font face="Courier New" size="2"><a name="tag-header2">&lt;header&gt;</a></font></td>
+                <td><font face="Verdana, sans-serif" size="2">Шапка страницы или раздела (логотип, заголовок, меню)</font></td>
+                <td><font face="Courier New" size="1">&lt;header&gt;&lt;h1&gt;Мой сайт&lt;/h1&gt;&lt;/header&gt;</font></td>
+              </tr>
+              <tr bgcolor="#f5f5ff">
+                <td><font face="Courier New" size="2"><a name="tag-footer2">&lt;footer&gt;</a></font></td>
+                <td><font face="Verdana, sans-serif" size="2">Подвал страницы (автор, контакты, копирайт)</font></td>
+                <td><font face="Courier New" size="1">&lt;footer&gt;&lt;p&gt;&copy; 2024&lt;/p&gt;&lt;/footer&gt;</font></td>
+              </tr>
+              <tr>
+                <td><font face="Courier New" size="2"><a name="tag-nav2">&lt;nav&gt;</a></font></td>
+                <td><font face="Verdana, sans-serif" size="2">Навигационное меню с основными ссылками</font></td>
+                <td><font face="Courier New" size="1">&lt;nav&gt;&lt;a href="#"&gt;Главная&lt;/a&gt;&lt;/nav&gt;</font></td>
+              </tr>
+              <tr bgcolor="#f5f5ff">
+                <td><font face="Courier New" size="2"><a name="tag-section2">&lt;section&gt;</a></font></td>
+                <td><font face="Verdana, sans-serif" size="2">Тематический раздел страницы с заголовком</font></td>
+                <td><font face="Courier New" size="1">&lt;section&gt;&lt;h2&gt;О нас&lt;/h2&gt;...&lt;/section&gt;</font></td>
+              </tr>
+              <tr>
+                <td><font face="Courier New" size="2"><a name="tag-article2">&lt;article&gt;</a></font></td>
+                <td><font face="Verdana, sans-serif" size="2">Самостоятельная статья, пост или новость</font></td>
+                <td><font face="Courier New" size="1">&lt;article&gt;&lt;h2&gt;Новость&lt;/h2&gt;...&lt;/article&gt;</font></td>
+              </tr>
+              <tr bgcolor="#f5f5ff">
+                <td><font face="Courier New" size="2"><a name="tag-aside2">&lt;aside&gt;</a></font></td>
+                <td><font face="Verdana, sans-serif" size="2">Боковая панель (сайдбар) с дополнительным контентом</font></td>
+                <td><font face="Courier New" size="1">&lt;aside&gt;&lt;p&gt;Реклама&lt;/p&gt;&lt;/aside&gt;</font></td>
+              </tr>
+            </table>
+
+            <br>
+            <table width="100%" border="2" cellpadding="10" cellspacing="0" bordercolor="#2a7a2a" bgcolor="#eefaee">
+              <tr>
+                <td>
+                  <font face="Verdana, sans-serif" size="2" color="#1a4a1a">
+                    <b>&#128196; Типичная структура страницы HTML5:</b><br><br>
+                    <font face="Courier New" size="2">
+                      &lt;body&gt;<br>
+                      &nbsp;&lt;header&gt; ... &lt;/header&gt;<br>
+                      &nbsp;&lt;nav&gt; ... &lt;/nav&gt;<br>
+                      &nbsp;&lt;section&gt;<br>
+                      &nbsp;&nbsp;&lt;article&gt; ... &lt;/article&gt;<br>
+                      &nbsp;&nbsp;&lt;aside&gt; ... &lt;/aside&gt;<br>
+                      &nbsp;&lt;/section&gt;<br>
+                      &nbsp;&lt;footer&gt; ... &lt;/footer&gt;<br>
+                      &lt;/body&gt;
+                    </font>
+                  </font>
+                </td>
+              </tr>
+            </table>
+
+            <br>
+            <!-- ЖИВОЙ ПРИМЕР: РАЗДЕЛ 2 -->
+            <table width="100%" border="3" cellpadding="0" cellspacing="0" bordercolor="#e67e00">
+              <tr bgcolor="#e67e00">
+                <td align="center" colspan="2">
+                  <font face="Georgia, serif" color="#ffffff" size="3"><b>ПРИМЕР — Структура HTML5-страницы</b></font>
+                </td>
+              </tr>
+              <tr>
+                <td width="50%" valign="top" bgcolor="#1e1e2e">
+                  <font face="Verdana" color="#aaaaaa" size="1">&nbsp;<b>КОД:</b></font><br>
+                  <pre><font face="Courier New" color="#e0e0e0" size="1">&lt;!DOCTYPE html&gt;
+&lt;html lang="ru"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;title&gt;Мой первый сайт&lt;/title&gt;
+&lt;/head&gt;
+&lt;body bgcolor="#f0f8ff" text="#222"&gt;
+
+  &lt;header&gt;
+    &lt;h1&gt;Добро пожаловать!&lt;/h1&gt;
+    &lt;nav&gt;
+      &lt;a href="#about"&gt;О нас&lt;/a&gt; |
+      &lt;a href="#news"&gt;Новости&lt;/a&gt; |
+      &lt;a href="#contact"&gt;Контакты&lt;/a&gt;
+    &lt;/nav&gt;
+  &lt;/header&gt;
+
+  &lt;section&gt;
+    &lt;aside&gt;
+      &lt;h3&gt;Боковая панель&lt;/h3&gt;
+      &lt;p&gt;Полезные ссылки&lt;/p&gt;
+    &lt;/aside&gt;
+
+    &lt;article id="news"&gt;
+      &lt;h2&gt;Последние новости&lt;/h2&gt;
+      &lt;p&gt;Текст статьи здесь...&lt;/p&gt;
+    &lt;/article&gt;
+  &lt;/section&gt;
+
+  &lt;footer&gt;
+    &lt;address&gt;© 2026 Мой сайт | info@site.ru&lt;/address&gt;
+  &lt;/footer&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;</font></pre>
+                </td>
+                <td width="50%" valign="top" bgcolor="#f0f8ff">
+                  <font face="Verdana" color="#333" size="1">&nbsp;<b>РЕЗУЛЬТАТ В БРАУЗЕРЕ:</b></font><br>
+                  <table width="95%" border="2" cellpadding="8" cellspacing="4" align="center" bordercolor="#aaccee">
+                    <tr bgcolor="#1a3a6a">
+                      <td colspan="2">
+                        <font face="Georgia" color="#fff" size="4"><b>Добро пожаловать!</b></font><br>
+                        <font face="Verdana" size="2">
+                          <a href="#"><font color="#ffcc66">О нас</font></a> |
+                          <a href="#"><font color="#ffcc66">Новости</font></a> |
+                          <a href="#"><font color="#ffcc66">Контакты</font></a>
+                        </font>
+                      </td>
+                    </tr>
+                    <tr valign="top">
+                      <td width="35%" bgcolor="#ddeeff">
+                        <font face="Verdana" size="2"><b>Боковая панель</b><br>Полезные ссылки</font>
+                      </td>
+                      <td bgcolor="#ffffff">
+                        <font face="Georgia" size="3"><b>Последние новости</b></font><br>
+                        <font face="Verdana" size="2">Текст статьи здесь...</font>
+                      </td>
+                    </tr>
+                    <tr bgcolor="#334">
+                      <td colspan="2" align="center">
+                        <font face="Verdana" color="#aaccee" size="1"><i>&copy; 2026 Мой сайт | info@site.ru</i></font>
+                      </td>
+                    </tr>
+                  </table>
+                  <br>
+                  <table width="95%" border="1" cellpadding="6" cellspacing="0" align="center" bordercolor="#e67e00" bgcolor="#fff8ee">
+                    <tr>
+                      <td>
+                        <font face="Verdana" size="1" color="#a04000">
+                          <b>&#128161; Что здесь происходит:</b><br>
+                          &bull; <code>&lt;header&gt;</code> содержит логотип и навигацию<br>
+                          &bull; <code>&lt;nav&gt;</code> — меню с тремя ссылками<br>
+                          &bull; <code>&lt;section&gt;</code> — главная зона контента<br>
+                          &bull; <code>&lt;aside&gt;</code> — боковая панель<br>
+                          &bull; <code>&lt;article&gt;</code> — самостоятельная статья<br>
+                          &bull; <code>&lt;footer&gt;</code> + <code>&lt;address&gt;</code> — подвал с контактами
+                        </font>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+
+          </td>
+        </tr>
+      </table>
+
+      <br>
+
+      <!-- ======================================================
+           РАЗДЕЛ 3: ТЕГИ ТЕКСТА
+           ====================================================== -->
+      <a name="section-text"></a>
+      <table width="100%" border="0" cellpadding="15" cellspacing="0" bgcolor="#1a3a6a">
+        <tr>
+          <td>
+            <font face="Georgia, serif" color="#ffffff" size="5"><b>3. Теги для работы с текстом</b></font>
+          </td>
+        </tr>
+      </table>
+
+      <table width="100%" border="1" cellpadding="15" cellspacing="0" bordercolor="#aaaacc" bgcolor="#ffffff">
+        <tr>
+          <td>
+
+            <!-- ЗАГОЛОВКИ -->
+            <a name="text-headings"></a>
+            <h3><font face="Georgia, serif" color="#1a3a6a">Заголовки &lt;h1&gt; — &lt;h6&gt;</font></h3>
+            <p>
+              <font face="Verdana, sans-serif" size="2">
+                HTML предоставляет 6 уровней заголовков. <code>&lt;h1&gt;</code> — самый важный (главный заголовок страницы), <code>&lt;h6&gt;</code> — наименее важный.
+              </font>
+            </p>
+
+            <table width="100%" border="1" cellpadding="10" cellspacing="0" bordercolor="#cccccc" bgcolor="#f8f8f8">
+              <tr>
+                <td width="200"><font face="Courier New" size="2">&lt;h1&gt;Текст&lt;/h1&gt;</font></td>
+                <td><h1>Заголовок уровня 1</h1></td>
+              </tr>
+              <tr bgcolor="#f0f0ff">
+                <td><font face="Courier New" size="2">&lt;h2&gt;Текст&lt;/h2&gt;</font></td>
+                <td><h2>Заголовок уровня 2</h2></td>
+              </tr>
+              <tr>
+                <td><font face="Courier New" size="2">&lt;h3&gt;Текст&lt;/h3&gt;</font></td>
+                <td><h3>Заголовок уровня 3</h3></td>
+              </tr>
+              <tr bgcolor="#f0f0ff">
+                <td><font face="Courier New" size="2">&lt;h4&gt;Текст&lt;/h4&gt;</font></td>
+                <td><h4>Заголовок уровня 4</h4></td>
+              </tr>
+              <tr>
+                <td><font face="Courier New" size="2">&lt;h5&gt;Текст&lt;/h5&gt;</font></td>
+                <td><h5>Заголовок уровня 5</h5></td>
+              </tr>
+              <tr bgcolor="#f0f0ff">
+                <td><font face="Courier New" size="2">&lt;h6&gt;Текст&lt;/h6&gt;</font></td>
+                <td><h6>Заголовок уровня 6</h6></td>
+              </tr>
+            </table>
+
+            <hr color="#cccccc" size="1">
+
+            <!-- ФОРМАТИРОВАНИЕ -->
+            <a name="text-format"></a>
+            <h3><font face="Georgia, serif" color="#1a3a6a">Форматирование текста</font></h3>
+
+            <table width="100%" border="1" cellpadding="10" cellspacing="0" bordercolor="#cccccc">
+              <tr bgcolor="#1a3a6a">
+                <th><font face="Verdana, sans-serif" size="2" color="#ffffff">Тег</font></th>
+                <th><font face="Verdana, sans-serif" size="2" color="#ffffff">Описание</font></th>
+                <th><font face="Verdana, sans-serif" size="2" color="#ffffff">Результат</font></th>
+              </tr>
+              <tr>
+                <td><font face="Courier New" size="2">&lt;b&gt;</font></td>
+                <td><font face="Verdana, sans-serif" size="2">Жирный текст (визуальный)</font></td>
+                <td><b>Жирный текст</b></td>
+              </tr>
+              <tr bgcolor="#f5f5ff">
+                <td><font face="Courier New" size="2">&lt;strong&gt;</font></td>
+                <td><font face="Verdana, sans-serif" size="2">Важный текст (семантический)</font></td>
+                <td><strong>Важный текст</strong></td>
+              </tr>
+              <tr>
+                <td><font face="Courier New" size="2">&lt;i&gt;</font></td>
+                <td><font face="Verdana, sans-serif" size="2">Курсив (визуальный)</font></td>
+                <td><i>Курсивный текст</i></td>
+              </tr>
+              <tr bgcolor="#f5f5ff">
+                <td><font face="Courier New" size="2">&lt;em&gt;</font></td>
+                <td><font face="Verdana, sans-serif" size="2">Акцент (семантический, курсив)</font></td>
+                <td><em>Акцентированный текст</em></td>
+              </tr>
+              <tr>
+                <td><font face="Courier New" size="2">&lt;u&gt;</font></td>
+                <td><font face="Verdana, sans-serif" size="2">Подчёркнутый текст</font></td>
+                <td><u>Подчёркнутый текст</u></td>
+              </tr>
+              <tr bgcolor="#f5f5ff">
+                <td><font face="Courier New" size="2">&lt;s&gt; / &lt;strike&gt;</font></td>
+                <td><font face="Verdana, sans-serif" size="2">Зачёркнутый текст</font></td>
+                <td><s>Зачёркнутый текст</s></td>
+              </tr>
+              <tr>
+                <td><font face="Courier New" size="2">&lt;sup&gt;</font></td>
+                <td><font face="Verdana, sans-serif" size="2">Верхний индекс</font></td>
+                <td>E = mc<sup>2</sup></td>
+              </tr>
+              <tr bgcolor="#f5f5ff">
+                <td><font face="Courier New" size="2">&lt;sub&gt;</font></td>
+                <td><font face="Verdana, sans-serif" size="2">Нижний индекс</font></td>
+                <td>H<sub>2</sub>O</td>
+              </tr>
+              <tr>
+                <td><font face="Courier New" size="2">&lt;big&gt;</font></td>
+                <td><font face="Verdana, sans-serif" size="2">Увеличить шрифт на 1 размер</font></td>
+                <td><big>Большой текст</big></td>
+              </tr>
+              <tr bgcolor="#f5f5ff">
+                <td><font face="Courier New" size="2">&lt;small&gt;</font></td>
+                <td><font face="Verdana, sans-serif" size="2">Уменьшить шрифт на 1 размер</font></td>
+                <td><small>Маленький текст</small></td>
+              </tr>
+              <tr>
+                <td><font face="Courier New" size="2">&lt;code&gt;</font></td>
+                <td><font face="Verdana, sans-serif" size="2">Программный код (моноширинный шрифт)</font></td>
+                <td><code>console.log("Hello")</code></td>
+              </tr>
+              <tr bgcolor="#f5f5ff">
+                <td><font face="Courier New" size="2">&lt;kbd&gt;</font></td>
+                <td><font face="Verdana, sans-serif" size="2">Ввод с клавиатуры / названия клавиш</font></td>
+                <td>Нажмите <kbd>Ctrl+S</kbd></td>
+              </tr>
+              <tr>
+                <td><font face="Courier New" size="2">&lt;mark&gt;</font></td>
+                <td><font face="Verdana, sans-serif" size="2">Выделенный / подсвеченный текст</font></td>
+                <td><mark>Выделенный текст</mark></td>
+              </tr>
+              <tr bgcolor="#f5f5ff">
+                <td><font face="Courier New" size="2">&lt;br&gt;</font></td>
+                <td><font face="Verdana, sans-serif" size="2">Перенос строки</font></td>
+                <td><font face="Verdana, sans-serif" size="2">Первая строка<br>Вторая строка</font></td>
+              </tr>
+              <tr>
+                <td><font face="Courier New" size="2">&lt;hr&gt;</font></td>
+                <td><font face="Verdana, sans-serif" size="2">Горизонтальная линия</font></td>
+                <td><hr size="2" color="#999999" width="100"></td>
+              </tr>
+              <tr bgcolor="#f5f5ff">
+                <td><font face="Courier New" size="2">&lt;p&gt;</font></td>
+                <td><font face="Verdana, sans-serif" size="2">Абзац текста</font></td>
+                <td><font face="Verdana, sans-serif" size="2">Блочный элемент с отступами</font></td>
+              </tr>
+              <tr>
+                <td><font face="Courier New" size="2">&lt;pre&gt;</font></td>
+                <td><font face="Verdana, sans-serif" size="2">Предварительно форматированный текст</font></td>
+                <td><pre>  пробелы   сохраняются
+  и переносы строк</pre></td>
+              </tr>
+              <tr bgcolor="#f5f5ff">
+                <td><font face="Courier New" size="2">&lt;blockquote&gt;</font></td>
+                <td><font face="Verdana, sans-serif" size="2">Блочная цитата</font></td>
+                <td><blockquote><font face="Verdana, sans-serif" size="2"><i>"Это цитата из книги"</i></font></blockquote></td>
+              </tr>
+              <tr>
+                <td><font face="Courier New" size="2">&lt;q&gt;</font></td>
+                <td><font face="Verdana, sans-serif" size="2">Строчная цитата</font></td>
+                <td><font face="Verdana, sans-serif" size="2">Он сказал <q>Привет!</q></font></td>
+              </tr>
+            </table>
+
+            <hr color="#cccccc" size="1">
+
+            <!-- СЕМАНТИЧЕСКИЕ ТЕГИ -->
+            <a name="text-semantic"></a>
+            <h3><font face="Georgia, serif" color="#1a3a6a">Семантические теги текста</font></h3>
+
+            <table width="100%" border="1" cellpadding="10" cellspacing="0" bordercolor="#cccccc">
+              <tr bgcolor="#1a3a6a">
+                <th><font face="Verdana, sans-serif" size="2" color="#ffffff">Тег</font></th>
+                <th><font face="Verdana, sans-serif" size="2" color="#ffffff">Описание</font></th>
+                <th><font face="Verdana, sans-serif" size="2" color="#ffffff">Результат</font></th>
+              </tr>
+              <tr>
+                <td><font face="Courier New" size="2">&lt;abbr title="..."&gt;</font></td>
+                <td><font face="Verdana, sans-serif" size="2">Аббревиатура с расшифровкой при наведении</font></td>
+                <td><abbr title="HyperText Markup Language">HTML</abbr></td>
+              </tr>
+              <tr bgcolor="#f5f5ff">
+                <td><font face="Courier New" size="2">&lt;cite&gt;</font></td>
+                <td><font face="Verdana, sans-serif" size="2">Ссылка на источник, цитируемое произведение</font></td>
+                <td><cite>Война и мир</cite></td>
+              </tr>
+              <tr>
+                <td><font face="Courier New" size="2">&lt;dfn&gt;</font></td>
+                <td><font face="Verdana, sans-serif" size="2">Определение нового термина</font></td>
+                <td><dfn>Алгоритм</dfn> — набор инструкций</td>
+              </tr>
+              <tr bgcolor="#f5f5ff">
+                <td><font face="Courier New" size="2">&lt;del&gt;</font></td>
+                <td><font face="Verdana, sans-serif" size="2">Удалённый текст (правки документа)</font></td>
+                <td><del>Старый текст</del> Новый текст</td>
+              </tr>
+              <tr>
+                <td><font face="Courier New" size="2">&lt;ins&gt;</font></td>
+                <td><font face="Verdana, sans-serif" size="2">Вставленный текст (правки документа)</font></td>
+                <td><ins>Добавленный текст</ins></td>
+              </tr>
+              <tr bgcolor="#f5f5ff">
+                <td><font face="Courier New" size="2">&lt;address&gt;</font></td>
+                <td><font face="Verdana, sans-serif" size="2">Контактная информация об авторе</font></td>
+                <td><address>Автор: Иванов И.И.</address></td>
+              </tr>
+            </table>
+
+            <br>
+            <!-- ЖИВОЙ ПРИМЕР: РАЗДЕЛ 3 -->
+            <table width="100%" border="3" cellpadding="0" cellspacing="0" bordercolor="#e67e00">
+              <tr bgcolor="#e67e00">
+                <td align="center" colspan="2">
+                  <font face="Georgia, serif" color="#ffffff" size="3"><b>ПРИМЕР — Статья с форматированием текста</b></font>
+                </td>
+              </tr>
+              <tr>
+                <td width="50%" valign="top" bgcolor="#1e1e2e">
+                  <font face="Verdana" color="#aaaaaa" size="1">&nbsp;<b>КОД:</b></font><br>
+                  <pre><font face="Courier New" color="#e0e0e0" size="1">&lt;h1&gt;Планета Марс&lt;/h1&gt;
+&lt;h2&gt;Основные характеристики&lt;/h2&gt;
+&lt;p&gt;
+  Марс — &lt;strong&gt;четвёртая планета&lt;/strong&gt;
+  от Солнца. Её также называют
+  &lt;em&gt;«Красной планетой»&lt;/em&gt;
+  из-за цвета поверхности.
+&lt;/p&gt;
+&lt;p&gt;
+  Расстояние от Земли:
+  &lt;b&gt;54–401 млн км&lt;/b&gt;.&lt;br&gt;
+  Температура: от &lt;b&gt;−153°C&lt;/b&gt;
+  до &lt;b&gt;+20°C&lt;/b&gt;.
+&lt;/p&gt;
+&lt;h3&gt;Химическая формула воды&lt;/h3&gt;
+&lt;p&gt;
+  На Марсе обнаружена
+  H&lt;sub&gt;2&lt;/sub&gt;O в виде льда.
+&lt;/p&gt;
+&lt;h3&gt;Гравитация&lt;/h3&gt;
+&lt;p&gt;
+  g = 3.72 м/с&lt;sup&gt;2&lt;/sup&gt;
+  (против 9.81 на Земле)
+&lt;/p&gt;
+&lt;blockquote&gt;
+  &lt;cite&gt;NASA, 2023:&lt;/cite&gt;
+  &lt;q&gt;Марс — следующий шаг
+  человечества в космосе.&lt;/q&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;
+  Изменения программы:
+  &lt;del&gt;2020 год&lt;/del&gt;
+  &lt;ins&gt;2035 год&lt;/ins&gt; —
+  планируемый полёт.
+&lt;/p&gt;
+&lt;p&gt;
+  Используйте &lt;kbd&gt;Ctrl+D&lt;/kbd&gt;,
+  чтобы добавить в закладки!
+&lt;/p&gt;
+&lt;address&gt;
+  Автор: &lt;abbr
+   title="Национальное управление
+   по аэронавтике"&gt;NASA&lt;/abbr&gt;
+&lt;/address&gt;</font></pre>
+                </td>
+                <td width="50%" valign="top" bgcolor="#ffffff">
+                  <font face="Verdana" color="#333" size="1">&nbsp;<b>РЕЗУЛЬТАТ В БРАУЗЕРЕ:</b></font>
+                  <table width="95%" border="1" cellpadding="10" cellspacing="4" align="center" bordercolor="#cccccc" bgcolor="#fff8f8">
+                    <tr>
+                      <td>
+                        <h1><font face="Georgia" color="#cc2200" size="5">Планета Марс</font></h1>
+                        <h2><font face="Georgia" color="#1a3a6a" size="3">Основные характеристики</font></h2>
+                        <p>
+                          <font face="Verdana" size="2">
+                            Марс — <strong>четвёртая планета</strong> от Солнца. Её также называют <em>«Красной планетой»</em> из-за цвета поверхности.
+                          </font>
+                        </p>
+                        <p>
+                          <font face="Verdana" size="2">
+                            Расстояние от Земли: <b>54–401 млн км</b>.<br>
+                            Температура: от <b>−153°C</b> до <b>+20°C</b>.
+                          </font>
+                        </p>
+                        <h3><font face="Georgia" size="3">Химическая формула воды</font></h3>
+                        <p><font face="Verdana" size="2">На Марсе обнаружена H<sub>2</sub>O в виде льда.</font></p>
+                        <h3><font face="Georgia" size="3">Гравитация</font></h3>
+                        <p><font face="Verdana" size="2">g = 3.72 м/с<sup>2</sup> (против 9.81 на Земле)</font></p>
+                        <blockquote>
+                          <font face="Verdana" size="2"><cite><b>NASA, 2023:</b></cite> <q>Марс — следующий шаг человечества в космосе.</q></font>
+                        </blockquote>
+                        <p><font face="Verdana" size="2">Изменения: <del>2020 год</del> <ins>2035 год</ins> — планируемый полёт.</font></p>
+                        <p><font face="Verdana" size="2">Используйте <kbd>Ctrl+D</kbd>, чтобы добавить в закладки!</font></p>
+                        <address><font face="Verdana" size="1">Автор: <abbr title="Национальное управление по аэронавтике">NASA</abbr></font></address>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+
+          </td>
+        </tr>
+      </table>
+
+      <br>
+
+      <!-- ======================================================
+           РАЗДЕЛ 4: СПИСКИ
+           ====================================================== -->
+      <a name="section-lists"></a>
+      <table width="100%" border="0" cellpadding="15" cellspacing="0" bgcolor="#1a3a6a">
+        <tr>
+          <td>
+            <font face="Georgia, serif" color="#ffffff" size="5"><b>4. Теги для работы со списками</b></font>
+          </td>
+        </tr>
+      </table>
+
+      <table width="100%" border="1" cellpadding="15" cellspacing="0" bordercolor="#aaaacc" bgcolor="#ffffff">
+        <tr>
+          <td>
+
+            <table width="100%" border="0" cellpadding="0" cellspacing="15">
+              <tr valign="top">
+
+                <!-- Маркированный список -->
+                <td width="33%">
+                  <a name="list-ul"></a>
+                  <table width="100%" border="2" cellpadding="10" cellspacing="0" bordercolor="#1a3a6a">
+                    <tr bgcolor="#1a3a6a">
+                      <td><font face="Courier New" color="#ffffff" size="3"><b>&lt;ul&gt; Маркированный список</b></font></td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <font face="Courier New" size="2">
+                          &lt;ul type="disc"&gt;<br>
+                          &nbsp;&lt;li&gt;Элемент 1&lt;/li&gt;<br>
+                          &nbsp;&lt;li&gt;Элемент 2&lt;/li&gt;<br>
+                          &lt;/ul&gt;
+                        </font>
+                        <hr size="1">
+                        <font face="Verdana" size="2"><b>disc (по умолчанию):</b></font>
+                        <ul type="disc">
+                          <li><font face="Verdana" size="2">HTML</font></li>
+                          <li><font face="Verdana" size="2">CSS</font></li>
+                          <li><font face="Verdana" size="2">JavaScript</font></li>
+                        </ul>
+                        <font face="Verdana" size="2"><b>circle:</b></font>
+                        <ul type="circle">
+                          <li><font face="Verdana" size="2">Круглый маркер</font></li>
+                        </ul>
+                        <font face="Verdana" size="2"><b>square:</b></font>
+                        <ul type="square">
+                          <li><font face="Verdana" size="2">Квадратный маркер</font></li>
+                        </ul>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+
+                <!-- Нумерованный список -->
+                <td width="33%">
+                  <a name="list-ol"></a>
+                  <table width="100%" border="2" cellpadding="10" cellspacing="0" bordercolor="#1a3a6a">
+                    <tr bgcolor="#1a3a6a">
+                      <td><font face="Courier New" color="#ffffff" size="3"><b>&lt;ol&gt; Нумерованный список</b></font></td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <font face="Courier New" size="2">
+                          &lt;ol type="1"&gt;<br>
+                          &nbsp;&lt;li&gt;Элемент&lt;/li&gt;<br>
+                          &lt;/ol&gt;
+                        </font>
+                        <hr size="1">
+                        <font face="Verdana" size="2"><b>type="1" (числа):</b></font>
+                        <ol type="1">
+                          <li><font face="Verdana" size="2">Первый</font></li>
+                          <li><font face="Verdana" size="2">Второй</font></li>
+                        </ol>
+                        <font face="Verdana" size="2"><b>type="A" (буквы):</b></font>
+                        <ol type="A">
+                          <li><font face="Verdana" size="2">Альфа</font></li>
+                          <li><font face="Verdana" size="2">Бета</font></li>
+                        </ol>
+                        <font face="Verdana" size="2"><b>type="I" (римские):</b></font>
+                        <ol type="I">
+                          <li><font face="Verdana" size="2">Uno</font></li>
+                          <li><font face="Verdana" size="2">Dos</font></li>
+                        </ol>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+
+                <!-- Список определений -->
+                <td width="33%">
+                  <a name="list-dl"></a>
+                  <table width="100%" border="2" cellpadding="10" cellspacing="0" bordercolor="#1a3a6a">
+                    <tr bgcolor="#1a3a6a">
+                      <td><font face="Courier New" color="#ffffff" size="3"><b>&lt;dl&gt; Список определений</b></font></td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <font face="Courier New" size="2">
+                          &lt;dl&gt;<br>
+                          &nbsp;&lt;dt&gt;Термин&lt;/dt&gt;<br>
+                          &nbsp;&lt;dd&gt;Определение&lt;/dd&gt;<br>
+                          &lt;/dl&gt;
+                        </font>
+                        <hr size="1">
+                        <font face="Verdana" size="2"><b>Пример:</b></font>
+                        <dl>
+                          <dt><font face="Verdana" size="2"><b>HTML</b></font></dt>
+                          <dd><font face="Verdana" size="2">Язык разметки гипертекста</font></dd>
+                          <dt><font face="Verdana" size="2"><b>CSS</b></font></dt>
+                          <dd><font face="Verdana" size="2">Каскадные таблицы стилей</font></dd>
+                          <dt><font face="Verdana" size="2"><b>JS</b></font></dt>
+                          <dd><font face="Verdana" size="2">Язык программирования</font></dd>
+                        </dl>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+
+              </tr>
+            </table>
+
+            <!-- Вложенные списки -->
+            <h3><font face="Georgia, serif" color="#1a3a6a">Вложенные списки</font></h3>
+            <table width="100%" border="0" cellpadding="10" cellspacing="0">
+              <tr valign="top">
+                <td width="50%">
+                  <table width="100%" border="1" cellpadding="8" cellspacing="0" bordercolor="#cccccc" bgcolor="#f8f8f8">
+                    <tr>
+                      <td>
+                        <font face="Courier New" size="2">
+                          &lt;ul&gt;<br>
+                          &nbsp;&lt;li&gt;Фрукты<br>
+                          &nbsp;&nbsp;&lt;ul&gt;<br>
+                          &nbsp;&nbsp;&nbsp;&lt;li&gt;Яблоко&lt;/li&gt;<br>
+                          &nbsp;&nbsp;&nbsp;&lt;li&gt;Банан&lt;/li&gt;<br>
+                          &nbsp;&nbsp;&lt;/ul&gt;<br>
+                          &nbsp;&lt;/li&gt;<br>
+                          &lt;/ul&gt;
+                        </font>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+                <td width="50%">
+                  <font face="Verdana" size="2"><b>Результат:</b></font>
+                  <ul>
+                    <li><font face="Verdana" size="2">Фрукты</font>
+                      <ul>
+                        <li><font face="Verdana" size="2">Яблоко</font></li>
+                        <li><font face="Verdana" size="2">Банан</font></li>
+                        <li><font face="Verdana" size="2">Манго</font></li>
+                      </ul>
+                    </li>
+                    <li><font face="Verdana" size="2">Овощи</font>
+                      <ul>
+                        <li><font face="Verdana" size="2">Морковь</font></li>
+                        <li><font face="Verdana" size="2">Капуста</font></li>
+                      </ul>
+                    </li>
+                  </ul>
+                </td>
+              </tr>
+            </table>
+
+            <br>
+            <!-- ЖИВОЙ ПРИМЕР: РАЗДЕЛ 4 -->
+            <table width="100%" border="3" cellpadding="0" cellspacing="0" bordercolor="#e67e00">
+              <tr bgcolor="#e67e00">
+                <td align="center" colspan="2">
+                  <font face="Georgia, serif" color="#ffffff" size="3"><b>ПРИМЕР — Меню кафе со списками</b></font>
+                </td>
+              </tr>
+              <tr>
+                <td width="50%" valign="top" bgcolor="#1e1e2e">
+                  <font face="Verdana" color="#aaaaaa" size="1">&nbsp;<b>КОД:</b></font>
+                  <pre><font face="Courier New" color="#e0e0e0" size="1">&lt;h2&gt;Меню кафе «Восток»&lt;/h2&gt;
+
+&lt;h3&gt;Горячие блюда:&lt;/h3&gt;
+&lt;ul type="disc"&gt;
+  &lt;li&gt;Плов
+    &lt;ul type="circle"&gt;
+      &lt;li&gt;Классический — 35 сом.&lt;/li&gt;
+      &lt;li&gt;С курицей — 30 сом.&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Шашлык — 50 сом.&lt;/li&gt;
+  &lt;li&gt;Манты — 25 сом.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3&gt;Напитки:&lt;/h3&gt;
+&lt;ol type="1"&gt;
+  &lt;li&gt;Зелёный чай — 5 сом.&lt;/li&gt;
+  &lt;li&gt;Кофе — 15 сом.&lt;/li&gt;
+  &lt;li&gt;Свежевыжатый сок — 20 сом.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h3&gt;Термины:&lt;/h3&gt;
+&lt;dl&gt;
+  &lt;dt&gt;&lt;b&gt;Плов&lt;/b&gt;&lt;/dt&gt;
+  &lt;dd&gt;Среднеазиатское блюдо
+    из риса с мясом и морковью&lt;/dd&gt;
+  &lt;dt&gt;&lt;b&gt;Манты&lt;/b&gt;&lt;/dt&gt;
+  &lt;dd&gt;Паровые пельмени с мясом
+    и луком&lt;/dd&gt;
+&lt;/dl&gt;</font></pre>
+                </td>
+                <td width="50%" valign="top" bgcolor="#fffdf5">
+                  <font face="Verdana" color="#333" size="1">&nbsp;<b>РЕЗУЛЬТАТ В БРАУЗЕРЕ:</b></font>
+                  <table width="95%" border="1" cellpadding="12" cellspacing="4" align="center" bordercolor="#c8a040" bgcolor="#fffdf5">
+                    <tr>
+                      <td>
+                        <h2><font face="Georgia" color="#8b4513" size="4">Меню кафе «Восток»</font></h2>
+                        <h3><font face="Georgia" size="3">Горячие блюда:</font></h3>
+                        <ul type="disc">
+                          <li><font face="Verdana" size="2">Плов</font>
+                            <ul type="circle">
+                              <li><font face="Verdana" size="2">Классический — 35 сом.</font></li>
+                              <li><font face="Verdana" size="2">С курицей — 30 сом.</font></li>
+                            </ul>
+                          </li>
+                          <li><font face="Verdana" size="2">Шашлык — 50 сом.</font></li>
+                          <li><font face="Verdana" size="2">Манты — 25 сом.</font></li>
+                        </ul>
+                        <h3><font face="Georgia" size="3">Напитки:</font></h3>
+                        <ol type="1">
+                          <li><font face="Verdana" size="2">Зелёный чай — 5 сом.</font></li>
+                          <li><font face="Verdana" size="2">Кофе — 15 сом.</font></li>
+                          <li><font face="Verdana" size="2">Свежевыжатый сок — 20 сом.</font></li>
+                        </ol>
+                        <h3><font face="Georgia" size="3">Термины:</font></h3>
+                        <dl>
+                          <dt><font face="Verdana" size="2"><b>Плов</b></font></dt>
+                          <dd><font face="Verdana" size="2">Среднеазиатское блюдо из риса с мясом и морковью</font></dd>
+                          <dt><font face="Verdana" size="2"><b>Манты</b></font></dt>
+                          <dd><font face="Verdana" size="2">Паровые пельмени с мясом и луком</font></dd>
+                        </dl>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+
+          </td>
+        </tr>
+      </table>
+
+      <br>
+
+      <!-- ======================================================
+           РАЗДЕЛ 5: ССЫЛКИ
+           ====================================================== -->
+      <a name="section-links"></a>
+      <table width="100%" border="0" cellpadding="15" cellspacing="0" bgcolor="#1a3a6a">
+        <tr>
+          <td>
+            <font face="Georgia, serif" color="#ffffff" size="5"><b>5. Теги для работы со ссылками</b></font>
+          </td>
+        </tr>
+      </table>
+
+      <table width="100%" border="1" cellpadding="15" cellspacing="0" bordercolor="#aaaacc" bgcolor="#ffffff">
+        <tr>
+          <td>
+
+            <h3><font face="Georgia, serif" color="#1a3a6a">Тег &lt;a&gt; — гиперссылка</font></h3>
+            <p>
+              <font face="Verdana, sans-serif" size="2">
+                Тег <code>&lt;a&gt;</code> (anchor — якорь) является одним из важнейших в HTML. Создаёт гиперссылку — текст или изображение, кликнув на которое можно перейти на другую страницу или ресурс.
+              </font>
+            </p>
+
+            <table width="100%" border="1" cellpadding="10" cellspacing="0" bordercolor="#cccccc">
+              <tr bgcolor="#1a3a6a">
+                <th><font face="Verdana, sans-serif" size="2" color="#ffffff">Тип ссылки</font></th>
+                <th><font face="Verdana, sans-serif" size="2" color="#ffffff">Код</font></th>
+                <th><font face="Verdana, sans-serif" size="2" color="#ffffff">Результат</font></th>
+              </tr>
+              <tr>
+                <td><font face="Verdana, sans-serif" size="2">Внешняя ссылка</font></td>
+                <td><font face="Courier New" size="2">&lt;a href="https://google.com"&gt;Google&lt;/a&gt;</font></td>
+                <td><a href="https://google.com">Google</a></td>
+              </tr>
+              <tr bgcolor="#f5f5ff">
+                <td><font face="Verdana, sans-serif" size="2">Открыть в новой вкладке</font></td>
+                <td><font face="Courier New" size="2">&lt;a href="https://..." target="_blank"&gt;Ссылка&lt;/a&gt;</font></td>
+                <td><a href="https://google.com" target="_blank">Ссылка (новая вкладка)</a></td>
+              </tr>
+              <tr>
+                <td><font face="Verdana, sans-serif" size="2">Ссылка на email</font></td>
+                <td><font face="Courier New" size="2">&lt;a href="mailto:<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="2b42454d446b4e534a465b474e05484446">[email&#160;protected]</a>"&gt;Написать&lt;/a&gt;</font></td>
+                <td><a href="/cdn-cgi/l/email-protection#472e29212807223f262a372b226924282a">Написать нам</a></td>
+              </tr>
+              <tr bgcolor="#f5f5ff">
+                <td><font face="Verdana, sans-serif" size="2">Ссылка на телефон</font></td>
+                <td><font face="Courier New" size="2">&lt;a href="tel:+79001234567"&gt;Позвонить&lt;/a&gt;</font></td>
+                <td><a href="tel:+79001234567">+7 (900) 123-45-67</a></td>
+              </tr>
+              <tr>
+                <td><font face="Verdana, sans-serif" size="2">Якорная ссылка (к разделу)</font></td>
+                <td><font face="Courier New" size="2">&lt;a href="#section-doc"&gt;К разделу&lt;/a&gt;</font></td>
+                <td><a href="#section-doc">К разделу 2 ↑</a></td>
+              </tr>
+              <tr bgcolor="#f5f5ff">
+                <td><font face="Verdana, sans-serif" size="2">Изображение-ссылка</font></td>
+                <td><font face="Courier New" size="2">&lt;a href="..."&gt;&lt;img src="pic.jpg"&gt;&lt;/a&gt;</font></td>
+                <td><font face="Verdana" size="2">(изображение кликабельно)</font></td>
+              </tr>
+            </table>
+
+            <br>
+            <h3><font face="Georgia, serif" color="#1a3a6a">Атрибут <code>target</code></font></h3>
+            <table width="100%" border="1" cellpadding="8" cellspacing="0" bordercolor="#cccccc">
+              <tr bgcolor="#e8eef8">
+                <th><font face="Verdana, sans-serif" size="2">Значение</font></th>
+                <th><font face="Verdana, sans-serif" size="2">Поведение</font></th>
+              </tr>
+              <tr>
+                <td><font face="Courier New" size="2">_blank</font></td>
+                <td><font face="Verdana, sans-serif" size="2">Открыть в новой вкладке/окне</font></td>
+              </tr>
+              <tr bgcolor="#f5f5ff">
+                <td><font face="Courier New" size="2">_self</font></td>
+                <td><font face="Verdana, sans-serif" size="2">Открыть в текущей вкладке (по умолчанию)</font></td>
+              </tr>
+              <tr>
+                <td><font face="Courier New" size="2">_parent</font></td>
+                <td><font face="Verdana, sans-serif" size="2">Открыть в родительском фрейме</font></td>
+              </tr>
+              <tr bgcolor="#f5f5ff">
+                <td><font face="Courier New" size="2">_top</font></td>
+                <td><font face="Verdana, sans-serif" size="2">Открыть в полном окне, отменяя все фреймы</font></td>
+              </tr>
+              <tr>
+                <td><font face="Courier New" size="2">имя_фрейма</font></td>
+                <td><font face="Verdana, sans-serif" size="2">Открыть в указанном именованном фрейме</font></td>
+              </tr>
+            </table>
+
+            <br>
+            <!-- ЖИВОЙ ПРИМЕР: РАЗДЕЛ 5 -->
+            <table width="100%" border="3" cellpadding="0" cellspacing="0" bordercolor="#e67e00">
+              <tr bgcolor="#e67e00">
+                <td align="center" colspan="2">
+                  <font face="Georgia, serif" color="#ffffff" size="3"><b>ПРИМЕР — Навигационная страница сайта</b></font>
+                </td>
+              </tr>
+              <tr>
+                <td width="50%" valign="top" bgcolor="#1e1e2e">
+                  <font face="Verdana" color="#aaaaaa" size="1">&nbsp;<b>КОД:</b></font>
+                  <pre><font face="Courier New" color="#e0e0e0" size="1">&lt;!-- Якоря-цели --&gt;
+&lt;a name="top"&gt;&lt;/a&gt;
+&lt;h1&gt;Портфолио разработчика&lt;/h1&gt;
+
+&lt;!-- Меню навигации --&gt;
+&lt;p&gt;
+  &lt;a href="#projects"&gt;Проекты&lt;/a&gt; |
+  &lt;a href="#skills"&gt;Навыки&lt;/a&gt; |
+  &lt;a href="#contact"&gt;Контакты&lt;/a&gt; |
+  &lt;a href="https://github.com"
+     target="_blank"&gt;GitHub ↗&lt;/a&gt;
+&lt;/p&gt;
+
+&lt;!-- Раздел проекты --&gt;
+&lt;a name="projects"&gt;&lt;/a&gt;
+&lt;h2&gt;Мои проекты&lt;/h2&gt;
+&lt;p&gt;
+  &lt;a href="project1.html"&gt;
+    &#127760; Сайт-визитка
+  &lt;/a&gt;&lt;br&gt;
+  &lt;a href="project2.html"&gt;
+    &#128722; Интернет-магазин
+  &lt;/a&gt;
+&lt;/p&gt;
+
+&lt;!-- Раздел контакты --&gt;
+&lt;a name="contact"&gt;&lt;/a&gt;
+&lt;h2&gt;Контакты&lt;/h2&gt;
+&lt;p&gt;
+  &#128231; &lt;a href="mailto:
+    dev@mail.ru"&gt;dev@mail.ru&lt;/a&gt;&lt;br&gt;
+  &#128222; &lt;a href="tel:
+    +992901234567"&gt;+992 90 123-45-67&lt;/a&gt;
+&lt;/p&gt;
+
+&lt;!-- Ссылка наверх --&gt;
+&lt;p&gt;&lt;a href="#top"&gt;&#8679; Наверх&lt;/a&gt;&lt;/p&gt;</font></pre>
+                </td>
+                <td width="50%" valign="top" bgcolor="#f8faff">
+                  <font face="Verdana" color="#333" size="1">&nbsp;<b>РЕЗУЛЬТАТ В БРАУЗЕРЕ:</b></font>
+                  <table width="95%" border="1" cellpadding="12" cellspacing="4" align="center" bordercolor="#aaaacc" bgcolor="#f8faff">
+                    <tr>
+                      <td>
+                        <a name="ex_top"></a>
+                        <h1><font face="Georgia" color="#1a3a6a" size="4">Портфолио разработчика</font></h1>
+                        <p>
+                          <font face="Verdana" size="2">
+                            <a href="#ex_projects">Проекты</a> |
+                            <a href="#ex_skills">Навыки</a> |
+                            <a href="#ex_contact">Контакты</a> |
+                            <a href="https://github.com" target="_blank">GitHub ↗</a>
+                          </font>
+                        </p>
+                        <hr size="1" color="#cccccc">
+                        <a name="ex_projects"></a>
+                        <h2><font face="Georgia" size="3">&#128188; Мои проекты</font></h2>
+                        <p>
+                          <font face="Verdana" size="2">
+                            <a href="#">&#127760; Сайт-визитка</a><br>
+                            <a href="#">&#128722; Интернет-магазин</a><br>
+                            <a href="#">&#128200; Дашборд аналитики</a>
+                          </font>
+                        </p>
+                        <a name="ex_contact"></a>
+                        <h2><font face="Georgia" size="3">&#128222; Контакты</font></h2>
+                        <p>
+                          <font face="Verdana" size="2">
+                            &#128231; <a href="mailto:dev@mail.ru">dev@mail.ru</a><br>
+                            &#128222; <a href="tel:+992901234567">+992 90 123-45-67</a><br>
+                            &#128279; <a href="https://t.me/" target="_blank">Telegram ↗</a>
+                          </font>
+                        </p>
+                        <p><font face="Verdana" size="2"><a href="#ex_top">&#8679; Наверх</a></font></p>
+                      </td>
+                    </tr>
+                  </table>
+                  <br>
+                  <table width="95%" border="1" cellpadding="6" cellspacing="0" align="center" bordercolor="#e67e00" bgcolor="#fff8ee">
+                    <tr><td><font face="Verdana" size="1" color="#a04000">
+                      <b>&#128161; Ключевые приёмы:</b><br>
+                      &bull; <code>href="#якорь"</code> — прыжок по странице<br>
+                      &bull; <code>target="_blank"</code> — новая вкладка<br>
+                      &bull; <code>mailto:</code> — открыть почту<br>
+                      &bull; <code>tel:</code> — звонок с мобильного
+                    </font></td></tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+
+          </td>
+        </tr>
+      </table>
+
+      <br>
+
+      <!-- ======================================================
+           РАЗДЕЛ 6: МЕДИА
+           ====================================================== -->
+      <a name="section-media"></a>
+      <table width="100%" border="0" cellpadding="15" cellspacing="0" bgcolor="#1a3a6a">
+        <tr>
+          <td>
+            <font face="Georgia, serif" color="#ffffff" size="5"><b>6. Теги для работы с медиа</b></font>
+          </td>
+        </tr>
+      </table>
+
+      <table width="100%" border="1" cellpadding="15" cellspacing="0" bordercolor="#aaaacc" bgcolor="#ffffff">
+        <tr>
+          <td>
+
+            <!-- ИЗОБРАЖЕНИЯ -->
+            <a name="media-img"></a>
+            <h3><font face="Georgia, serif" color="#1a3a6a">Тег &lt;img&gt; — Изображения</font></h3>
+            <p>
+              <font face="Verdana, sans-serif" size="2">
+                Тег <code>&lt;img&gt;</code> используется для вставки изображений. Поддерживает форматы: <b>JPEG, PNG, GIF, WebP, SVG, BMP</b>.
+              </font>
+            </p>
+
+            <table width="100%" border="1" cellpadding="8" cellspacing="0" bordercolor="#cccccc">
+              <tr bgcolor="#1a3a6a">
+                <th><font face="Verdana, sans-serif" size="2" color="#ffffff">Атрибут</font></th>
+                <th><font face="Verdana, sans-serif" size="2" color="#ffffff">Описание</font></th>
+                <th><font face="Verdana, sans-serif" size="2" color="#ffffff">Обязательный?</font></th>
+              </tr>
+              <tr>
+                <td><font face="Courier New" size="2">src</font></td>
+                <td><font face="Verdana, sans-serif" size="2">Путь к файлу изображения</font></td>
+                <td align="center"><font face="Verdana, sans-serif" size="2" color="#cc0000"><b>ДА</b></font></td>
+              </tr>
+              <tr bgcolor="#f5f5ff">
+                <td><font face="Courier New" size="2">alt</font></td>
+                <td><font face="Verdana, sans-serif" size="2">Альтернативный текст (если изображение не загрузилось)</font></td>
+                <td align="center"><font face="Verdana, sans-serif" size="2" color="#cc0000"><b>ДА</b></font></td>
+              </tr>
+              <tr>
+                <td><font face="Courier New" size="2">width</font></td>
+                <td><font face="Verdana, sans-serif" size="2">Ширина изображения (в пикселях или %)</font></td>
+                <td align="center"><font face="Verdana, sans-serif" size="2">нет</font></td>
+              </tr>
+              <tr bgcolor="#f5f5ff">
+                <td><font face="Courier New" size="2">height</font></td>
+                <td><font face="Verdana, sans-serif" size="2">Высота изображения</font></td>
+                <td align="center"><font face="Verdana, sans-serif" size="2">нет</font></td>
+              </tr>
+              <tr>
+                <td><font face="Courier New" size="2">title</font></td>
+                <td><font face="Verdana, sans-serif" size="2">Всплывающая подсказка при наведении</font></td>
+                <td align="center"><font face="Verdana, sans-serif" size="2">нет</font></td>
+              </tr>
+              <tr bgcolor="#f5f5ff">
+                <td><font face="Courier New" size="2">border</font></td>
+                <td><font face="Verdana, sans-serif" size="2">Рамка вокруг изображения</font></td>
+                <td align="center"><font face="Verdana, sans-serif" size="2">нет</font></td>
+              </tr>
+              <tr>
+                <td><font face="Courier New" size="2">hspace / vspace</font></td>
+                <td><font face="Verdana, sans-serif" size="2">Горизонтальный / вертикальный отступ</font></td>
+                <td align="center"><font face="Verdana, sans-serif" size="2">нет</font></td>
+              </tr>
+            </table>
+
+            <br>
+            <table width="100%" border="1" cellpadding="10" cellspacing="0" bordercolor="#cccccc" bgcolor="#f8f8f8">
+              <tr>
+                <td>
+                  <font face="Verdana, sans-serif" size="2" color="#2a6a2a"><b>&#128196; Пример кода:</b></font><br><br>
+                  <font face="Courier New" size="2">
+                    &lt;img src="photo.jpg" alt="Описание фото" width="300" height="200"&gt;<br><br>
+                    &lt;!-- Изображение-ссылка --&gt;<br>
+                    &lt;a href="page.html"&gt;<br>
+                    &nbsp;&nbsp;&lt;img src="button.png" alt="Кнопка" border="0"&gt;<br>
+                    &lt;/a&gt;
+                  </font>
+                </td>
+              </tr>
+            </table>
+
+            <hr color="#cccccc" size="1">
+
+            <!-- АУДИО -->
+            <a name="media-audio"></a>
+            <h3><font face="Georgia, serif" color="#1a3a6a">Тег &lt;audio&gt; — Аудио (HTML5)</font></h3>
+
+            <table width="100%" border="1" cellpadding="8" cellspacing="0" bordercolor="#cccccc">
+              <tr bgcolor="#1a3a6a">
+                <th><font face="Verdana, sans-serif" size="2" color="#ffffff">Атрибут</font></th>
+                <th><font face="Verdana, sans-serif" size="2" color="#ffffff">Описание</font></th>
+              </tr>
+              <tr>
+                <td><font face="Courier New" size="2">src</font></td>
+                <td><font face="Verdana, sans-serif" size="2">Путь к аудиофайлу (.mp3, .ogg, .wav)</font></td>
+              </tr>
+              <tr bgcolor="#f5f5ff">
+                <td><font face="Courier New" size="2">controls</font></td>
+                <td><font face="Verdana, sans-serif" size="2">Показать панель управления (кнопки воспроизведения)</font></td>
+              </tr>
+              <tr>
+                <td><font face="Courier New" size="2">autoplay</font></td>
+                <td><font face="Verdana, sans-serif" size="2">Автоматическое воспроизведение при загрузке</font></td>
+              </tr>
+              <tr bgcolor="#f5f5ff">
+                <td><font face="Courier New" size="2">loop</font></td>
+                <td><font face="Verdana, sans-serif" size="2">Зациклить воспроизведение</font></td>
+              </tr>
+              <tr>
+                <td><font face="Courier New" size="2">muted</font></td>
+                <td><font face="Verdana, sans-serif" size="2">Начать без звука</font></td>
+              </tr>
+              <tr bgcolor="#f5f5ff">
+                <td><font face="Courier New" size="2">preload</font></td>
+                <td><font face="Verdana, sans-serif" size="2">Предзагрузка: auto | metadata | none</font></td>
+              </tr>
+            </table>
+
+            <br>
+            <table width="100%" border="1" cellpadding="10" cellspacing="0" bordercolor="#cccccc" bgcolor="#f8f8f8">
+              <tr>
+                <td>
+                  <font face="Courier New" size="2">
+                    &lt;audio controls&gt;<br>
+                    &nbsp;&nbsp;&lt;source src="music.mp3" type="audio/mpeg"&gt;<br>
+                    &nbsp;&nbsp;&lt;source src="music.ogg" type="audio/ogg"&gt;<br>
+                    &nbsp;&nbsp;Ваш браузер не поддерживает аудио.<br>
+                    &lt;/audio&gt;
+                  </font>
+                </td>
+              </tr>
+            </table>
+
+            <hr color="#cccccc" size="1">
+
+            <!-- ВИДЕО -->
+            <a name="media-video"></a>
+            <h3><font face="Georgia, serif" color="#1a3a6a">Тег &lt;video&gt; — Видео (HTML5)</font></h3>
+
+            <table width="100%" border="1" cellpadding="8" cellspacing="0" bordercolor="#cccccc">
+              <tr bgcolor="#1a3a6a">
+                <th><font face="Verdana, sans-serif" size="2" color="#ffffff">Атрибут</font></th>
+                <th><font face="Verdana, sans-serif" size="2" color="#ffffff">Описание</font></th>
+              </tr>
+              <tr>
+                <td><font face="Courier New" size="2">src</font></td>
+                <td><font face="Verdana, sans-serif" size="2">Путь к видеофайлу (.mp4, .webm, .ogg)</font></td>
+              </tr>
+              <tr bgcolor="#f5f5ff">
+                <td><font face="Courier New" size="2">controls</font></td>
+                <td><font face="Verdana, sans-serif" size="2">Показать панель управления</font></td>
+              </tr>
+              <tr>
+                <td><font face="Courier New" size="2">width / height</font></td>
+                <td><font face="Verdana, sans-serif" size="2">Размеры видеоплеера</font></td>
+              </tr>
+              <tr bgcolor="#f5f5ff">
+                <td><font face="Courier New" size="2">poster</font></td>
+                <td><font face="Verdana, sans-serif" size="2">Изображение-превью до начала воспроизведения</font></td>
+              </tr>
+              <tr>
+                <td><font face="Courier New" size="2">autoplay</font></td>
+                <td><font face="Verdana, sans-serif" size="2">Автовоспроизведение</font></td>
+              </tr>
+              <tr bgcolor="#f5f5ff">
+                <td><font face="Courier New" size="2">loop</font></td>
+                <td><font face="Verdana, sans-serif" size="2">Повтор</font></td>
+              </tr>
+              <tr>
+                <td><font face="Courier New" size="2">muted</font></td>
+                <td><font face="Verdana, sans-serif" size="2">Без звука (нужно для autoplay в современных браузерах)</font></td>
+              </tr>
+            </table>
+
+            <br>
+            <table width="100%" border="1" cellpadding="10" cellspacing="0" bordercolor="#cccccc" bgcolor="#f8f8f8">
+              <tr>
+                <td>
+                  <font face="Courier New" size="2">
+                    &lt;video width="640" height="360" controls poster="preview.jpg"&gt;<br>
+                    &nbsp;&nbsp;&lt;source src="video.mp4" type="video/mp4"&gt;<br>
+                    &nbsp;&nbsp;&lt;source src="video.webm" type="video/webm"&gt;<br>
+                    &nbsp;&nbsp;Ваш браузер не поддерживает видео.<br>
+                    &lt;/video&gt;
+                  </font>
+                </td>
+              </tr>
+            </table>
+
+            <br>
+            <!-- ЖИВОЙ ПРИМЕР: РАЗДЕЛ 6 -->
+            <table width="100%" border="3" cellpadding="0" cellspacing="0" bordercolor="#e67e00">
+              <tr bgcolor="#e67e00">
+                <td align="center" colspan="2">
+                  <font face="Georgia, serif" color="#ffffff" size="3"><b>ПРИМЕР — Медиа-страница фотогалереи</b></font>
+                </td>
+              </tr>
+              <tr>
+                <td width="50%" valign="top" bgcolor="#1e1e2e">
+                  <font face="Verdana" color="#aaaaaa" size="5">&nbsp;<b>КОД:</b></font>
+                  <pre><font face="Courier New" color="#e0e0e0" size="1">&lt;h2&gt;Галерея природы&lt;/h2&gt;
+
+&lt;!-- Изображение с подписью --&gt;
+&lt;figure&gt;
+  &lt;img src="mountain.jpg"
+    alt="Горы Памира"
+    width="300"
+    height="180"
+    border="1"
+    title="Горы Памира"&gt;
+  &lt;figcaption&gt;
+    &lt;b&gt;Памирские горы&lt;/b&gt; —
+    &lt;small&gt;фото 2024&lt;/small&gt;
+  &lt;/figcaption&gt;
+&lt;/figure&gt;
+
+&lt;!-- Изображение-ссылка --&gt;
+&lt;a href="gallery.html"&gt;
+  &lt;img src="lake.jpg"
+    alt="Озеро Каракуль"
+    width="300"
+    height="180"
+    border="2"&gt;
+&lt;/a&gt;
+
+&lt;!-- Аудио плеер --&gt;
+&lt;h3&gt;Звуки природы:&lt;/h3&gt;
+&lt;audio controls&gt;
+  &lt;source src="nature.mp3"
+    type="audio/mpeg"&gt;
+  Браузер не поддерживает аудио.
+&lt;/audio&gt;
+
+&lt;!-- Видео плеер --&gt;
+&lt;h3&gt;Видеоролик:&lt;/h3&gt;
+&lt;video width="300"
+  height="180"
+  controls
+  poster="preview.jpg"&gt;
+  &lt;source src="nature.mp4"
+    type="video/mp4"&gt;
+  Браузер не поддерживает видео.
+&lt;/video&gt;</font></pre>
+                </td>
+                <td width="50%" valign="top" bgcolor="#f0f5f0">
+                  <font face="Verdana" color="#333" size="1">&nbsp;<b>РЕЗУЛЬТАТ В БРАУЗЕРЕ:</b></font>
+                  <table width="95%" border="1" cellpadding="12" cellspacing="4" align="center" bordercolor="#88aa88" bgcolor="#f0f5f0">
+                    <tr><td>
+                      <h2><font face="Georgia" color="#2a6a2a" size="4" >Галерея природы</font></h2>
+
+                      <table border="0" cellpadding="5" cellspacing="0">
+                        <tr valign="top">
+                          <td>
+                            <!-- Placeholder image using HTML only -->
+                            <table width="140" height="90" border="2" cellpadding="0" cellspacing="0" bordercolor="#338833" bgcolor="#c8e8c8">
+                              <tr><td align="center" valign="middle">
+                                 <figure>
+                                    <img src="D:\MSU_task\Prikladnie_Internet_teexnologii\mountain.jpg" width="280" height="220" border="2"  hspace="0" vspace="5">
+                                    <br>
+                                                                    </figure>
+                              </td></tr>
+                            </table>
+                            <font face="Verdana" size="1"><b>Памирские горы</b> — <small>фото 2024</small></font>
+                          </td>
+                          <td>
+                            <a href="#">
+                              <table width="140" height="90" border="2" cellpadding="0" cellspacing="0" bordercolor="#3388aa" bgcolor="#c8dde8">
+                                <tr><td align="center" valign="middle">
+                                  <figure>
+                                    <img src="D:\MSU_task\Prikladnie_Internet_teexnologii\pamir-2.jpg" width="280" height="220" border="2"  hspace="0" vspace="5">
+                                    <br>
+                                                                    </figure>
+
+                                </td></tr>
+                              </table>
+                            </a>
+                          </td>
+                        </tr>
+                      </table>
+
+                      <h3><font face="Georgia" size="3">&#127925; Звуки природы:</font></h3>
+                      <table border="1" cellpadding="6" cellspacing="0" bordercolor="#888" bgcolor="#eee" width="280">
+                        <tr><td align="center">
+                       
+ <audio controls loop>
+                                    <source src="Tony Ann-Rush of life.mp3" type="audio/mpeg">
+                                    <source src="sample.ogg" type="audio/ogg">
+                                    <source src="sample.wav" type="audio/wav">
+                                    Ваш браузер не поддерживает HTML5 аудио.
+                                </audio>
+
+
+                        </td></tr>
+                      </table>
+
+                      <h3><font face="Georgia" size="3">&#127916; Видеоролик:</font></h3>
+                      <table width="280" height="100" border="2" cellpadding="0" cellspacing="0" bordercolor="#555" bgcolor="#222">
+                        <tr><td align="center" valign="middle">
+                         <video width="600" height="450" controls loop muted poster="https://picsum.photos/320/200?grayscale">
+                                    <source src="HTML.mp4" type="video/mp4">
+                                    <source src="sample.webm" type="video/webm">
+                                    <source src="sample.ogv" type="video/ogg">
+                                    <track kind="subtitles" src="subtitles_ru.vtt" srclang="ru" label="Русский">
+                                    <track kind="subtitles" src="subtitles_en.vtt" srclang="en" label="English">
+                                    <font color="#e74c3c"><b>Ваш браузер не поддерживает HTML5 видео.</b></font>
+                                </video>
+
+                        </td></tr>
+                      </table>
+                    </td></tr>
+                  </table>
+                  <br>
+                  <table width="95%" border="1" cellpadding="6" cellspacing="0" align="center" bordercolor="#e67e00" bgcolor="#fff8ee">
+                    <tr><td><font face="Verdana" size="1" color="#a04000">
+                      <b>&#128161; Важно помнить:</b><br>
+                      &bull; Атрибут <code>alt</code> обязателен у <code>&lt;img&gt;</code><br>
+                      &bull; <code>&lt;figure&gt;</code> + <code>&lt;figcaption&gt;</code> = подпись к изображению<br>
+                      &bull; Всегда указывайте несколько форматов в <code>&lt;source&gt;</code><br>
+                      &bull; Для автовоспроизведения видео нужен атрибут <code>muted</code>
+                    </font></td></tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+
+          </td>
+        </tr>
+      </table>
+
+      <br>
+
+      <!-- ======================================================
+           РАЗДЕЛ 7: ТАБЛИЦЫ
+           ====================================================== -->
+      <a name="section-tables"></a>
+      <table width="100%" border="0" cellpadding="15" cellspacing="0" bgcolor="#1a3a6a">
+        <tr>
+          <td>
+            <font face="Georgia, serif" color="#ffffff" size="5"><b>7. Теги для работы с таблицами</b></font>
+          </td>
+        </tr>
+      </table>
+
+      <table width="100%" border="1" cellpadding="15" cellspacing="0" bordercolor="#aaaacc" bgcolor="#ffffff">
+        <tr>
+          <td>
+
+            <p>
+              <font face="Verdana, sans-serif" size="2">
+                Таблицы в HTML создаются с помощью нескольких тегов, работающих вместе. Основной тег — <code>&lt;table&gt;</code>, внутри которого строки (<code>&lt;tr&gt;</code>), а в строках — ячейки (<code>&lt;td&gt;</code>) или заголовки (<code>&lt;th&gt;</code>).
+              </font>
+            </p>
+
+            <h3><font face="Georgia, serif" color="#1a3a6a">Структура таблицы</font></h3>
+
+            <table width="100%" border="0" cellpadding="10" cellspacing="0">
+              <tr valign="top">
+                <td width="50%">
+                  <table width="100%" border="1" cellpadding="8" cellspacing="0" bordercolor="#cccccc" bgcolor="#f8f8f8">
+                    <tr>
+                      <td>
+                        <font face="Courier New" size="2">
+                          &lt;table border="1"&gt;<br>
+                          &nbsp;&lt;caption&gt;Заголовок таблицы&lt;/caption&gt;<br>
+                          &nbsp;&lt;thead&gt;<br>
+                          &nbsp;&nbsp;&lt;tr&gt;<br>
+                          &nbsp;&nbsp;&nbsp;&lt;th&gt;Столбец 1&lt;/th&gt;<br>
+                          &nbsp;&nbsp;&nbsp;&lt;th&gt;Столбец 2&lt;/th&gt;<br>
+                          &nbsp;&nbsp;&lt;/tr&gt;<br>
+                          &nbsp;&lt;/thead&gt;<br>
+                          &nbsp;&lt;tbody&gt;<br>
+                          &nbsp;&nbsp;&lt;tr&gt;<br>
+                          &nbsp;&nbsp;&nbsp;&lt;td&gt;Данные 1&lt;/td&gt;<br>
+                          &nbsp;&nbsp;&nbsp;&lt;td&gt;Данные 2&lt;/td&gt;<br>
+                          &nbsp;&nbsp;&lt;/tr&gt;<br>
+                          &nbsp;&lt;/tbody&gt;<br>
+                          &nbsp;&lt;tfoot&gt;<br>
+                          &nbsp;&nbsp;&lt;tr&gt;<br>
+                          &nbsp;&nbsp;&nbsp;&lt;td colspan="2"&gt;Итог&lt;/td&gt;<br>
+                          &nbsp;&nbsp;&lt;/tr&gt;<br>
+                          &nbsp;&lt;/tfoot&gt;<br>
+                          &lt;/table&gt;
+                        </font>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+                <td width="50%">
+                  <font face="Verdana, sans-serif" size="2"><b>Результат:</b></font><br><br>
+                  <table border="2" cellpadding="8" cellspacing="0" bordercolor="#1a3a6a" width="100%">
+                    <caption><font face="Verdana, sans-serif" size="2"><b>Таблица студентов</b></font></caption>
+                    <thead>
+                      <tr bgcolor="#1a3a6a">
+                        <th><font face="Verdana, sans-serif" size="2" color="#ffffff">Имя</font></th>
+                        <th><font face="Verdana, sans-serif" size="2" color="#ffffff">Оценка</font></th>
+                        <th><font face="Verdana, sans-serif" size="2" color="#ffffff">Статус</font></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td><font face="Verdana, sans-serif" size="2">Алишер</font></td>
+                        <td align="center"><font face="Verdana, sans-serif" size="2">95</font></td>
+                        <td><font face="Verdana, sans-serif" size="2">Отлично</font></td>
+                      </tr>
+                      <tr bgcolor="#f0f4ff">
+                        <td><font face="Verdana, sans-serif" size="2">Зарина</font></td>
+                        <td align="center"><font face="Verdana, sans-serif" size="2">88</font></td>
+                        <td><font face="Verdana, sans-serif" size="2">Хорошо</font></td>
+                      </tr>
+                      <tr>
+                        <td><font face="Verdana, sans-serif" size="2">Мухаммад</font></td>
+                        <td align="center"><font face="Verdana, sans-serif" size="2">72</font></td>
+                        <td><font face="Verdana, sans-serif" size="2">Удовлетворительно</font></td>
+                      </tr>
+                    </tbody>
+                    <tfoot>
+                      <tr bgcolor="#eef3fa">
+                        <td colspan="2"><font face="Verdana, sans-serif" size="2"><b>Средний балл:</b></font></td>
+                        <td><font face="Verdana, sans-serif" size="2"><b>85</b></font></td>
+                      </tr>
+                    </tfoot>
+                  </table>
+                </td>
+              </tr>
+            </table>
+
+            <br>
+            <h3><font face="Georgia, serif" color="#1a3a6a">Объединение ячеек</font></h3>
+
+            <table width="100%" border="0" cellpadding="10" cellspacing="0">
+              <tr valign="top">
+                <td width="50%">
+                  <font face="Verdana, sans-serif" size="2">
+                    <b>colspan</b> — объединение по горизонтали (нескольких столбцов):<br>
+                    <font face="Courier New" size="2">&lt;td colspan="2"&gt;...&lt;/td&gt;</font><br><br>
+                    <b>rowspan</b> — объединение по вертикали (нескольких строк):<br>
+                    <font face="Courier New" size="2">&lt;td rowspan="3"&gt;...&lt;/td&gt;</font>
+                  </font>
+                </td>
+                <td width="50%">
+                  <table border="2" cellpadding="6" cellspacing="0" bordercolor="#1a3a6a">
+                    <tr bgcolor="#e8eef8">
+                      <td colspan="3" align="center"><font face="Verdana, sans-serif" size="2"><b>colspan="3" (3 колонки)</b></font></td>
+                    </tr>
+                    <tr>
+                      <td rowspan="2" bgcolor="#fff3e0" align="center"><font face="Verdana, sans-serif" size="2"><b>row<br>span<br>=2</b></font></td>
+                      <td><font face="Verdana, sans-serif" size="2">Ячейка A</font></td>
+                      <td><font face="Verdana, sans-serif" size="2">Ячейка B</font></td>
+                    </tr>
+                    <tr>
+                      <td><font face="Verdana, sans-serif" size="2">Ячейка C</font></td>
+                      <td><font face="Verdana, sans-serif" size="2">Ячейка D</font></td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+
+            <br>
+            <!-- ЖИВОЙ ПРИМЕР: РАЗДЕЛ 7 -->
+            <table width="100%" border="3" cellpadding="0" cellspacing="0" bordercolor="#e67e00">
+              <tr bgcolor="#e67e00">
+                <td align="center" colspan="2">
+                  <font face="Georgia, serif" color="#ffffff" size="3"><b>ПРИМЕР — Расписание занятий</b></font>
+                </td>
+              </tr>
+              <tr>
+                <td width="50%" valign="top" bgcolor="#1e1e2e">
+                  <font face="Verdana" color="#aaaaaa" size="3">&nbsp;<b>КОД:</b></font>
+                  <pre><font face="Courier New" color="#e0e0e0" size="1">&lt;table border="1"
+  cellpadding="6"
+  cellspacing="0"
+  bgcolor="#fff"&gt;
+
+&lt;caption&gt;&lt;b&gt;Расписание — Пн&lt;/b&gt;
+&lt;/caption&gt;
+
+&lt;thead&gt;
+  &lt;tr bgcolor="#1a3a6a"&gt;
+    &lt;th&gt;&lt;font color="#fff"&gt;
+      Время&lt;/font&gt;&lt;/th&gt;
+    &lt;th&gt;&lt;font color="#fff"&gt;
+      Предмет&lt;/font&gt;&lt;/th&gt;
+    &lt;th&gt;&lt;font color="#fff"&gt;
+      Аудитория&lt;/font&gt;&lt;/th&gt;
+  &lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+  &lt;tr&gt;
+    &lt;td rowspan="2"&gt;
+      8:00–11:30
+    &lt;/td&gt;
+    &lt;td&gt;HTML/CSS&lt;/td&gt;
+    &lt;td&gt;Ауд. 101&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr bgcolor="#f0f4ff"&gt;
+    &lt;td&gt;JavaScript&lt;/td&gt;
+    &lt;td&gt;Ауд. 102&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;12:00–13:30&lt;/td&gt;
+    &lt;td colspan="2"&gt;
+      &lt;b&gt;Обед&lt;/b&gt; — столовая
+    &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr bgcolor="#f0f4ff"&gt;
+    &lt;td&gt;14:00–15:30&lt;/td&gt;
+    &lt;td&gt;Базы данных&lt;/td&gt;
+    &lt;td&gt;Ауд. 205&lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+
+&lt;tfoot&gt;
+  &lt;tr bgcolor="#eef3fa"&gt;
+    &lt;td colspan="3"&gt;
+      Всего: 3 пары
+    &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tfoot&gt;
+&lt;/table&gt;</font></pre>
+                </td>
+                <td width="50%" valign="top" bgcolor="#f8faff">
+                  <font face="Verdana" color="#333" size="1">&nbsp;<b>РЕЗУЛЬТАТ В БРАУЗЕРЕ:</b></font><br><br>
+                  <table border="2" cellpadding="8" cellspacing="0" bordercolor="#1a3a6a" align="center" width="90%">
+                    <caption><font face="Verdana" size="2"><b>&#128197; Расписание — Понедельник</b></font></caption>
+                    <thead>
+                      <tr bgcolor="#1a3a6a">
+                        <th><font face="Verdana" color="#fff" size="2">Время</font></th>
+                        <th><font face="Verdana" color="#fff" size="2">Предмет</font></th>
+                        <th><font face="Verdana" color="#fff" size="2">Аудитория</font></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td rowspan="2" align="center" bgcolor="#fff8e0"><font face="Verdana" size="2"><b>8:00–11:30</b></font></td>
+                        <td><font face="Verdana" size="2">HTML/CSS</font></td>
+                        <td align="center"><font face="Verdana" size="2">Ауд. 101</font></td>
+                      </tr>
+                      <tr bgcolor="#f0f4ff">
+                        <td><font face="Verdana" size="2">JavaScript</font></td>
+                        <td align="center"><font face="Verdana" size="2">Ауд. 102</font></td>
+                      </tr>
+                      <tr bgcolor="#fff0e0">
+                        <td align="center"><font face="Verdana" size="2">12:00–13:30</font></td>
+                        <td colspan="2" align="center"><font face="Verdana" size="2"><b>&#127829; Обед</b> — столовая</font></td>
+                      </tr>
+                      <tr bgcolor="#f0f4ff">
+                        <td align="center"><font face="Verdana" size="2">14:00–15:30</font></td>
+                        <td><font face="Verdana" size="2">Базы данных</font></td>
+                        <td align="center"><font face="Verdana" size="2">Ауд. 205</font></td>
+                      </tr>
+                      <tr>
+                        <td align="center"><font face="Verdana" size="2">16:00–17:30</font></td>
+                        <td><font face="Verdana" size="2">Проектная работа</font></td>
+                        <td align="center"><font face="Verdana" size="2">Ауд. 301</font></td>
+                      </tr>
+                    </tbody>
+                    <tfoot>
+                      <tr bgcolor="#eef3fa">
+                        <td colspan="3" align="center"><font face="Verdana" size="2"><b>Всего: 4 пары | Корп. А</b></font></td>
+                      </tr>
+                    </tfoot>
+                  </table>
+                  <br>
+                  <table width="90%" border="1" cellpadding="6" cellspacing="0" align="center" bordercolor="#e67e00" bgcolor="#fff8ee">
+                    <tr><td><font face="Verdana" size="1" color="#a04000">
+                      <b>&#128161; Что использовано:</b><br>
+                      &bull; <code>rowspan="2"</code> — ячейка «8:00–11:30» занимает 2 строки<br>
+                      &bull; <code>colspan="2"</code> — «Обед» растянут на 2 столбца<br>
+                      &bull; <code>&lt;thead&gt;</code> — синяя шапка таблицы<br>
+                      &bull; <code>&lt;tfoot&gt;</code> — итоговая строка внизу<br>
+                      &bull; <code>bgcolor</code> — чередующиеся цвета строк
+                    </font></td></tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+
+          </td>
+        </tr>
+      </table>
+
+      <br>
+
+      <!-- ======================================================
+           РАЗДЕЛ 8: ФОРМЫ
+           ====================================================== -->
+      <a name="section-forms"></a>
+      <table width="100%" border="0" cellpadding="15" cellspacing="0" bgcolor="#1a3a6a">
+        <tr>
+          <td>
+            <font face="Georgia, serif" color="#ffffff" size="5"><b>8. Теги для работы с формами</b></font>
+          </td>
+        </tr>
+      </table>
+
+      <table width="100%" border="1" cellpadding="15" cellspacing="0" bordercolor="#aaaacc" bgcolor="#ffffff">
+        <tr>
+          <td>
+
+            <p>
+              <font face="Verdana, sans-serif" size="2">
+                Формы позволяют пользователям отправлять данные на сервер. Создаются тегом <code>&lt;form&gt;</code>, а внутри размещаются различные элементы ввода.
+              </font>
+            </p>
+
+            <!-- Атрибуты FORM -->
+            <h3><font face="Georgia, serif" color="#1a3a6a">Тег &lt;form&gt; и его атрибуты</font></h3>
+            <table width="100%" border="1" cellpadding="8" cellspacing="0" bordercolor="#cccccc">
+              <tr bgcolor="#e8eef8">
+                <th><font face="Verdana, sans-serif" size="2">Атрибут</font></th>
+                <th><font face="Verdana, sans-serif" size="2">Описание</font></th>
+                <th><font face="Verdana, sans-serif" size="2">Значения</font></th>
+              </tr>
+              <tr>
+                <td><font face="Courier New" size="2">action</font></td>
+                <td><font face="Verdana, sans-serif" size="2">URL обработчика формы</font></td>
+                <td><font face="Courier New" size="2">"/submit.php"</font></td>
+              </tr>
+              <tr bgcolor="#f5f5ff">
+                <td><font face="Courier New" size="2">method</font></td>
+                <td><font face="Verdana, sans-serif" size="2">Метод HTTP-запроса</font></td>
+                <td><font face="Courier New" size="2">get | post</font></td>
+              </tr>
+              <tr>
+                <td><font face="Courier New" size="2">enctype</font></td>
+                <td><font face="Verdana, sans-serif" size="2">Кодировка данных (для файлов)</font></td>
+                <td><font face="Courier New" size="2">multipart/form-data</font></td>
+              </tr>
+            </table>
+
+            <br>
+
+            <!-- Типы INPUT -->
+            <h3><font face="Georgia, serif" color="#1a3a6a">Типы элемента &lt;input type="..."&gt;</font></h3>
+
+            <table width="100%" border="1" cellpadding="10" cellspacing="0" bordercolor="#cccccc">
+              <tr bgcolor="#1a3a6a">
+                <th width="120"><font face="Verdana, sans-serif" size="2" color="#ffffff">type=</font></th>
+                <th><font face="Verdana, sans-serif" size="2" color="#ffffff">Описание</font></th>
+                <th width="200"><font face="Verdana, sans-serif" size="2" color="#ffffff">Вид</font></th>
+              </tr>
+              <tr>
+                <td><font face="Courier New" size="2">"text"</font></td>
+                <td><font face="Verdana, sans-serif" size="2">Однострочное текстовое поле</font></td>
+                <td><input type="text" placeholder="Введите текст" size="20"></td>
+              </tr>
+              <tr bgcolor="#f5f5ff">
+                <td><font face="Courier New" size="2">"password"</font></td>
+                <td><font face="Verdana, sans-serif" size="2">Поле для пароля (символы скрыты)</font></td>
+                <td><input type="password" placeholder="Пароль" size="20"></td>
+              </tr>
+              <tr>
+                <td><font face="Courier New" size="2">"email"</font></td>
+                <td><font face="Verdana, sans-serif" size="2">Поле для email (с валидацией)</font></td>
+                <td><input type="email" placeholder="email@mail.com" size="20"></td>
+              </tr>
+              <tr bgcolor="#f5f5ff">
+                <td><font face="Courier New" size="2">"number"</font></td>
+                <td><font face="Verdana, sans-serif" size="2">Числовое поле</font></td>
+                <td><input type="number" min="0" max="100" value="42" size="10"></td>
+              </tr>
+              <tr>
+                <td><font face="Courier New" size="2">"checkbox"</font></td>
+                <td><font face="Verdana, sans-serif" size="2">Флажок (множественный выбор)</font></td>
+                <td>
+                  <input type="checkbox" checked> <font face="Verdana" size="2">HTML</font>&nbsp;
+                  <input type="checkbox"> <font face="Verdana" size="2">CSS</font>&nbsp;
+                  <input type="checkbox"> <font face="Verdana" size="2">JS</font>
+                </td>
+              </tr>
+              <tr bgcolor="#f5f5ff">
+                <td><font face="Courier New" size="2">"radio"</font></td>
+                <td><font face="Verdana, sans-serif" size="2">Переключатель (один из группы)</font></td>
+                <td>
+                  <input type="radio" name="gender" checked> <font face="Verdana" size="2">Мужской</font>&nbsp;
+                  <input type="radio" name="gender"> <font face="Verdana" size="2">Женский</font>
+                </td>
+              </tr>
+              <tr>
+                <td><font face="Courier New" size="2">"range"</font></td>
+                <td><font face="Verdana, sans-serif" size="2">Ползунок для выбора диапазона</font></td>
+                <td><input type="range" min="0" max="100" value="50"></td>
+              </tr>
+              <tr bgcolor="#f5f5ff">
+                <td><font face="Courier New" size="2">"date"</font></td>
+                <td><font face="Verdana, sans-serif" size="2">Выбор даты</font></td>
+                <td><input type="date"></td>
+              </tr>
+              <tr>
+                <td><font face="Courier New" size="2">"file"</font></td>
+                <td><font face="Verdana, sans-serif" size="2">Загрузка файла</font></td>
+                <td><input type="file"></td>
+              </tr>
+              <tr bgcolor="#f5f5ff">
+                <td><font face="Courier New" size="2">"color"</font></td>
+                <td><font face="Verdana, sans-serif" size="2">Выбор цвета</font></td>
+                <td><input type="color" value="#1a3a6a"></td>
+              </tr>
+              <tr>
+                <td><font face="Courier New" size="2">"submit"</font></td>
+                <td><font face="Verdana, sans-serif" size="2">Кнопка отправки формы</font></td>
+                <td><input type="submit" value="Отправить"></td>
+              </tr>
+              <tr bgcolor="#f5f5ff">
+                <td><font face="Courier New" size="2">"reset"</font></td>
+                <td><font face="Verdana, sans-serif" size="2">Кнопка сброса формы</font></td>
+                <td><input type="reset" value="Очистить"></td>
+              </tr>
+            </table>
+
+            <br>
+
+            <!-- Пример формы -->
+            <h3><font face="Georgia, serif" color="#1a3a6a">Пример реальной формы</font></h3>
+
+            <table width="100%" border="0" cellpadding="10" cellspacing="0">
+              <tr valign="top">
+                <td width="50%">
+                  <table width="100%" border="1" cellpadding="8" cellspacing="0" bordercolor="#cccccc" bgcolor="#f8f8f8">
+                    <tr>
+                      <td>
+                        <font face="Courier New" size="1">
+                          &lt;form action="/send" method="post"&gt;<br>
+                          &nbsp;&lt;fieldset&gt;<br>
+                          &nbsp;&nbsp;&lt;legend&gt;Регистрация&lt;/legend&gt;<br>
+                          &nbsp;&nbsp;&lt;label for="name"&gt;Имя:&lt;/label&gt;&lt;br&gt;<br>
+                          &nbsp;&nbsp;&lt;input type="text" id="name"&gt;&lt;br&gt;<br>
+                          &nbsp;&nbsp;&lt;label for="email"&gt;Email:&lt;/label&gt;&lt;br&gt;<br>
+                          &nbsp;&nbsp;&lt;input type="email" id="email"&gt;&lt;br&gt;<br>
+                          &nbsp;&nbsp;&lt;label&gt;Пол:&lt;/label&gt;&lt;br&gt;<br>
+                          &nbsp;&nbsp;&lt;input type="radio" name="sex"&gt; Муж.&lt;br&gt;<br>
+                          &nbsp;&nbsp;&lt;input type="radio" name="sex"&gt; Жен.&lt;br&gt;&lt;br&gt;<br>
+                          &nbsp;&nbsp;&lt;select name="city"&gt;<br>
+                          &nbsp;&nbsp;&nbsp;&lt;option&gt;Душанбе&lt;/option&gt;<br>
+                          &nbsp;&nbsp;&nbsp;&lt;option&gt;Худжанд&lt;/option&gt;<br>
+                          &nbsp;&nbsp;&lt;/select&gt;&lt;br&gt;&lt;br&gt;<br>
+                          &nbsp;&nbsp;&lt;textarea rows="3" cols="25"&gt;<br>
+                          &nbsp;&nbsp;&lt;/textarea&gt;&lt;br&gt;&lt;br&gt;<br>
+                          &nbsp;&nbsp;&lt;input type="submit" value="Зарегистрироваться"&gt;<br>
+                          &nbsp;&lt;/fieldset&gt;<br>
+                          &lt;/form&gt;
+                        </font>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+                <td width="50%">
+                  <font face="Verdana, sans-serif" size="2"><b>Результат:</b></font><br><br>
+                  <form>
+                    <fieldset>
+                      <legend><font face="Verdana, sans-serif" size="2"><b>Регистрация</b></font></legend>
+                      <font face="Verdana, sans-serif" size="2">
+                        <label for="demo_name">Имя:</label><br>
+                        <input type="text" id="demo_name" placeholder="Ваше имя"><br><br>
+                        <label for="demo_email">Email:</label><br>
+                        <input type="email" id="demo_email" placeholder="email@mail.com"><br><br>
+                        <label>Пол:</label><br>
+                        <input type="radio" name="sex"> Мужской<br>
+                        <input type="radio" name="sex"> Женский<br><br>
+                        <label>Город:</label><br>
+                        <select name="city">
+                          <option>Душанбе</option>
+                          <option>Худжанд</option>
+                          <option>Бохтар</option>
+                          <option>Куляб</option>
+                        </select><br><br>
+                        <label>Комментарий:</label><br>
+                        <textarea rows="3" cols="25" placeholder="Ваш комментарий..."></textarea><br><br>
+                        <input type="submit" value="Зарегистрироваться">
+                        <input type="reset" value="Очистить">
+                      </font>
+                    </fieldset>
+                  </form>
+                </td>
+              </tr>
+            </table>
+
+            <br>
+            <!-- ЖИВОЙ ПРИМЕР: РАЗДЕЛ 8 -->
+            <table width="100%" border="3" cellpadding="0" cellspacing="0" bordercolor="#e67e00">
+              <tr bgcolor="#e67e00">
+                <td align="center" colspan="2">
+                  <font face="Georgia, serif" color="#ffffff" size="3"><b>ПРИМЕР — Форма заказа товара</b></font>
+                </td>
+              </tr>
+              <tr>
+                <td width="50%" valign="top" bgcolor="#1e1e2e">
+                  <font face="Verdana" color="#aaaaaa" size="1">&nbsp;<b>КОД:</b></font>
+                  <pre><font face="Courier New" color="#e0e0e0" size="1">&lt;form action="/order"
+  method="post"&gt;
+
+  &lt;fieldset&gt;
+  &lt;legend&gt;
+    &lt;b&gt;Оформить заказ&lt;/b&gt;
+  &lt;/legend&gt;
+
+  &lt;label for="fname"&gt;
+    Ваше имя:*
+  &lt;/label&gt;&lt;br&gt;
+  &lt;input type="text"
+    id="fname"
+    name="name"
+    placeholder="Алишер Иванов"
+    required&gt;&lt;br&gt;&lt;br&gt;
+
+  &lt;label for="fphone"&gt;
+    Телефон:*
+  &lt;/label&gt;&lt;br&gt;
+  &lt;input type="tel"
+    id="fphone"
+    name="phone"
+    placeholder="+992 XX XXX-XX-XX"
+    required&gt;&lt;br&gt;&lt;br&gt;
+
+  &lt;label&gt;Товар:&lt;/label&gt;&lt;br&gt;
+  &lt;select name="product"&gt;
+    &lt;optgroup label="Электроника"&gt;
+      &lt;option value="p1"&gt;
+        Телефон&lt;/option&gt;
+      &lt;option value="p2"&gt;
+        Ноутбук&lt;/option&gt;
+    &lt;/optgroup&gt;
+    &lt;optgroup label="Книги"&gt;
+      &lt;option value="b1"&gt;
+        HTML для начинающих
+      &lt;/option&gt;
+    &lt;/optgroup&gt;
+  &lt;/select&gt;&lt;br&gt;&lt;br&gt;
+
+  &lt;label&gt;Доставка:&lt;/label&gt;&lt;br&gt;
+  &lt;input type="radio"
+    name="del" value="courier"
+    checked&gt; Курьером&lt;br&gt;
+  &lt;input type="radio"
+    name="del" value="pickup"&gt;
+    Самовывоз&lt;br&gt;&lt;br&gt;
+
+  &lt;label&gt;Количество:&lt;/label&gt;&lt;br&gt;
+  &lt;input type="number"
+    name="qty"
+    min="1" max="99"
+    value="1"&gt;&lt;br&gt;&lt;br&gt;
+
+  &lt;label&gt;Промокод:&lt;/label&gt;&lt;br&gt;
+  &lt;input type="text"
+    name="promo"
+    placeholder="SALE2026"&gt;&lt;br&gt;&lt;br&gt;
+
+  &lt;label for="fnote"&gt;
+    Примечание:
+  &lt;/label&gt;&lt;br&gt;
+  &lt;textarea id="fnote"
+    name="note"
+    rows="3" cols="28"
+    placeholder="Особые пожелания..."
+    &gt;&lt;/textarea&gt;&lt;br&gt;&lt;br&gt;
+
+  &lt;input type="checkbox"
+    name="agree"
+    required&gt;
+  Согласен с условиями&lt;br&gt;&lt;br&gt;
+
+  &lt;input type="submit"
+    value="&#128722; Заказать"&gt;
+  &lt;input type="reset"
+    value="Очистить"&gt;
+
+  &lt;/fieldset&gt;
+&lt;/form&gt;</font></pre>
+                </td>
+                <td width="50%" valign="top" bgcolor="#f8fff8">
+                  <font face="Verdana" color="#333" size="1">&nbsp;<b>РЕЗУЛЬТАТ — ЖИВАЯ РАБОЧАЯ ФОРМА:</b></font><br><br>
+                  <form action="#" method="get">
+                    <fieldset>
+                      <legend><font face="Verdana" size="2"><b>&#128722; Оформить заказ</b></font></legend>
+                      <font face="Verdana" size="2">
+
+                        <label for="live_fname">Ваше имя:*</label><br>
+                        <input type="text" id="live_fname" name="name" placeholder="Алишер Иванов" required><br><br>
+
+                        <label for="live_fphone">Телефон:*</label><br>
+                        <input type="tel" id="live_fphone" name="phone" placeholder="+992 XX XXX-XX-XX" required><br><br>
+
+                        <label for="live_fmail">Email:</label><br>
+                        <input type="email" id="live_fmail" name="email" placeholder="email@mail.tj"><br><br>
+
+                        <label>Товар:</label><br>
+                        <select name="product">
+                          <optgroup label="&#128241; Электроника">
+                            <option value="p1">Телефон — 1500 сом.</option>
+                            <option value="p2">Ноутбук — 8000 сом.</option>
+                          </optgroup>
+                          <optgroup label="&#128218; Книги">
+                            <option value="b1">HTML для начинающих — 80 сом.</option>
+                            <option value="b2">CSS. Полное руководство — 90 сом.</option>
+                          </optgroup>
+                        </select><br><br>
+
+                        <label>Доставка:</label><br>
+                        <input type="radio" name="del2" value="courier" checked> Курьером<br>
+                        <input type="radio" name="del2" value="pickup"> Самовывоз<br><br>
+
+                        <label>Количество (1–99):</label><br>
+                        <input type="number" name="qty" min="1" max="99" value="1"><br><br>
+
+                        <label>Промокод:</label><br>
+                        <input type="text" name="promo" placeholder="SALE2026" size="15"><br><br>
+
+                        <label>Дата доставки:</label><br>
+                        <input type="date" name="date"><br><br>
+
+                        <label for="live_fnote">Примечание:</label><br>
+                        <textarea id="live_fnote" name="note" rows="3" cols="28" placeholder="Особые пожелания..."></textarea><br><br>
+
+                        <input type="checkbox" name="agree"> Согласен с условиями&nbsp;&nbsp;
+                        <input type="checkbox" name="news"> Подписаться на новости<br><br>
+
+                        <input type="submit" value="&#128722; Заказать">
+                        &nbsp;
+                        <input type="reset" value="Очистить">
+                      </font>
+                    </fieldset>
+                  </form>
+                  <br>
+                  <table width="100%" border="1" cellpadding="6" cellspacing="0" bordercolor="#e67e00" bgcolor="#fff8ee">
+                    <tr><td><font face="Verdana" size="1" color="#a04000">
+                      <b>&#128161; Что использовано:</b><br>
+                      &bull; <code>&lt;fieldset&gt;</code> + <code>&lt;legend&gt;</code> — группировка с рамкой<br>
+                      &bull; <code>&lt;label for="id"&gt;</code> — связь с полем ввода<br>
+                      &bull; <code>&lt;optgroup label="..."&gt;</code> — группы в выпадающем списке<br>
+                      &bull; <code>required</code> — обязательное поле<br>
+                      &bull; <code>type="tel"</code>, <code>"email"</code>, <code>"date"</code> — специальные поля<br>
+                      &bull; <code>type="radio"</code> с одним <code>name</code> — взаимоисключающий выбор
+                    </font></td></tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+
+          </td>
+        </tr>
+      </table>
+
+      <br>
+
+      <!-- ======================================================
+           РАЗДЕЛ 9: ОСНОВЫ CSS
+           ====================================================== -->
+      <a name="section-css"></a>
+      <table width="100%" border="0" cellpadding="15" cellspacing="0" bgcolor="#1a3a6a">
+        <tr>
+          <td>
+            <font face="Georgia, serif" color="#ffffff" size="5"><b>9. Введение в CSS</b></font>
+          </td>
+        </tr>
+      </table>
+
+      <table width="100%" border="1" cellpadding="15" cellspacing="0" bordercolor="#aaaacc" bgcolor="#ffffff">
+        <tr>
+          <td>
+
+            <p>
+              <font face="Verdana, sans-serif" size="2">
+                <b>CSS</b> (<em>Cascading Style Sheets</em> — каскадные таблицы стилей) — язык, описывающий внешний вид HTML-документа. Если HTML — это <em>скелет</em> страницы, то CSS — это её <em>внешность</em>.
+              </font>
+            </p>
+
+            <h3><font face="Georgia, serif" color="#1a3a6a">Три способа подключения CSS</font></h3>
+
+            <table width="100%" border="1" cellpadding="10" cellspacing="0" bordercolor="#cccccc">
+              <tr bgcolor="#1a3a6a">
+                <th><font face="Verdana, sans-serif" size="2" color="#ffffff">Способ</font></th>
+                <th><font face="Verdana, sans-serif" size="2" color="#ffffff">Код</font></th>
+                <th><font face="Verdana, sans-serif" size="2" color="#ffffff">Когда использовать</font></th>
+              </tr>
+              <tr>
+                <td><font face="Verdana, sans-serif" size="2"><b>1. Встроенный</b> (inline)</font></td>
+                <td><font face="Courier New" size="2">&lt;p style="color:red"&gt;...&lt;/p&gt;</font></td>
+                <td><font face="Verdana, sans-serif" size="2">Для одного элемента</font></td>
+              </tr>
+              <tr bgcolor="#f5f5ff">
+                <td><font face="Verdana, sans-serif" size="2"><b>2. Внутренний</b> (internal)</font></td>
+                <td><font face="Courier New" size="2">&lt;style&gt; p { color: red; } &lt;/style&gt;</font></td>
+                <td><font face="Verdana, sans-serif" size="2">Для одной страницы</font></td>
+              </tr>
+              <tr>
+                <td><font face="Verdana, sans-serif" size="2"><b>3. Внешний</b> (external)</font></td>
+                <td><font face="Courier New" size="2">&lt;link rel="stylesheet" href="style.css"&gt;</font></td>
+                <td><font face="Verdana, sans-serif" size="2">Для всего сайта ✓ <b>рекомендуется</b></font></td>
+              </tr>
+            </table>
+
+            <br>
+            <h3><font face="Georgia, serif" color="#1a3a6a">Синтаксис CSS-правила</font></h3>
+
+            <table width="100%" border="1" cellpadding="10" cellspacing="0" bordercolor="#cccccc" bgcolor="#f8f8f8">
+              <tr>
+                <td>
+                  <font face="Courier New" size="3" color="#1a3a6a">
+                    <b>селектор</b> {<br>
+                    &nbsp;&nbsp;<b>свойство</b>: <b>значение</b>;<br>
+                    &nbsp;&nbsp;<b>свойство2</b>: <b>значение2</b>;<br>
+                    }
+                  </font>
+                  <br><br>
+                  <font face="Verdana, sans-serif" size="2"><b>Примеры:</b></font><br>
+                  <font face="Courier New" size="2">
+                    h1 { color: blue; font-size: 32px; }<br>
+                    p { font-family: Arial; line-height: 1.6; }<br>
+                    .my-class { background-color: #f0f0f0; }<br>
+                    #my-id { border: 1px solid red; }
+                  </font>
+                </td>
+              </tr>
+            </table>
+
+            <br>
+            <h3><font face="Georgia, serif" color="#1a3a6a">Основные CSS-свойства</font></h3>
+
+            <table width="100%" border="0" cellpadding="5" cellspacing="10">
+              <tr valign="top">
+
+                <!-- Шрифт и текст -->
+                <td width="25%">
+                  <table width="100%" border="2" cellpadding="8" cellspacing="0" bordercolor="#1a3a6a">
+                    <tr bgcolor="#1a3a6a">
+                      <td colspan="2"><font face="Verdana" color="#ffffff" size="2"><b>&#128210; ТЕКСТ</b></font></td>
+                    </tr>
+                    <tr><td colspan="2"><font face="Courier New" size="1">color: red;<br>font-size: 16px;<br>font-family: Arial;<br>font-weight: bold;<br>font-style: italic;<br>text-align: center;<br>text-decoration: underline;<br>line-height: 1.5;<br>letter-spacing: 2px;</font></td></tr>
+                  </table>
+                </td>
+
+                <!-- Фон -->
+                <td width="25%">
+                  <table width="100%" border="2" cellpadding="8" cellspacing="0" bordercolor="#1a3a6a">
+                    <tr bgcolor="#1a3a6a">
+                      <td colspan="2"><font face="Verdana" color="#ffffff" size="2"><b>&#127912; ФОН</b></font></td>
+                    </tr>
+                    <tr><td colspan="2"><font face="Courier New" size="1">background-color: #fff;<br>background-image: url(...);<br>background-repeat: no-repeat;<br>background-size: cover;<br>background-position: center;<br>opacity: 0.8;</font></td></tr>
+                  </table>
+                </td>
+
+                <!-- Размеры и отступы -->
+                <td width="25%">
+                  <table width="100%" border="2" cellpadding="8" cellspacing="0" bordercolor="#1a3a6a">
+                    <tr bgcolor="#1a3a6a">
+                      <td colspan="2"><font face="Verdana" color="#ffffff" size="2"><b>&#128200; РАЗМЕРЫ</b></font></td>
+                    </tr>
+                    <tr><td colspan="2"><font face="Courier New" size="1">width: 100px;<br>height: 50px;<br>max-width: 1200px;<br>min-height: 300px;<br>margin: 10px;<br>padding: 20px;<br>margin-top: 5px;<br>padding-left: 15px;</font></td></tr>
+                  </table>
+                </td>
+
+                <!-- Границы -->
+                <td width="25%">
+                  <table width="100%" border="2" cellpadding="8" cellspacing="0" bordercolor="#1a3a6a">
+                    <tr bgcolor="#1a3a6a">
+                      <td colspan="2"><font face="Verdana" color="#ffffff" size="2"><b>&#9632; ГРАНИЦЫ</b></font></td>
+                    </tr>
+                    <tr><td colspan="2"><font face="Courier New" size="1">border: 1px solid black;<br>border-radius: 5px;<br>border-color: red;<br>border-style: dashed;<br>border-width: 2px;<br>box-shadow: 2px 2px 5px gray;</font></td></tr>
+                  </table>
+                </td>
+
+              </tr>
+            </table>
+
+            <br>
+            <!--  ПРИМЕР: РАЗДЕЛ 9 -->
+                             <table width="300" border="1" cellpadding="6" cellspacing="0" align="center" bordercolor="#e67e00" bgcolor="#fff8ee">
+                    <tr><td><font face="Verdana" size="1" color="#a04000">
+                      <b>&#128161; CSS-концепции здесь:</b><br>
+                      &bull; <code>.class</code> — стиль по классу<br>
+                      &bull; <code>border-radius</code> — скруглённые углы<br>
+                      &bull; <code>text-decoration: line-through</code> — зачёркивание<br>
+                      &bull; <code>background-color</code> + <code>color</code> для «бейджа»<br>
+                      &bull; <code>font-size</code>, <code>font-weight</code>, <code>padding</code>
+                    </font></td></tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+
+          </td>
+        </tr>
+      </table>
+
+
+
+      <table width="100%" border="0" cellpadding="15" cellspacing="0" bgcolor="#2a6a2a">
+        <tr>
+          <td>
+            <font face="Georgia, serif" color="#ffffff" size="4"><b>&#9889; Универсальные атрибуты и события</b></font>
+          </td>
+        </tr>
+      </table>
+
+      <table width="100%" border="1" cellpadding="15" cellspacing="0" bordercolor="#aaaacc" bgcolor="#ffffff">
+        <tr>
+          <td>
+
+            <table width="100%" border="0" cellpadding="5" cellspacing="10">
+              <tr valign="top">
+                <td width="50%">
+                  <h3><font face="Georgia, serif" color="#2a6a2a">Универсальные атрибуты</font></h3>
+                  <font face="Verdana, sans-serif" size="2">
+                    Эти атрибуты можно использовать в любом HTML-теге:
+                  </font>
+                  <table width="100%" border="1" cellpadding="6" cellspacing="0" bordercolor="#cccccc">
+                    <tr bgcolor="#e8f5e8">
+                      <th><font face="Verdana, sans-serif" size="2">Атрибут</font></th>
+                      <th><font face="Verdana, sans-serif" size="2">Описание</font></th>
+                    </tr>
+                    <tr>
+                      <td><font face="Courier New" size="2">id</font></td>
+                      <td><font face="Verdana, sans-serif" size="2">Уникальный идентификатор элемента</font></td>
+                    </tr>
+                    <tr bgcolor="#f5fff5">
+                      <td><font face="Courier New" size="2">class</font></td>
+                      <td><font face="Verdana, sans-serif" size="2">Класс для стилизации через CSS</font></td>
+                    </tr>
+                    <tr>
+                      <td><font face="Courier New" size="2">style</font></td>
+                      <td><font face="Verdana, sans-serif" size="2">Встроенные CSS-стили</font></td>
+                    </tr>
+                    <tr bgcolor="#f5fff5">
+                      <td><font face="Courier New" size="2">title</font></td>
+                      <td><font face="Verdana, sans-serif" size="2">Всплывающая подсказка</font></td>
+                    </tr>
+                    <tr>
+                      <td><font face="Courier New" size="2">lang</font></td>
+                      <td><font face="Verdana, sans-serif" size="2">Язык содержимого</font></td>
+                    </tr>
+                    <tr bgcolor="#f5fff5">
+                      <td><font face="Courier New" size="2">dir</font></td>
+                      <td><font face="Verdana, sans-serif" size="2">Направление текста: ltr | rtl</font></td>
+                    </tr>
+                    <tr>
+                      <td><font face="Courier New" size="2">hidden</font></td>
+                      <td><font face="Verdana, sans-serif" size="2">Скрыть элемент</font></td>
+                    </tr>
+                    <tr bgcolor="#f5fff5">
+                      <td><font face="Courier New" size="2">tabindex</font></td>
+                      <td><font face="Verdana, sans-serif" size="2">Порядок Tab-навигации</font></td>
+                    </tr>
+                    <tr>
+                      <td><font face="Courier New" size="2">accesskey</font></td>
+                      <td><font face="Verdana, sans-serif" size="2">Горячая клавиша доступа</font></td>
+                    </tr>
+                    <tr bgcolor="#f5fff5">
+                      <td><font face="Courier New" size="2">contenteditable</font></td>
+                      <td><font face="Verdana, sans-serif" size="2">Разрешить редактирование</font></td>
+                    </tr>
+                  </table>
+                </td>
+                <td width="50%">
+                  <h3><font face="Georgia, serif" color="#2a6a2a">Основные события (Events)</font></h3>
+                  <font face="Verdana, sans-serif" size="2">
+                    События позволяют реагировать на действия пользователя:
+                  </font>
+                  <table width="100%" border="1" cellpadding="6" cellspacing="0" bordercolor="#cccccc">
+                    <tr bgcolor="#e8f5e8">
+                      <th><font face="Verdana, sans-serif" size="2">Событие</font></th>
+                      <th><font face="Verdana, sans-serif" size="2">Когда происходит</font></th>
+                    </tr>
+                    <tr>
+                      <td><font face="Courier New" size="2">onclick</font></td>
+                      <td><font face="Verdana, sans-serif" size="2">При клике мышью</font></td>
+                    </tr>
+                    <tr bgcolor="#f5fff5">
+                      <td><font face="Courier New" size="2">ondblclick</font></td>
+                      <td><font face="Verdana, sans-serif" size="2">При двойном клике</font></td>
+                    </tr>
+                    <tr>
+                      <td><font face="Courier New" size="2">onmouseover</font></td>
+                      <td><font face="Verdana, sans-serif" size="2">При наведении мыши</font></td>
+                    </tr>
+                    <tr bgcolor="#f5fff5">
+                      <td><font face="Courier New" size="2">onmouseout</font></td>
+                      <td><font face="Verdana, sans-serif" size="2">При уходе мыши</font></td>
+                    </tr>
+                    <tr>
+                      <td><font face="Courier New" size="2">onkeydown</font></td>
+                      <td><font face="Verdana, sans-serif" size="2">При нажатии клавиши</font></td>
+                    </tr>
+                    <tr bgcolor="#f5fff5">
+                      <td><font face="Courier New" size="2">onkeyup</font></td>
+                      <td><font face="Verdana, sans-serif" size="2">При отпускании клавиши</font></td>
+                    </tr>
+                    <tr>
+                      <td><font face="Courier New" size="2">onload</font></td>
+                      <td><font face="Verdana, sans-serif" size="2">Когда страница загружена</font></td>
+                    </tr>
+                    <tr bgcolor="#f5fff5">
+                      <td><font face="Courier New" size="2">onfocus</font></td>
+                      <td><font face="Verdana, sans-serif" size="2">При получении фокуса</font></td>
+                    </tr>
+                    <tr>
+                      <td><font face="Courier New" size="2">onblur</font></td>
+                      <td><font face="Verdana, sans-serif" size="2">При потере фокуса</font></td>
+                    </tr>
+                    <tr bgcolor="#f5fff5">
+                      <td><font face="Courier New" size="2">onchange</font></td>
+                      <td><font face="Verdana, sans-serif" size="2">При изменении значения</font></td>
+                    </tr>
+                    <tr>
+                      <td><font face="Courier New" size="2">onsubmit</font></td>
+                      <td><font face="Verdana, sans-serif" size="2">При отправке формы</font></td>
+                    </tr>
+                    <tr bgcolor="#f5fff5">
+                      <td><font face="Courier New" size="2">onreset</font></td>
+                      <td><font face="Verdana, sans-serif" size="2">При сбросе формы</font></td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+
+          </td>
+        </tr>
+      </table>
+
+      <br>
+
+      <!-- ======================================================
+           ЗАДАНИЯ ДЛЯ САМОСТОЯТЕЛЬНОЙ РАБОТЫ
+           ====================================================== -->
+      <table width="100%" border="0" cellpadding="15" cellspacing="0" bgcolor="#8a1a1a">
+        <tr>
+          <td>
+            <font face="Georgia, serif" color="#ffffff" size="4"><b>&#128221; Задания для самостоятельной работы</b></font>
+          </td>
+        </tr>
+      </table>
+
+      <table width="100%" border="2" cellpadding="15" cellspacing="0" bordercolor="#8a1a1a" bgcolor="#fff8f8">
+        <tr>
+          <td>
+            <ol>
+              <li>
+                <font face="Verdana, sans-serif" size="2">
+                  <b>Базовая страница:</b> Создать веб-страницу с заголовком, несколькими абзацами текста разного форматирования. Использовать только теги для работы с документом и текстом.
+                </font>
+              </li>
+              <li>
+                <font face="Verdana, sans-serif" size="2">
+                  <b>Навигация:</b> Реализовать веб-страницу с пунктами меню, боковой панелью и основной частью с текстом. Добавить ссылки, ведущие к нужным разделам документа.
+                </font>
+              </li>
+              <li>
+                <font face="Verdana, sans-serif" size="2">
+                  <b>Медиа-страница:</b> Создать страницу с несколькими изображениями разных размеров, встроить аудио- и видео-плеер с элементами управления.
+                </font>
+              </li>
+              <li>
+                <font face="Verdana, sans-serif" size="2">
+                  <b>Таблица данных:</b> Создать таблицу расписания занятий или прайс-лист с заголовком, шапкой (thead), телом (tbody) и итогами (tfoot). Использовать объединение ячеек colspan/rowspan.
+                </font>
+              </li>
+              <li>
+                <font face="Verdana, sans-serif" size="2">
+                  <b>Форма регистрации:</b> Создать форму с полями: имя, email, пароль, дата рождения, пол (radio), интересы (checkbox), город (select), комментарий (textarea), кнопки отправки и сброса.
+                </font>
+              </li>
+              <li>
+                <font face="Verdana, sans-serif" size="2">
+                  <b>Полный сайт:</b> Объединить всё изученное — создать сайт с шапкой, навигацией, боковой панелью, основным контентом (статьи, списки, таблицы, изображения, форма обратной связи) и подвалом.
+                </font>
+              </li>
+            </ol>
+          </td>
+        </tr>
+      </table>
+
+      <br>
+
+    </td>
+  </tr>
+</table>
+
+<!-- ============================================================
+     ПОДВАЛ
+     ============================================================ -->
+<table width="100%" border="0" cellpadding="0" cellspacing="0" bgcolor="#1a3a6a">
+  <tr>
+    <td>
+      <table width="960" border="0" cellpadding="20" cellspacing="0" align="center">
+        <tr>
+          <td width="33%">
+            <font face="Verdana, sans-serif" color="#aaccee" size="2">
+              <b><font color="#ffffff">&#128209; Учебник HTML</font></b><br>
+              Полное руководство по языку разметки гипертекста для начинающих и продолжающих.
+            </font>
+          </td>
+          <td width="33%" align="center">
+            <font face="Verdana, sans-serif" color="#aaccee" size="2">
+              <b><font color="#ffffff">&#128279; Полезные ресурсы</font></b><br>
+              <a href="https://developer.mozilla.org" target="_blank"><font color="#ffcc66">MDN Web Docs</font></a><br>
+              <a href="https://www.w3schools.com" target="_blank"><font color="#ffcc66">W3Schools</font></a><br>
+              <a href="https://validator.w3.org" target="_blank"><font color="#ffcc66">HTML Validator</font></a>
+            </font>
+          </td>
+          <td width="33%" align="right">
+            <font face="Verdana, sans-serif" color="#aaccee" size="2">
+              <b><font color="#ffffff">&#128197; Дата создания</font></b><br>
+              Март 2026<br><br>
+              <a href="#intro"><font color="#ffcc66">&#8679; Наверх</font></a>
+            </font>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="3" align="center">
+            <hr color="#2a5a9a" size="1">
+            <font face="Verdana, sans-serif" color="#7799bb" size="1">
+              &copy; 2026 HTML Tutorial &mdash; Учебный материал по веб-программированию &mdash; Создан
