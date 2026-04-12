@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Геометрический Калькулятор</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#07112a;--bg2:#0c1e3d;--bg3:#102348;
+  --accent:#3b82f6;--accent2:#60a5fa;--accent3:#93c5fd;
+  --teal:#14b8a6;--teal2:#2dd4bf;
+  --purple:#8b5cf6;--purple2:#a78bfa;
+  --text:#e2e8f0;--text2:#94a3b8;--text3:#64748b;
+  --border:rgba(59,130,246,0.25);--border2:rgba(59,130,246,0.4);
+}
+html,body{height:100%;overflow:hidden}
+body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text)}
+canvas#bg{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none}
+.app{position:relative;z-index:1;display:flex;flex-direction:column;height:100vh}
+.header{display:flex;align-items:center;justify-content:space-between;padding:12px 24px;border-bottom:1px solid var(--border);background:rgba(7,17,42,0.85);backdrop-filter:blur(8px);flex-shrink:0}
+.header-title{font-size:20px;font-weight:700;color:#fff;display:flex;align-items:center;gap:10px}
+.header-title span{color:var(--accent2)}
+.header-formula{font-family:monospace;font-size:13px;color:var(--accent3);background:rgba(59,130,246,0.1);border:1px solid var(--border2);border-radius:20px;padding:5px 14px}
+.content{display:flex;flex:1;overflow:hidden}
+.sidebar{width:200px;flex-shrink:0;background:rgba(12,30,61,0.75);backdrop-filter:blur(4px);border-right:1px solid var(--border);overflow-y:auto;padding:12px 0}
+.sidebar::-webkit-scrollbar{width:3px}
+.sidebar::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+.grp-label{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text3);padding:12px 16px 6px}
+.shape-btn{display:flex;align-items:center;gap:10px;width:100%;padding:9px 16px;font-size:13px;color:var(--text2);background:none;border:none;border-left:3px solid transparent;cursor:pointer;text-align:left;transition:all .2s}
+.shape-btn:hover{background:rgba(59,130,246,0.08);color:var(--text);border-left-color:var(--border2)}
+.shape-btn.active{background:rgba(59,130,246,0.15);color:var(--accent2);border-left-color:var(--accent);font-weight:600}
+.shape-btn .ico{width:20px;height:20px;flex-shrink:0}
+.canvas-col{flex:1;display:flex;flex-direction:column;padding:16px;gap:10px;background:rgba(7,17,42,0.3)}
+.canvas-wrap{flex:1;position:relative;background:rgba(12,30,61,0.5);border:1px solid var(--border);border-radius:12px;overflow:hidden;min-height:200px}
+.canvas-wrap canvas{display:block;width:100%;height:100%}
+.legend{display:flex;gap:16px;font-size:11.5px;color:var(--text3);flex-wrap:wrap}
+.leg{display:flex;align-items:center;gap:6px}
+.leg-dot{width:8px;height:8px;border-radius:50%}
+.fields-col{width:280px;flex-shrink:0;background:rgba(12,30,61,0.85);backdrop-filter:blur(8px);border-left:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden}
+.panel-head{padding:14px 18px;border-bottom:1px solid var(--border);background:rgba(59,130,246,0.06);flex-shrink:0}
+.panel-title{font-size:16px;font-weight:700;color:#fff;margin-bottom:2px}
+.panel-sub{font-size:11px;color:var(--text3);font-family:monospace}
+.fields-scroll{flex:1;overflow-y:auto;padding:12px 18px}
+.fields-scroll::-webkit-scrollbar{width:3px}
+.fields-scroll::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.field-row{margin-bottom:10px}
+.field-label{display:flex;align-items:center;gap:7px;margin-bottom:5px}
+.sym{font-family:monospace;font-size:14px;font-weight:700;color:var(--purple2);min-width:26px}
+.fname{font-size:11.5px;color:var(--text3)}
+.inp-wrap{display:flex;align-items:center;background:rgba(7,17,42,0.6);border:1px solid rgba(59,130,246,0.2);border-radius:8px;transition:all .2s}
+.inp-wrap:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px rgba(59,130,246,0.15)}
+.inp-wrap input{flex:1;padding:9px 12px;font-size:14px;font-family:monospace;background:transparent;border:none;outline:none;color:var(--text)}
+.inp-wrap input::placeholder{color:var(--text3)}
+.inp-wrap input.computed{color:var(--teal2)}
+.inp-wrap input.user-set{color:#fff}
+.panel-foot{padding:12px 18px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:8px;background:rgba(7,17,42,0.4);flex-shrink:0}
+.btn-calc{width:100%;padding:12px;font-size:14px;font-weight:700;border:none;border-radius:8px;background:linear-gradient(135deg,#3b82f6,#1d4ed8);color:#fff;cursor:pointer;transition:all .2s}
+.btn-calc:hover{transform:translateY(-1px);box-shadow:0 4px 20px rgba(59,130,246,0.4)}
+.btn-reset{flex:1;padding:9px;font-size:13px;border:1px solid var(--border2);border-radius:8px;background:transparent;color:var(--text2);cursor:pointer;transition:all .2s}
+.btn-reset:hover{background:rgba(59,130,246,0.1);color:var(--text)}
+.btn-row{display:flex;gap:8px}
+.status{font-size:12px;min-height:16px;color:var(--teal2);text-align:center}
+.status.err{color:#f87171}
+.empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;color:var(--text3);font-size:14px;padding:20px}
+</style>
+</head>
+<body>
+
+<canvas id="bg"></canvas>
+
+<div class="app">
+  <div class="header">
+    <div class="header-title"><span>∑</span> Геометрический Калькулятор</div>
+    <div class="header-formula" id="hformula">Выберите фигуру</div>
+  </div>
+  <div class="content">
+    <div class="sidebar" id="sidebar"></div>
+    <div class="canvas-col">
+      <div class="canvas-wrap"><canvas id="cv"></canvas></div>
+      <div class="legend">
+        <div class="leg"><div class="leg-dot" style="background:#2dd4bf"></div><span>фигура</span></div>
+        <div class="leg"><div class="leg-dot" style="background:#a78bfa"></div><span>активный параметр</span></div>
+        <div class="leg"><div class="leg-dot" style="background:rgba(59,130,246,0.6)"></div><span>площадь / объём</span></div>
+      </div>
+    </div>
+    <div class="fields-col" id="fieldsCol">
+      <div class="empty" id="emptyState">
+        <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+          <circle cx="24" cy="24" r="22" stroke="rgba(59,130,246,0.3)" stroke-width="1.5"/>
+          <path d="M12 36 L24 12 L36 36 Z" stroke="rgba(59,130,246,0.3)" stroke-width="1.5" fill="none"/>
+          <rect x="16" y="20" width="16" height="12" stroke="rgba(59,130,246,0.3)" stroke-width="1.5" fill="none"/>
+        </svg>
+        <span>Выберите фигуру слева</span>
+      </div>
+      <div id="fieldsBody" style="display:none;flex:1;flex-direction:column;overflow:hidden">
+        <div class="panel-head">
+          <div class="panel-title" id="pname"></div>
+          <div class="panel-sub" id="pformula"></div>
+        </div>
+        <div class="fields-scroll" id="fieldsScroll"></div>
+        <div class="panel-foot">
+          <button class="btn-calc" onclick="calculate()">= Вычислить</button>
+          <div class="btn-row"><button class="btn-reset" onclick="resetAll()">Сбросить</button></div>
+          <div class="status" id="status"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const PI=Math.PI,sqrt=Math.sqrt,cbrt=Math.cbrt,sin=Math.sin,cos=Math.cos,
+  atan=Math.atan,atan2=Math.atan2,asin=Math.asin,acos=Math.acos,abs=Math.abs,R=PI/180;
+
+function fmt(v){
+  if(v==null||isNaN(v)||!isFinite(v))return'';
+  const n=+v;
+  if(abs(n)>=10000)return n.toFixed(1);
+  if(abs(n)>=100)return n.toFixed(2);
+  if(abs(n)>=1)return n.toFixed(4);
+  return n.toFixed(5);
+}
+
+const SHAPES=[
+  {id:'right_tri',label:'Прямоугольный △',group:'Треугольники',
+   formula:'a²+b²=c²',
+   fields:[
+     {k:'a',sym:'a',name:'катет a'},{k:'b',sym:'b',name:'катет b'},
+     {k:'c',sym:'c',name:'гипотенуза c'},{k:'alpha',sym:'α',name:'угол α, °'},
+     {k:'beta',sym:'β',name:'угол β, °'},{k:'S',sym:'S',name:'площадь'},
+     {k:'P',sym:'P',name:'периметр'},{k:'h',sym:'h',name:'высота к c'},
+     {k:'m_c',sym:'mс',name:'медиана к c'},
+   ],
+   calc(v){
+     let{a,b,c,alpha,beta,S,P,h,m_c}=v;
+     const hv=k=>v[k]!=null&&!isNaN(v[k])&&v[k]>0;
+     if(hv('a')&&hv('b')){c=sqrt(a*a+b*b);alpha=atan(a/b)/R;beta=90-alpha;}
+     else if(hv('a')&&hv('c')&&c>a){b=sqrt(c*c-a*a);alpha=asin(a/c)/R;beta=90-alpha;}
+     else if(hv('b')&&hv('c')&&c>b){a=sqrt(c*c-b*b);beta=asin(b/c)/R;alpha=90-beta;}
+     else if(hv('a')&&hv('alpha')&&alpha>0&&alpha<90){alpha=+alpha;beta=90-alpha;c=a/sin(alpha*R);b=sqrt(c*c-a*a);}
+     else if(hv('b')&&hv('beta')&&beta>0&&beta<90){beta=+beta;alpha=90-beta;c=b/sin(beta*R);a=sqrt(c*c-b*b);}
+     else if(hv('c')&&hv('alpha')&&alpha>0&&alpha<90){alpha=+alpha;beta=90-alpha;a=c*sin(alpha*R);b=c*sin(beta*R);}
+     else if(hv('S')&&hv('a')){b=2*S/a;c=sqrt(a*a+b*b);alpha=atan(a/b)/R;beta=90-alpha;}
+     else if(hv('h')&&hv('c')){const hc=h*c,sum=sqrt(c*c+2*hc),disc=sum*sum-4*hc;if(disc>=0){a=(sum+sqrt(disc))/2;b=(sum-sqrt(disc))/2;}alpha=atan(a/b)/R;beta=90-alpha;}
+     if(a&&b){c=c||sqrt(a*a+b*b);S=0.5*a*b;P=a+b+c;h=a*b/c;m_c=c/2;if(!alpha)alpha=atan(a/b)/R;if(!beta)beta=90-alpha;}
+     return{a,b,c,alpha,beta,S,P,h,m_c};
+   },
+   draw(ctx,W,H,v,af){
+     const a=v.a>0?v.a:1,b=v.b>0?v.b:1.5;
+     const sc=Math.min((W-72)/b,(H-60)/a),ox=36,oy=H-28;
+     const A=[ox,oy-a*sc],B=[ox+b*sc,oy],C=[ox,oy];
+     fillPoly(ctx,[A,B,C],'rgba(59,130,246,0.08)');
+     drawRightAngle(ctx,C[0],C[1],12);
+     if(af==='S')fillPoly(ctx,[A,B,C],'rgba(59,130,246,0.22)');
+     if(af==='P')strokePoly(ctx,[A,B,C],'#a78bfa',2.5);else strokePoly(ctx,[A,B,C],'#2dd4bf',1.5);
+     const segs={a:[A,C],b:[C,B],c:[A,B]};
+     if(segs[af]){const[p1,p2]=segs[af];ctx.beginPath();ctx.moveTo(...p1);ctx.lineTo(...p2);ctx.strokeStyle='#a78bfa';ctx.lineWidth=3;ctx.stroke();}
+     if(af==='h')dashedLine(ctx,A[0],A[1],A[0],B[1],'#a78bfa',1.5);
+     if(af==='m_c'){ctx.beginPath();ctx.moveTo(A[0],A[1]);ctx.lineTo((B[0]+C[0])/2,(B[1]+C[1])/2);ctx.strokeStyle='#a78bfa';ctx.lineWidth=2;ctx.setLineDash([4,3]);ctx.stroke();ctx.setLineDash([]);}
+     label(ctx,(A[0]+C[0])/2-14,(A[1]+C[1])/2,'a');
+     label(ctx,(C[0]+B[0])/2,(C[1]+B[1])/2+16,'b');
+     label(ctx,(A[0]+B[0])/2+10,(A[1]+B[1])/2-8,'c');
+   }
+  },
+  {id:'eq_tri',label:'Равносторонний △',group:'Треугольники',
+   formula:'h = a√3/2',
+   fields:[
+     {k:'a',sym:'a',name:'сторона'},{k:'S',sym:'S',name:'площадь'},
+     {k:'P',sym:'P',name:'периметр'},{k:'h',sym:'h',name:'высота'},
+     {k:'R',sym:'R',name:'описанная R'},{k:'r',sym:'r',name:'вписанная r'},
+   ],
+   calc(v){
+     let{a,S,P,h,R,r}=v;
+     const hv=k=>v[k]!=null&&+v[k]>0;
+     if(!hv('a')){
+       if(hv('S'))a=sqrt(4*S/sqrt(3));
+       else if(hv('P'))a=P/3;
+       else if(hv('h'))a=2*h/sqrt(3);
+       else if(hv('R'))a=R*sqrt(3);
+       else if(hv('r'))a=r*2*sqrt(3);
+     }
+     if(a){S=sqrt(3)/4*a*a;P=3*a;h=sqrt(3)/2*a;R=a/sqrt(3);r=a/(2*sqrt(3));}
+     return{a,S,P,h,R,r};
+   },
+   draw(ctx,W,H,v,af){
+     const a=v.a>0?v.a:1,ht=sqrt(3)/2*a;
+     const sc=Math.min((W-60)/a,(H-60)/ht),cx=W/2,by=H-24,ty=by-ht*sc;
+     const A=[cx-a*sc/2,by],B=[cx+a*sc/2,by],C=[cx,ty];
+     fillPoly(ctx,[A,B,C],'rgba(59,130,246,0.08)');
+     if(af==='S')fillPoly(ctx,[A,B,C],'rgba(59,130,246,0.22)');
+     if(af==='h')dashedLine(ctx,cx,ty,cx,by,'#a78bfa',2);
+     if(af==='P')strokePoly(ctx,[A,B,C],'#a78bfa',2.5);else strokePoly(ctx,[A,B,C],'#2dd4bf',1.5);
+     const cy2=ty+(ht*sc)/3;
+     if(af==='R')dashedArc(ctx,cx,cy2,(v.R>0?v.R:a/sqrt(3))*sc,'#a78bfa');
+     if(af==='r')dashedArc(ctx,cx,cy2,(v.r>0?v.r:a/(2*sqrt(3)))*sc,'#a78bfa');
+     label(ctx,cx,(by+ty)/2+4,'a');
+   }
+  },
+  {id:'scalene',label:'Произвольный △',group:'Треугольники',
+   formula:'S=√[s(s-a)(s-b)(s-c)]',
+   fields:[
+     {k:'a',sym:'a',name:'сторона BC'},{k:'b',sym:'b',name:'сторона AC'},
+     {k:'c',sym:'c',name:'сторона AB'},{k:'alpha',sym:'α',name:'угол A, °'},
+     {k:'beta',sym:'β',name:'угол B, °'},{k:'gamma',sym:'γ',name:'угол C, °'},
+     {k:'S',sym:'S',name:'площадь'},{k:'P',sym:'P',name:'периметр'},
+     {k:'R',sym:'R',name:'описанная R'},{k:'r',sym:'r',name:'вписанная r'},
+   ],
+   calc(v){
+     let{a,b,c,alpha,beta,gamma,S,P,R,r}=v;
+     const hv=k=>v[k]!=null&&!isNaN(v[k])&&v[k]>0;
+     function full(a,b,c){
+       if(!a||!b||!c||a+b<=c||a+c<=b||b+c<=a)return null;
+       const s=(a+b+c)/2,sq=s*(s-a)*(s-b)*(s-c);
+       if(sq<0)return null;
+       const S2=sqrt(sq);
+       return{S:S2,P:a+b+c,R:a*b*c/(4*S2),r:S2/s,
+         alpha:acos(Math.max(-1,Math.min(1,(b*b+c*c-a*a)/(2*b*c))))/R,
+         beta:acos(Math.max(-1,Math.min(1,(a*a+c*c-b*b)/(2*a*c))))/R,
+         gamma:acos(Math.max(-1,Math.min(1,(a*a+b*b-c*c)/(2*a*b))))/R};
+     }
+     if(hv('a')&&hv('b')&&hv('c')){const res=full(a,b,c);if(res)Object.assign(v,res),({S,P,R,r,alpha,beta,gamma}=res);}
+     else if(hv('a')&&hv('b')&&hv('gamma')&&gamma>0&&gamma<180){gamma=+gamma;c=sqrt(a*a+b*b-2*a*b*cos(gamma*R));const res=full(a,b,c);if(res)({S,P,R,r,alpha,beta}=res);}
+     else if(hv('a')&&hv('alpha')&&hv('beta')&&alpha+beta<180){alpha=+alpha;beta=+beta;gamma=180-alpha-beta;b=a*sin(beta*R)/sin(alpha*R);c=a*sin(gamma*R)/sin(alpha*R);const res=full(a,b,c);if(res)({S,P,R,r}=res);}
+     else if(hv('a')&&hv('b')&&hv('alpha')&&alpha>0&&alpha<180){alpha=+alpha;const sinB=b*sin(alpha*R)/a;if(sinB<=1){beta=asin(sinB)/R;gamma=180-alpha-beta;c=a*sin(gamma*R)/sin(alpha*R);const res=full(a,b,c);if(res)({S,P,R,r}=res);}}
+     return{a,b,c,alpha,beta,gamma,S,P,R,r};
+   },
+   draw(ctx,W,H,v,af){
+     const a=v.a>0?v.a:3,bv=v.b>0?v.b:4,c=v.c>0?v.c:5;
+     const cosA=Math.max(-1,Math.min(1,(bv*bv+c*c-a*a)/(2*bv*c)));
+     const Ax=0,Bx=c,Cx=bv*cosA,Cy=bv*sqrt(1-cosA*cosA);
+     const xs=[0,Bx,Cx],ys=[0,0,Cy],minX=Math.min(...xs),maxX=Math.max(...xs),minY=0,maxY=Math.max(...ys);
+     const sc=Math.min((W-70)/(maxX-minX||1),(H-60)/(maxY-minY||1));
+     const ox=32-minX*sc,oy=H-28;
+     const A=[Ax*sc+ox,oy],B=[Bx*sc+ox,oy],C=[Cx*sc+ox,oy-Cy*sc];
+     fillPoly(ctx,[A,B,C],'rgba(59,130,246,0.08)');
+     if(af==='S')fillPoly(ctx,[A,B,C],'rgba(59,130,246,0.22)');
+     if(af==='P')strokePoly(ctx,[A,B,C],'#a78bfa',2.5);else strokePoly(ctx,[A,B,C],'#2dd4bf',1.5);
+     const segs={a:[B,C],b:[A,C],c:[A,B]};
+     if(segs[af]){const[p1,p2]=segs[af];ctx.beginPath();ctx.moveTo(...p1);ctx.lineTo(...p2);ctx.strokeStyle='#a78bfa';ctx.lineWidth=3;ctx.stroke();}
+     ctx.font='bold 12px monospace';ctx.fillStyle='#94a3b8';ctx.textAlign='center';
+     ctx.fillText('A',A[0],A[1]+16);ctx.fillText('B',B[0],B[1]+16);ctx.fillText('C',C[0],C[1]-8);
+   }
+  },
+  {id:'isos_tri',label:'Равнобедренный △',group:'Треугольники',
+   formula:'h=√(b²−(a/2)²)',
+   fields:[
+     {k:'a',sym:'a',name:'основание'},{k:'b',sym:'b',name:'боковая сторона'},
+     {k:'alpha',sym:'α',name:'угол при основании °'},{k:'beta',sym:'β',name:'угол при вершине °'},
+     {k:'S',sym:'S',name:'площадь'},{k:'P',sym:'P',name:'периметр'},{k:'h',sym:'h',name:'высота'},
+   ],
+   calc(v){
+     let{a,b,alpha,beta,S,P,h}=v;
+     const hv=k=>v[k]!=null&&+v[k]>0;
+     if(hv('a')&&hv('b')&&b>a/2){h=sqrt(b*b-(a/2)*(a/2));alpha=acos(a/(2*b))/R;beta=180-2*alpha;}
+     else if(hv('a')&&hv('alpha')&&alpha>0&&alpha<90){alpha=+alpha;beta=180-2*alpha;b=a/(2*Math.cos(alpha*R));h=b*Math.sin(alpha*R);}
+     else if(hv('a')&&hv('h')){b=sqrt(h*h+(a/2)*(a/2));alpha=atan(h/(a/2))/R;beta=180-2*alpha;}
+     else if(hv('b')&&hv('beta')&&beta>0&&beta<180){beta=+beta;alpha=(180-beta)/2;a=2*b*Math.cos(alpha*R);h=b*Math.sin(alpha*R);}
+     else if(hv('S')&&hv('a')){h=2*S/a;b=sqrt(h*h+(a/2)*(a/2));alpha=atan(h/(a/2))/R;beta=180-2*alpha;}
+     if(a&&b&&h){S=0.5*a*h;P=a+2*b;}
+     return{a,b,alpha,beta,S,P,h};
+   },
+   draw(ctx,W,H,v,af){
+     const a=v.a>0?v.a:2,bv=v.b>0?v.b:1.8,h=v.h>0?v.h:sqrt(bv*bv-(a/2)*(a/2));
+     const sc=Math.min((W-60)/a,(H-60)/h),cx=W/2,by=H-24,ty=by-h*sc;
+     const A=[cx-a*sc/2,by],B=[cx+a*sc/2,by],C=[cx,ty];
+     fillPoly(ctx,[A,B,C],'rgba(59,130,246,0.08)');
+     if(af==='S')fillPoly(ctx,[A,B,C],'rgba(59,130,246,0.22)');
+     if(af==='h')dashedLine(ctx,cx,ty,cx,by,'#a78bfa',2);
+     if(af==='P')strokePoly(ctx,[A,B,C],'#a78bfa',2.5);else strokePoly(ctx,[A,B,C],'#2dd4bf',1.5);
+     if(af==='a'){ctx.beginPath();ctx.moveTo(A[0],by+10);ctx.lineTo(B[0],by+10);ctx.strokeStyle='#a78bfa';ctx.lineWidth=2;ctx.stroke();}
+     if(af==='b'){ctx.beginPath();ctx.moveTo(A[0],A[1]);ctx.lineTo(C[0],C[1]);ctx.strokeStyle='#a78bfa';ctx.lineWidth=3;ctx.stroke();}
+     label(ctx,cx,by+20,'a');
+   }
+  },
+  {id:'square',label:'Квадрат',group:'Четырёхугольники',
+   formula:'S=a², d=a√2',
+   fields:[
+     {k:'a',sym:'a',name:'сторона'},{k:'S',sym:'S',name:'площадь'},
+     {k:'P',sym:'P',name:'периметр'},{k:'d',sym:'d',name:'диагональ'},
+     {k:'R',sym:'R',name:'описанная R'},{k:'r',sym:'r',name:'вписанная r'},
+   ],
+   calc(v){
+     let{a,S,P,d,R,r}=v;
+     const hv=k=>v[k]!=null&&+v[k]>0;
+     if(!hv('a')){if(hv('S'))a=sqrt(S);else if(hv('P'))a=P/4;else if(hv('d'))a=d/sqrt(2);else if(hv('R'))a=R*sqrt(2);else if(hv('r'))a=r*2;}
+     if(a){S=a*a;P=4*a;d=a*sqrt(2);R=a*sqrt(2)/2;r=a/2;}
+     return{a,S,P,d,R,r};
+   },
+   draw(ctx,W,H,v,af){
+     const a=v.a>0?v.a:1,sc=Math.min((W-60)/a,(H-60)/a),ox=(W-a*sc)/2,oy=(H-a*sc)/2;
+     ctx.fillStyle='rgba(59,130,246,0.08)';ctx.fillRect(ox,oy,a*sc,a*sc);
+     if(af==='S'){ctx.fillStyle='rgba(59,130,246,0.22)';ctx.fillRect(ox,oy,a*sc,a*sc);}
+     if(af==='d'){ctx.beginPath();ctx.moveTo(ox,oy);ctx.lineTo(ox+a*sc,oy+a*sc);ctx.strokeStyle='#a78bfa';ctx.lineWidth=2;ctx.stroke();}
+     if(af==='R')dashedArc(ctx,ox+a*sc/2,oy+a*sc/2,a*sc*sqrt(2)/2,'#a78bfa');
+     if(af==='r')dashedArc(ctx,ox+a*sc/2,oy+a*sc/2,a*sc/2,'#a78bfa');
+     ctx.strokeStyle=af==='P'?'#a78bfa':'#2dd4bf';ctx.lineWidth=af==='P'?2.5:1.5;ctx.strokeRect(ox,oy,a*sc,a*sc);
+     label(ctx,ox+a*sc/2,oy+a*sc+18,'a');
+   }
+  },
+  {id:'rect',label:'Прямоугольник',group:'Четырёхугольники',
+   formula:'S=ab, d=√(a²+b²)',
+   fields:[
+     {k:'a',sym:'a',name:'длина'},{k:'b',sym:'b',name:'ширина'},
+     {k:'S',sym:'S',name:'площадь'},{k:'P',sym:'P',name:'периметр'},{k:'d',sym:'d',name:'диагональ'},
+   ],
+   calc(v){
+     let{a,b,S,P,d}=v;
+     const hv=k=>v[k]!=null&&+v[k]>0;
+     if(hv('a')&&hv('b')){S=a*b;P=2*(a+b);d=sqrt(a*a+b*b);}
+     else if(hv('a')&&hv('S')){b=S/a;P=2*(a+b);d=sqrt(a*a+b*b);}
+     else if(hv('a')&&hv('P')&&P>2*a){b=P/2-a;S=a*b;d=sqrt(a*a+b*b);}
+     else if(hv('a')&&hv('d')&&d>a){b=sqrt(d*d-a*a);S=a*b;P=2*(a+b);}
+     else if(hv('S')&&hv('P')){const disc=P*P/4-4*S;if(disc>=0){a=(P/2+sqrt(disc))/2;b=(P/2-sqrt(disc))/2;d=sqrt(a*a+b*b);}}
+     return{a,b,S,P,d};
+   },
+   draw(ctx,W,H,v,af){
+     const a=v.a>0?v.a:2,bv=v.b>0?v.b:1.2,sc=Math.min((W-70)/a,(H-60)/bv),ox=(W-a*sc)/2,oy=(H-bv*sc)/2;
+     ctx.fillStyle='rgba(59,130,246,0.08)';ctx.fillRect(ox,oy,a*sc,bv*sc);
+     if(af==='S'){ctx.fillStyle='rgba(59,130,246,0.22)';ctx.fillRect(ox,oy,a*sc,bv*sc);}
+     if(af==='d'){ctx.beginPath();ctx.moveTo(ox,oy);ctx.lineTo(ox+a*sc,oy+bv*sc);ctx.strokeStyle='#a78bfa';ctx.lineWidth=2;ctx.stroke();}
+     ctx.strokeStyle=af==='P'?'#a78bfa':'#2dd4bf';ctx.lineWidth=af==='P'?2.5:1.5;ctx.strokeRect(ox,oy,a*sc,bv*sc);
+     label(ctx,ox+a*sc/2,oy+bv*sc+18,'a');
+     ctx.textAlign='right';label(ctx,ox-8,oy+bv*sc/2+4,'b');
+   }
+  },
+  {id:'parallelogram',label:'Параллелограмм',group:'Четырёхугольники',
+   formula:'S = a·b·sin α',
+   fields:[
+     {k:'a',sym:'a',name:'основание'},{k:'b',sym:'b',name:'боковая сторона'},
+     {k:'alpha',sym:'α',name:'угол α, °'},{k:'S',sym:'S',name:'площадь'},
+     {k:'P',sym:'P',name:'периметр'},{k:'h',sym:'h',name:'высота'},
+   ],
+   calc(v){
+     let{a,b,alpha,S,P,h}=v;
+     const hv=k=>v[k]!=null&&+v[k]>0;
+     if(hv('a')&&hv('b')&&hv('alpha')&&alpha>0&&alpha<180){alpha=+alpha;h=b*Math.sin(alpha*R);S=a*h;P=2*(a+b);}
+     else if(hv('a')&&hv('b')&&hv('h')&&h<=b){S=a*h;P=2*(a+b);alpha=asin(h/b)/R;}
+     else if(hv('S')&&hv('a')&&hv('b')){h=S/a;if(h<=b)alpha=asin(h/b)/R;P=2*(a+b);}
+     return{a,b,alpha,S,P,h};
+   },
+   draw(ctx,W,H,v,af){
+     const a=v.a>0?v.a:3,bv=v.b>0?v.b:2,al=(v.alpha>0?+v.alpha:60)*R;
+     const hh=bv*Math.sin(al),dx=bv*Math.cos(al),sc=Math.min((W-80)/(a+abs(dx)),(H-60)/hh),pad=30;
+     const ox=pad+(dx<0?abs(dx)*sc:0),oy=H-pad;
+     const P1=[ox,oy],Q=[ox+a*sc,oy],Rp=[ox+a*sc+dx*sc,oy-hh*sc],Sp=[ox+dx*sc,oy-hh*sc];
+     fillPoly(ctx,[P1,Q,Rp,Sp],'rgba(59,130,246,0.08)');
+     if(af==='S')fillPoly(ctx,[P1,Q,Rp,Sp],'rgba(59,130,246,0.22)');
+     if(af==='h')dashedLine(ctx,Sp[0],Sp[1],Sp[0],P1[1],'#a78bfa',2);
+     strokePoly(ctx,[P1,Q,Rp,Sp],af==='P'?'#a78bfa':'#2dd4bf',af==='P'?2.5:1.5);
+     label(ctx,(P1[0]+Q[0])/2,oy+18,'a');
+   }
+  },
+  {id:'rhombus',label:'Ромб',group:'Четырёхугольники',
+   formula:'S = d₁d₂/2',
+   fields:[
+     {k:'a',sym:'a',name:'сторона'},{k:'alpha',sym:'α',name:'острый угол °'},
+     {k:'d1',sym:'d₁',name:'диагональ 1'},{k:'d2',sym:'d₂',name:'диагональ 2'},
+     {k:'S',sym:'S',name:'площадь'},{k:'P',sym:'P',name:'периметр'},{k:'h',sym:'h',name:'высота'},
+   ],
+   calc(v){
+     let{a,alpha,d1,d2,S,P,h}=v;
+     const hv=k=>v[k]!=null&&+v[k]>0;
+     if(hv('d1')&&hv('d2')){a=0.5*sqrt(d1*d1+d2*d2);S=0.5*d1*d2;P=4*a;alpha=2*asin(d1/(2*a))/R;if(alpha>90)alpha=180-alpha;h=S/a;}
+     else if(hv('a')&&hv('alpha')&&alpha>0&&alpha<180){alpha=+alpha;const ang=alpha<=90?alpha:180-alpha;d1=2*a*Math.sin(ang*R/2);d2=2*a*Math.cos(ang*R/2);S=0.5*d1*d2;P=4*a;h=a*Math.sin(ang*R);}
+     else if(hv('a')&&hv('d1')&&d1<2*a){d2=2*sqrt(a*a-(d1/2)*(d1/2));S=0.5*d1*d2;P=4*a;h=S/a;alpha=2*asin(d1/(2*a))/R;}
+     return{a,alpha,d1,d2,S,P,h};
+   },
+   draw(ctx,W,H,v,af){
+     const d1=v.d1>0?v.d1:3,d2=v.d2>0?v.d2:2,sc=Math.min((W-60)/d1,(H-60)/d2),cx=W/2,cy=H/2;
+     const T=[cx,cy-d2*sc/2],Rp=[cx+d1*sc/2,cy],Bo=[cx,cy+d2*sc/2],L=[cx-d1*sc/2,cy];
+     fillPoly(ctx,[T,Rp,Bo,L],'rgba(59,130,246,0.08)');
+     if(af==='S')fillPoly(ctx,[T,Rp,Bo,L],'rgba(59,130,246,0.22)');
+     if(af==='d1'){ctx.beginPath();ctx.moveTo(L[0],cy);ctx.lineTo(Rp[0],cy);ctx.strokeStyle='#a78bfa';ctx.lineWidth=2.5;ctx.stroke();}
+     if(af==='d2'){ctx.beginPath();ctx.moveTo(cx,T[1]);ctx.lineTo(cx,Bo[1]);ctx.strokeStyle='#a78bfa';ctx.lineWidth=2.5;ctx.stroke();}
+     strokePoly(ctx,[T,Rp,Bo,L],af==='P'?'#a78bfa':'#2dd4bf',af==='P'?2.5:1.5);
+     dashedLine(ctx,cx,T[1],cx,Bo[1],'rgba(59,130,246,0.2)',1);
+     dashedLine(ctx,L[0],cy,Rp[0],cy,'rgba(59,130,246,0.2)',1);
+   }
+  },
+  {id:'trapezoid',label:'Трапеция',group:'Четырёхугольники',
+   formula:'S = (a+b)/2 · h',
+   fields:[
+     {k:'a',sym:'a',name:'основание (большее)'},{k:'b',sym:'b',name:'основание (меньшее)'},
+     {k:'c',sym:'c',name:'боковая c'},{k:'d',sym:'d',name:'боковая d'},
+     {k:'h',sym:'h',name:'высота'},{k:'S',sym:'S',name:'площадь'},
+     {k:'P',sym:'P',name:'периметр'},{k:'m',sym:'m',name:'средняя линия'},
+   ],
+   calc(v){
+     let{a,b,c,d,h,S,P,m}=v;
+     const hv=k=>v[k]!=null&&+v[k]>0;
+     if(hv('a')&&hv('b')&&a>b){
+       if(hv('h')){S=(a+b)/2*h;m=(a+b)/2;if(hv('c')&&hv('d'))P=a+b+c+d;}
+       else if(hv('c')&&hv('d')){const s=(a-b)/2;if(c>s&&d>s){h=sqrt(c*c-s*s);S=(a+b)/2*h;P=a+b+c+d;m=(a+b)/2;}}
+     }
+     if(hv('S')&&hv('a')&&hv('b')){h=2*S/(a+b);m=(a+b)/2;}
+     if(hv('m')&&hv('h'))S=m*h;
+     if(hv('a')&&hv('b'))m=(a+b)/2;
+     return{a,b,c,d,h,S,P,m};
+   },
+   draw(ctx,W,H,v,af){
+     const a=v.a>0?v.a:4,bv=v.b>0?v.b:2,h=v.h>0?v.h:2,sc=Math.min((W-60)/a,(H-60)/h),ox=(W-a*sc)/2,oy=H-24,off=(a-bv)*sc/2;
+     const P1=[ox,oy],Q=[ox+a*sc,oy],Rp=[ox+a*sc-off,oy-h*sc],Sp=[ox+off,oy-h*sc];
+     fillPoly(ctx,[P1,Q,Rp,Sp],'rgba(59,130,246,0.08)');
+     if(af==='S')fillPoly(ctx,[P1,Q,Rp,Sp],'rgba(59,130,246,0.22)');
+     if(af==='h')dashedLine(ctx,W/2,oy,W/2,oy-h*sc,'#a78bfa',2);
+     if(af==='m'){const my=oy-h*sc/2;dashedLine(ctx,(ox+ox+off)/2,my,(ox+a*sc+ox+a*sc-off)/2,my,'#a78bfa',2);}
+     strokePoly(ctx,[P1,Q,Rp,Sp],af==='P'?'#a78bfa':'#2dd4bf',af==='P'?2.5:1.5);
+     label(ctx,(P1[0]+Q[0])/2,oy+20,'a');label(ctx,(Sp[0]+Rp[0])/2,Sp[1]-14,'b');
+   }
+  },
+  {id:'circle',label:'Круг',group:'Кривые',
+   formula:'S=πr², C=2πr',
+   fields:[
+     {k:'r',sym:'r',name:'радиус'},{k:'d',sym:'d',name:'диаметр'},
+     {k:'S',sym:'S',name:'площадь'},{k:'C',sym:'C',name:'длина окружности'},
+   ],
+   calc(v){
+     let{r,d,S,C}=v;
+     const hv=k=>v[k]!=null&&+v[k]>0;
+     if(!hv('r')){if(hv('d'))r=d/2;else if(hv('S'))r=sqrt(S/PI);else if(hv('C'))r=C/(2*PI);}
+     if(r){d=2*r;S=PI*r*r;C=2*PI*r;}
+     return{r,d,S,C};
+   },
+   draw(ctx,W,H,v,af){
+     const r=v.r>0?v.r:1,sc=Math.min((W-60)/(2*r),(H-60)/(2*r)),cx=W/2,cy=H/2;
+     ctx.beginPath();ctx.arc(cx,cy,r*sc,0,PI*2);
+     ctx.fillStyle='rgba(59,130,246,0.08)';ctx.fill();
+     if(af==='S'){ctx.fillStyle='rgba(59,130,246,0.22)';ctx.fill();}
+     ctx.strokeStyle=af==='C'?'#a78bfa':'#2dd4bf';ctx.lineWidth=af==='C'?2.5:1.5;ctx.stroke();
+     if(af==='r'){ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx+r*sc,cy);ctx.strokeStyle='#a78bfa';ctx.lineWidth=2;ctx.stroke();dot(ctx,cx,cy);}
+     if(af==='d'){ctx.beginPath();ctx.moveTo(cx-r*sc,cy);ctx.lineTo(cx+r*sc,cy);ctx.strokeStyle='#a78bfa';ctx.lineWidth=2;ctx.stroke();}
+     label(ctx,cx+r*sc/2+4,cy-8,'r');
+   }
+  },
+  {id:'ellipse',label:'Эллипс',group:'Кривые',
+   formula:'S=πab',
+   fields:[
+     {k:'a',sym:'a',name:'большая полуось'},{k:'b',sym:'b',name:'малая полуось'},
+     {k:'S',sym:'S',name:'площадь'},{k:'C',sym:'C',name:'периметр ≈'},{k:'e',sym:'e',name:'эксцентриситет'},
+   ],
+   calc(v){
+     let{a,b,S,C,e}=v;
+     const hv=k=>v[k]!=null&&!isNaN(v[k])&&v[k]>0;
+     function calc3(a,b){const hh=(a-b)*(a-b)/((a+b)*(a+b));C=PI*(a+b)*(1+3*hh/(10+sqrt(4-3*hh)));S=PI*a*b;e=sqrt(1-(b/a)*(b/a));return{S,C,e};}
+     if(hv('a')&&hv('b')&&a>=b){Object.assign(v,calc3(a,b));({S,C,e}=v);}
+     else if(hv('a')&&hv('S')){b=S/(PI*a);Object.assign(v,calc3(a,b));({C,e}=v);}
+     else if(hv('a')&&hv('e')&&e<1){b=a*sqrt(1-e*e);Object.assign(v,calc3(a,b));({S,C}=v);}
+     else if(hv('S')&&hv('e')&&e<1){a=sqrt(S/(PI*sqrt(1-e*e)));b=a*sqrt(1-e*e);Object.assign(v,calc3(a,b));({C}=v);}
+     return{a,b,S,C,e};
+   },
+   draw(ctx,W,H,v,af){
+     const a=v.a>0?v.a:2,bv=v.b>0?v.b:1,sc=Math.min((W-60)/(2*a),(H-60)/(2*bv)),cx=W/2,cy=H/2;
+     ctx.beginPath();ctx.ellipse(cx,cy,a*sc,bv*sc,0,0,PI*2);
+     ctx.fillStyle='rgba(59,130,246,0.08)';ctx.fill();
+     if(af==='S'){ctx.fillStyle='rgba(59,130,246,0.22)';ctx.fill();}
+     ctx.strokeStyle=af==='C'?'#a78bfa':'#2dd4bf';ctx.lineWidth=af==='C'?2.5:1.5;ctx.stroke();
+     if(af==='a'){ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx+a*sc,cy);ctx.strokeStyle='#a78bfa';ctx.lineWidth=2;ctx.stroke();}
+     if(af==='b'){ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx,cy-bv*sc);ctx.strokeStyle='#a78bfa';ctx.lineWidth=2;ctx.stroke();}
+     const cf=sqrt(abs(a*a-bv*bv))*sc;if(cf>4){dot(ctx,cx-cf,cy);dot(ctx,cx+cf,cy);}
+     label(ctx,cx+a*sc/2+3,cy+14,'a');label(ctx,cx+4,cy-bv*sc/2-4,'b');
+   }
+  },
+  {id:'sphere',label:'Сфера',group:'Тела вращения',
+   formula:'S=4πr², V=4/3·πr³',
+   fields:[
+     {k:'r',sym:'r',name:'радиус'},{k:'d',sym:'d',name:'диаметр'},
+     {k:'S',sym:'S',name:'площадь поверхности'},{k:'V',sym:'V',name:'объём'},
+   ],
+   calc(v){
+     let{r,d,S,V}=v;
+     const hv=k=>v[k]!=null&&+v[k]>0;
+     if(!hv('r')){if(hv('d'))r=d/2;else if(hv('S'))r=sqrt(S/(4*PI));else if(hv('V'))r=cbrt(3*V/(4*PI));}
+     if(r){d=2*r;S=4*PI*r*r;V=4/3*PI*r*r*r;}
+     return{r,d,S,V};
+   },
+   draw(ctx,W,H,v,af){
+     const r=v.r>0?v.r:1,sc=Math.min((W-60)/(2*r),(H-60)/(2*r)),cx=W/2,cy=H/2,rv=r*sc;
+     ctx.beginPath();ctx.arc(cx,cy,rv,0,PI*2);
+     ctx.fillStyle=af==='V'?'rgba(59,130,246,0.2)':'rgba(59,130,246,0.08)';ctx.fill();
+     ctx.strokeStyle='#2dd4bf';ctx.lineWidth=1.5;ctx.stroke();
+     ctx.beginPath();ctx.ellipse(cx,cy,rv,rv*.3,0,0,PI*2);ctx.setLineDash([4,4]);ctx.strokeStyle='rgba(45,212,191,0.4)';ctx.lineWidth=1;ctx.stroke();ctx.setLineDash([]);
+     if(af==='r'){ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx+rv,cy);ctx.strokeStyle='#a78bfa';ctx.lineWidth=2;ctx.stroke();dot(ctx,cx,cy);}
+     if(af==='S'){ctx.beginPath();ctx.arc(cx,cy,rv,0,PI*2);ctx.strokeStyle='#a78bfa';ctx.lineWidth=2.5;ctx.stroke();}
+     label(ctx,cx+rv/2+3,cy-7,'r');
+   }
+  },
+  {id:'cylinder',label:'Цилиндр',group:'Тела вращения',
+   formula:'V=πr²h',
+   fields:[
+     {k:'r',sym:'r',name:'радиус'},{k:'h',sym:'h',name:'высота'},
+     {k:'S_lat',sym:'Sб',name:'боковая площадь'},{k:'S_tot',sym:'S',name:'полная площадь'},{k:'V',sym:'V',name:'объём'},
+   ],
+   calc(v){
+     let{r,h,S_lat,S_tot,V}=v;
+     const hv=k=>v[k]!=null&&+v[k]>0;
+     if(hv('r')&&hv('h')){S_lat=2*PI*r*h;S_tot=2*PI*r*(r+h);V=PI*r*r*h;}
+     else if(hv('r')&&hv('V')){h=V/(PI*r*r);S_lat=2*PI*r*h;S_tot=2*PI*r*(r+h);}
+     else if(hv('h')&&hv('V')){r=sqrt(V/(PI*h));S_lat=2*PI*r*h;S_tot=2*PI*r*(r+h);}
+     else if(hv('r')&&hv('S_lat')){h=S_lat/(2*PI*r);S_tot=2*PI*r*(r+h);V=PI*r*r*h;}
+     return{r,h,S_lat,S_tot,V};
+   },
+   draw(ctx,W,H,v,af){
+     const r=v.r>0?v.r:1,ht=v.h>0?v.h:2,sc=Math.min((W-80)/(2*r),(H-60)/(ht+r*.4)),cx=W/2,ey=r*sc*.35,ty=24+ey,by=24+ey+ht*sc;
+     ctx.fillStyle='rgba(59,130,246,0.06)';
+     ctx.beginPath();ctx.moveTo(cx-r*sc,ty);ctx.lineTo(cx-r*sc,by);ctx.arc(cx,by,r*sc,PI,0);ctx.lineTo(cx+r*sc,ty);ctx.ellipse(cx,ty,r*sc,ey,0,0,PI*2);ctx.fill();
+     ctx.strokeStyle='#2dd4bf';ctx.lineWidth=1.5;
+     ctx.beginPath();ctx.moveTo(cx-r*sc,ty);ctx.lineTo(cx-r*sc,by);ctx.stroke();
+     ctx.beginPath();ctx.moveTo(cx+r*sc,ty);ctx.lineTo(cx+r*sc,by);ctx.stroke();
+     ctx.beginPath();ctx.ellipse(cx,ty,r*sc,ey,0,0,PI*2);ctx.stroke();
+     ctx.beginPath();ctx.arc(cx,by,r*sc,PI,0);ctx.stroke();
+     ctx.setLineDash([4,4]);ctx.beginPath();ctx.ellipse(cx,by,r*sc,ey,0,PI,PI*2);ctx.strokeStyle='rgba(45,212,191,0.4)';ctx.stroke();ctx.setLineDash([]);
+     if(af==='h')arrowLine(ctx,cx+r*sc+16,ty,cx+r*sc+16,by,'#a78bfa');
+     if(af==='r'){ctx.beginPath();ctx.moveTo(cx,ty);ctx.lineTo(cx+r*sc,ty);ctx.strokeStyle='#a78bfa';ctx.lineWidth=2;ctx.stroke();}
+     if(af==='V'){ctx.fillStyle='rgba(59,130,246,0.18)';ctx.beginPath();ctx.moveTo(cx-r*sc,ty);ctx.lineTo(cx-r*sc,by);ctx.arc(cx,by,r*sc,PI,0);ctx.lineTo(cx+r*sc,ty);ctx.ellipse(cx,ty,r*sc,ey,0,0,PI*2);ctx.fill();}
+   }
+  },
+  {id:'cone',label:'Конус',group:'Тела вращения',
+   formula:'V = ⅓πr²h',
+   fields:[
+     {k:'r',sym:'r',name:'радиус основания'},{k:'h',sym:'h',name:'высота'},
+     {k:'l',sym:'l',name:'образующая'},{k:'S_lat',sym:'Sб',name:'боковая площадь'},
+     {k:'S_tot',sym:'S',name:'полная площадь'},{k:'V',sym:'V',name:'объём'},{k:'alpha',sym:'α',name:'угол при вершине °'},
+   ],
+   calc(v){
+     let{r,h,l,S_lat,S_tot,V,alpha}=v;
+     const hv=k=>v[k]!=null&&+v[k]>0;
+     if(hv('r')&&hv('h')){l=sqrt(r*r+h*h);S_lat=PI*r*l;S_tot=PI*r*(r+l);V=PI*r*r*h/3;alpha=2*atan(r/h)/R;}
+     else if(hv('r')&&hv('l')&&l>r){h=sqrt(l*l-r*r);S_lat=PI*r*l;S_tot=PI*r*(r+l);V=PI*r*r*h/3;alpha=2*atan(r/h)/R;}
+     else if(hv('r')&&hv('V')){h=3*V/(PI*r*r);l=sqrt(r*r+h*h);S_lat=PI*r*l;S_tot=PI*r*(r+l);alpha=2*atan(r/h)/R;}
+     else if(hv('h')&&hv('V')){r=sqrt(3*V/(PI*h));l=sqrt(r*r+h*h);S_lat=PI*r*l;S_tot=PI*r*(r+l);alpha=2*atan(r/h)/R;}
+     else if(hv('r')&&hv('alpha')&&alpha>0&&alpha<180){h=r/Math.tan((alpha/2)*R);l=sqrt(r*r+h*h);S_lat=PI*r*l;S_tot=PI*r*(r+l);V=PI*r*r*h/3;}
+     else if(hv('r')&&hv('S_lat')){l=S_lat/(PI*r);if(l>r){h=sqrt(l*l-r*r);S_tot=PI*r*(r+l);V=PI*r*r*h/3;alpha=2*atan(r/h)/R;}}
+     return{r,h,l,S_lat,S_tot,V,alpha};
+   },
+   draw(ctx,W,H,v,af){
+     const r=v.r>0?v.r:1,ht=v.h>0?v.h:2,sc=Math.min((W-80)/(2*r),(H-70)/(ht+r*.4)),cx=W/2,ey=r*sc*.35,ty=24,by=24+ht*sc;
+     ctx.fillStyle='rgba(59,130,246,0.06)';
+     ctx.beginPath();ctx.moveTo(cx,ty);ctx.lineTo(cx-r*sc,by);ctx.arc(cx,by,r*sc,PI,0);ctx.closePath();ctx.fill();
+     ctx.strokeStyle='#2dd4bf';ctx.lineWidth=1.5;
+     ctx.beginPath();ctx.moveTo(cx,ty);ctx.lineTo(cx-r*sc,by);ctx.stroke();
+     ctx.beginPath();ctx.moveTo(cx,ty);ctx.lineTo(cx+r*sc,by);ctx.stroke();
+     ctx.beginPath();ctx.arc(cx,by,r*sc,PI,0);ctx.stroke();
+     ctx.setLineDash([4,4]);ctx.beginPath();ctx.ellipse(cx,by,r*sc,ey,0,PI,PI*2);ctx.strokeStyle='rgba(45,212,191,0.4)';ctx.stroke();ctx.setLineDash([]);
+     if(af==='h')dashedLine(ctx,cx,ty,cx,by,'#a78bfa',2);
+     if(af==='r'){ctx.beginPath();ctx.moveTo(cx,by);ctx.lineTo(cx+r*sc,by);ctx.strokeStyle='#a78bfa';ctx.lineWidth=2;ctx.stroke();}
+     if(af==='l'){ctx.beginPath();ctx.moveTo(cx,ty);ctx.lineTo(cx+r*sc,by);ctx.strokeStyle='#a78bfa';ctx.lineWidth=2.5;ctx.stroke();}
+     if(af==='V'){ctx.fillStyle='rgba(59,130,246,0.2)';ctx.beginPath();ctx.moveTo(cx,ty);ctx.lineTo(cx-r*sc,by);ctx.arc(cx,by,r*sc,PI,0);ctx.closePath();ctx.fill();}
+   }
+  },
+  {id:'ball',label:'Шар',group:'Тела вращения',
+   formula:'V = 4/3·πr³',
+   fields:[
+     {k:'r',sym:'r',name:'радиус'},{k:'d',sym:'d',name:'диаметр'},
+     {k:'S',sym:'S',name:'площадь поверхности'},{k:'V',sym:'V',name:'объём'},
+   ],
+   calc(v){
+     let{r,d,S,V}=v;
+     const hv=k=>v[k]!=null&&+v[k]>0;
+     if(!hv('r')){if(hv('d'))r=d/2;else if(hv('S'))r=sqrt(S/(4*PI));else if(hv('V'))r=cbrt(3*V/(4*PI));}
+     if(r){d=2*r;S=4*PI*r*r;V=4/3*PI*r*r*r;}
+     return{r,d,S,V};
+   },
+   draw(ctx,W,H,v,af){
+     const r=v.r>0?v.r:1,sc=Math.min((W-60)/(2*r),(H-60)/(2*r)),cx=W/2,cy=H/2,rv=r*sc;
+     ctx.beginPath();ctx.arc(cx,cy,rv,0,PI*2);
+     ctx.fillStyle=af==='V'?'rgba(59,130,246,0.22)':'rgba(59,130,246,0.1)';ctx.fill();
+     ctx.strokeStyle='#2dd4bf';ctx.lineWidth=1.5;ctx.stroke();
+     ctx.beginPath();ctx.ellipse(cx,cy,rv,rv*.3,0,0,PI*2);ctx.setLineDash([5,4]);ctx.strokeStyle='rgba(45,212,191,0.35)';ctx.lineWidth=1;ctx.stroke();ctx.setLineDash([]);
+     if(af==='r'){ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx+rv,cy);ctx.strokeStyle='#a78bfa';ctx.lineWidth=2;ctx.stroke();dot(ctx,cx,cy);}
+     if(af==='S'){ctx.beginPath();ctx.arc(cx,cy,rv,0,PI*2);ctx.strokeStyle='#a78bfa';ctx.lineWidth=2.5;ctx.stroke();}
+   }
+  },
+];
+
+function fillPoly(ctx,pts,fill){ctx.beginPath();pts.forEach((p,i)=>i?ctx.lineTo(...p):ctx.moveTo(...p));ctx.closePath();ctx.fillStyle=fill;ctx.fill();}
+function strokePoly(ctx,pts,col,lw){ctx.beginPath();pts.forEach((p,i)=>i?ctx.lineTo(...p):ctx.moveTo(...p));ctx.closePath();ctx.strokeStyle=col;ctx.lineWidth=lw;ctx.stroke();}
+function dashedLine(ctx,x1,y1,x2,y2,col,lw){ctx.save();ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.strokeStyle=col;ctx.lineWidth=lw;ctx.setLineDash([5,4]);ctx.stroke();ctx.restore();}
+function dashedArc(ctx,cx,cy,r,col){ctx.save();ctx.beginPath();ctx.arc(cx,cy,r,0,PI*2);ctx.strokeStyle=col;ctx.lineWidth=1.5;ctx.setLineDash([5,4]);ctx.stroke();ctx.restore();}
+function dot(ctx,x,y){ctx.beginPath();ctx.arc(x,y,3,0,PI*2);ctx.fillStyle='#a78bfa';ctx.fill();}
+function arrowLine(ctx,x1,y1,x2,y2,col){
+  ctx.save();ctx.strokeStyle=col;ctx.lineWidth=1.5;
+  ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
+  const ang=atan2(y2-y1,x2-x1),as=7;
+  ctx.beginPath();ctx.moveTo(x2-as*Math.cos(ang-.4),y2-as*Math.sin(ang-.4));ctx.lineTo(x2,y2);ctx.lineTo(x2-as*Math.cos(ang+.4),y2-as*Math.sin(ang+.4));ctx.stroke();
+  ctx.beginPath();ctx.moveTo(x1+as*Math.cos(ang-.4+PI),y1+as*Math.sin(ang-.4+PI));ctx.lineTo(x1,y1);ctx.lineTo(x1+as*Math.cos(ang+.4+PI),y1+as*Math.sin(ang+.4+PI));ctx.stroke();
+  ctx.restore();
+}
+function label(ctx,x,y,text){ctx.font='bold 12px monospace';ctx.fillStyle='#60a5fa';ctx.textAlign='center';ctx.fillText(text,x,y);}
+function drawRightAngle(ctx,x,y,s){ctx.strokeStyle='rgba(45,212,191,0.5)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(x+s,y);ctx.lineTo(x+s,y-s);ctx.lineTo(x,y-s);ctx.stroke();}
+
+// Animated background
+const bgCanvas=document.getElementById('bg');
+const bgCtx=bgCanvas.getContext('2d');
+const mathSymbols=['∫','∑','π','√','∞','Δ','α','β','γ','θ','λ','σ','∂','∇','≈','≠','±','×','∈','lim','sin','cos','tan','log','dx','dy','c²','a²','b²','r²','φ'];
+let bgItems=[];
+
+function initBg(){
+  bgCanvas.width=window.innerWidth;bgCanvas.height=window.innerHeight;
+  bgItems=[];
+  for(let i=0;i<80;i++){
+    bgItems.push({
+      x:Math.random()*bgCanvas.width,y:Math.random()*bgCanvas.height,
+      sym:mathSymbols[Math.floor(Math.random()*mathSymbols.length)],
+      size:10+Math.random()*22,alpha:0.04+Math.random()*0.12,
+      speed:0.2+Math.random()*0.5,drift:(Math.random()-0.5)*0.3,
+      color:Math.random()<0.5?'59,130,246':'139,92,246'
+    });
+  }
+}
+
+function drawBg(){
+  bgCtx.clearRect(0,0,bgCanvas.width,bgCanvas.height);
+  bgCtx.strokeStyle='rgba(59,130,246,0.06)';bgCtx.lineWidth=1;
+  for(let x=0;x<bgCanvas.width;x+=50){bgCtx.beginPath();bgCtx.moveTo(x,0);bgCtx.lineTo(x,bgCanvas.height);bgCtx.stroke();}
+  for(let y=0;y<bgCanvas.height;y+=50){bgCtx.beginPath();bgCtx.moveTo(0,y);bgCtx.lineTo(bgCanvas.width,y);bgCtx.stroke();}
+  bgItems.forEach(item=>{
+    bgCtx.save();bgCtx.globalAlpha=item.alpha;bgCtx.font=`${item.size}px monospace`;
+    bgCtx.fillStyle=`rgb(${item.color})`;bgCtx.fillText(item.sym,item.x,item.y);bgCtx.restore();
+    item.y-=item.speed;item.x+=item.drift;
+    if(item.y<-30)item.y=bgCanvas.height+10;
+    if(item.x<-30)item.x=bgCanvas.width+10;
+    if(item.x>bgCanvas.width+30)item.x=-10;
+  });
+  requestAnimationFrame(drawBg);
+}
+
+initBg();drawBg();
+
+let currentId=null,activeField=null;
+
+function getIconPath(id){
+  const p={right_tri:'M2 16 L16 16 L2 2 Z',eq_tri:'M9 2 L16 16 L2 16 Z',scalene:'M3 16 L15 16 L13 2 Z',isos_tri:'M9 2 L15 16 L3 16 Z',square:'M2 2 L16 2 L16 16 L2 16 Z',rect:'M1 5 L17 5 L17 13 L1 13 Z',parallelogram:'M3 16 L14 16 L15 2 L4 2 Z',rhombus:'M9 1 L17 9 L9 17 L1 9 Z',trapezoid:'M2 16 L16 16 L13 4 L5 4 Z',circle:'M9 9 m-7 0 a7 7 0 1 0 14 0 a7 7 0 1 0 -14 0',ellipse:'M9 9 m-7 0 a7 4 0 1 0 14 0 a7 4 0 1 0 -14 0',sphere:'M9 9 m-7 0 a7 7 0 1 0 14 0 a7 7 0 1 0 -14 0 M2 9 Q9 13 16 9',cylinder:'M2 5 L2 13 Q9 17 16 13 L16 5 Q9 9 2 5 M2 5 Q9 1 16 5',cone:'M9 1 L2 16 Q9 13 16 16 Z',ball:'M9 9 m-7 0 a7 7 0 1 0 14 0 a7 7 0 1 0 -14 0'};
+  return p[id]||'M2 2 L16 16';
+}
+
+function buildSidebar(){
+  const sb=document.getElementById('sidebar');
+  const groups={};
+  SHAPES.forEach(s=>{if(!groups[s.group])groups[s.group]=[];groups[s.group].push(s);});
+  Object.entries(groups).forEach(([g,items])=>{
+    const lbl=document.createElement('div');lbl.className='grp-label';lbl.textContent=g;sb.appendChild(lbl);
+    items.forEach(s=>{
+      const btn=document.createElement('button');btn.className='shape-btn';btn.dataset.id=s.id;
+      const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
+      svg.setAttribute('width','18');svg.setAttribute('height','18');svg.setAttribute('viewBox','0 0 18 18');
+      svg.setAttribute('fill','none');svg.setAttribute('stroke','currentColor');svg.setAttribute('stroke-width','1.2');svg.className='ico';
+      const p=document.createElementNS('http://www.w3.org/2000/svg','path');p.setAttribute('d',getIconPath(s.id));svg.appendChild(p);
+      const span=document.createElement('span');span.textContent=s.label;
+      btn.appendChild(svg);btn.appendChild(span);
+      btn.onclick=()=>selectShape(s.id);
+      sb.appendChild(btn);
+    });
+  });
+}
+
+function selectShape(id){
+  currentId=id;activeField=null;
+  document.querySelectorAll('.shape-btn').forEach(b=>b.classList.toggle('active',b.dataset.id===id));
+  const def=SHAPES.find(s=>s.id===id);
+  document.getElementById('emptyState').style.display='none';
+  const fb=document.getElementById('fieldsBody');fb.style.display='flex';
+  document.getElementById('pname').textContent=def.label;
+  document.getElementById('pformula').textContent=def.formula;
+  document.getElementById('hformula').textContent=def.formula;
+  document.getElementById('status').textContent='';document.getElementById('status').className='status';
+  const fs=document.getElementById('fieldsScroll');
+  fs.innerHTML=def.fields.map(f=>`
+    <div class="field-row">
+      <div class="field-label"><span class="sym">${f.sym}</span><span class="fname">${f.name}</span></div>
+      <div class="inp-wrap"><input type="number" step="any" placeholder="—" data-key="${f.k}" id="inp_${f.k}"></div>
+    </div>
+  `).join('');
+  def.fields.forEach(f=>{
+    const inp=document.getElementById('inp_'+f.k);
+    inp.addEventListener('focus',()=>{activeField=f.k;renderCanvas();});
+    inp.addEventListener('blur',()=>{activeField=null;renderCanvas();});
+    inp.addEventListener('input',()=>{inp.classList.add('user-set');inp.classList.remove('computed');});
+  });
+  renderCanvas();
+}
+
+function getVals(){
+  const v={};
+  document.querySelectorAll('[data-key]').forEach(inp=>{v[inp.dataset.key]=inp.value&&!isNaN(+inp.value)?+inp.value:null;});
+  return v;
+}
+
+function calculate(){
+  if(!currentId)return;
+  const def=SHAPES.find(s=>s.id===currentId);
+  const userKeys=new Set();
+  document.querySelectorAll('[data-key]').forEach(inp=>{if(inp.value)userKeys.add(inp.dataset.key);});
+  const v=getVals();
+  try{
+    const res=def.calc(v);let n=0;
+    Object.entries(res).forEach(([k,val])=>{
+      if(val!=null&&!isNaN(val)&&isFinite(val)&&val>0){n++;
+        if(!userKeys.has(k)){const inp=document.getElementById('inp_'+k);if(inp){inp.value=fmt(val);inp.classList.add('computed');inp.classList.remove('user-set');}}}
+    });
+    const st=document.getElementById('status');
+    if(n>0){st.textContent='✓ Вычислено успешно';st.className='status';}
+    else{st.textContent='⚠ Введите больше данных';st.className='status err';}
+    renderCanvas();
+  }catch(e){
+    const st=document.getElementById('status');st.textContent='Ошибка: '+e.message;st.className='status err';
+  }
+}
+
+function resetAll(){
+  document.querySelectorAll('[data-key]').forEach(inp=>{inp.value='';inp.className='';});
+  activeField=null;renderCanvas();
+  const st=document.getElementById('status');if(st){st.textContent='';st.className='status';}
+}
+
+function renderCanvas(){
+  const cv=document.getElementById('cv');if(!cv)return;
+  const dpr=window.devicePixelRatio||1,W=cv.clientWidth||400,H=cv.clientHeight||260;
+  cv.width=W*dpr;cv.height=H*dpr;
+  const ctx=cv.getContext('2d');ctx.scale(dpr,dpr);ctx.clearRect(0,0,W,H);
+  if(!currentId)return;
+  drawGrid(ctx,W,H);
+  const def=SHAPES.find(s=>s.id===currentId);
+  const vals=getVals();
+  try{
+    const res=def.calc(vals);
+    const merged={};
+    Object.keys(res).forEach(k=>{merged[k]=(vals[k]!=null&&vals[k]>0)?vals[k]:(res[k]||0);});
+    def.draw(ctx,W,H,merged,activeField);
+  }catch(e){def.draw(ctx,W,H,vals,activeField);}
+}
+
+function drawGrid(ctx,W,H){
+  ctx.save();ctx.strokeStyle='rgba(59,130,246,0.06)';ctx.lineWidth=.5;
+  for(let x=0;x<W;x+=30){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+  for(let y=0;y<H;y+=30){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+  ctx.restore();
+}
+
+buildSidebar();
+window.addEventListener('resize',()=>{initBg();renderCanvas();});
+</script>
+</body>
+</html>
