@@ -55,8 +55,6 @@ canvas#bg{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-e
 .inp-wrap input.computed{color:var(--teal2)}
 .inp-wrap input.user-set{color:#fff}
 .panel-foot{padding:12px 18px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:8px;background:rgba(7,17,42,0.4);flex-shrink:0}
-.btn-calc{width:100%;padding:12px;font-size:14px;font-weight:700;border:none;border-radius:8px;background:linear-gradient(135deg,#3b82f6,#1d4ed8);color:#fff;cursor:pointer;transition:all .2s}
-.btn-calc:hover{transform:translateY(-1px);box-shadow:0 4px 20px rgba(59,130,246,0.4)}
 .btn-reset{flex:1;padding:9px;font-size:13px;border:1px solid var(--border2);border-radius:8px;background:transparent;color:var(--text2);cursor:pointer;transition:all .2s}
 .btn-reset:hover{background:rgba(59,130,246,0.1);color:var(--text)}
 .btn-row{display:flex;gap:8px}
@@ -100,7 +98,6 @@ canvas#bg{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-e
         </div>
         <div class="fields-scroll" id="fieldsScroll"></div>
         <div class="panel-foot">
-          <button class="btn-calc" onclick="calculate()">= Вычислить</button>
           <div class="btn-row"><button class="btn-reset" onclick="resetAll()">Сбросить</button></div>
           <div class="status" id="status"></div>
         </div>
@@ -111,7 +108,7 @@ canvas#bg{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-e
 
 <script>
 const PI=Math.PI,sqrt=Math.sqrt,cbrt=Math.cbrt,sin=Math.sin,cos=Math.cos,
-  atan=Math.atan,atan2=Math.atan2,asin=Math.asin,acos=Math.acos,abs=Math.abs,R=PI/180;
+  tan=Math.tan,atan=Math.atan,atan2=Math.atan2,asin=Math.asin,acos=Math.acos,abs=Math.abs,R=PI/180;
 
 function fmt(v){
   if(v==null||isNaN(v)||!isFinite(v))return'';
@@ -123,6 +120,7 @@ function fmt(v){
 }
 
 const SHAPES=[
+  // ─── ТРЕУГОЛЬНИКИ ───────────────────────────────────────────────────────────
   {id:'right_tri',label:'Прямоугольный △',group:'Треугольники',
    formula:'a²+b²=c²',
    fields:[
@@ -130,37 +128,229 @@ const SHAPES=[
      {k:'c',sym:'c',name:'гипотенуза c'},{k:'alpha',sym:'α',name:'угол α, °'},
      {k:'beta',sym:'β',name:'угол β, °'},{k:'S',sym:'S',name:'площадь'},
      {k:'P',sym:'P',name:'периметр'},{k:'h',sym:'h',name:'высота к c'},
-     {k:'m_c',sym:'mс',name:'медиана к c'},
    ],
    calc(v){
-     let{a,b,c,alpha,beta,S,P,h,m_c}=v;
-     const hv=k=>v[k]!=null&&!isNaN(v[k])&&v[k]>0;
-     if(hv('a')&&hv('b')){c=sqrt(a*a+b*b);alpha=atan(a/b)/R;beta=90-alpha;}
-     else if(hv('a')&&hv('c')&&c>a){b=sqrt(c*c-a*a);alpha=asin(a/c)/R;beta=90-alpha;}
-     else if(hv('b')&&hv('c')&&c>b){a=sqrt(c*c-b*b);beta=asin(b/c)/R;alpha=90-beta;}
-     else if(hv('a')&&hv('alpha')&&alpha>0&&alpha<90){alpha=+alpha;beta=90-alpha;c=a/sin(alpha*R);b=sqrt(c*c-a*a);}
-     else if(hv('b')&&hv('beta')&&beta>0&&beta<90){beta=+beta;alpha=90-beta;c=b/sin(beta*R);a=sqrt(c*c-b*b);}
-     else if(hv('c')&&hv('alpha')&&alpha>0&&alpha<90){alpha=+alpha;beta=90-alpha;a=c*sin(alpha*R);b=c*sin(beta*R);}
-     else if(hv('S')&&hv('a')){b=2*S/a;c=sqrt(a*a+b*b);alpha=atan(a/b)/R;beta=90-alpha;}
-     else if(hv('h')&&hv('c')){const hc=h*c,sum=sqrt(c*c+2*hc),disc=sum*sum-4*hc;if(disc>=0){a=(sum+sqrt(disc))/2;b=(sum-sqrt(disc))/2;}alpha=atan(a/b)/R;beta=90-alpha;}
-     if(a&&b){c=c||sqrt(a*a+b*b);S=0.5*a*b;P=a+b+c;h=a*b/c;m_c=c/2;if(!alpha)alpha=atan(a/b)/R;if(!beta)beta=90-alpha;}
-     return{a,b,c,alpha,beta,S,P,h,m_c};
+     let{a,b,c,alpha,beta,S,P,h}=v;
+     const hv=k=>v[k]!=null&&!isNaN(v[k])&&+v[k]>0;
+     // нормализуем углы к числам
+     if(alpha!=null)alpha=+alpha;
+     if(beta!=null)beta=+beta;
+     // если задан только один угол — вычислить второй (оба должны быть <90)
+     if(hv('alpha')&&!hv('beta')&&alpha>0&&alpha<90){beta=90-alpha;}
+     else if(hv('beta')&&!hv('alpha')&&beta>0&&beta<90){alpha=90-beta;}
+
+     // === ВСЕ ВОЗМОЖНЫЕ КОМБИНАЦИИ ИЗ 2 И 3 ПАРАМЕТРОВ ===
+     // (исправлены ошибки в формулах: alpha теперь корректно считается как угол при вершине A)
+
+     if(hv('a')&&hv('b')){                              // катет a + катет b
+       c=Math.sqrt(a*a+b*b);
+       alpha=Math.atan(b/a)/R; beta=90-alpha;
+       S=a*b/2; P=a+b+c; h=a*b/c;
+     }
+     else if(hv('a')&&hv('c')&&c>a){                    // катет a + гипотенуза c
+       b=Math.sqrt(c*c-a*a);
+       alpha=Math.atan(b/a)/R; beta=90-alpha;
+       S=a*b/2; P=a+b+c; h=a*b/c;
+     }
+     else if(hv('b')&&hv('c')&&c>b){                    // катет b + гипотенуза c
+       a=Math.sqrt(c*c-b*b);
+       alpha=Math.atan(b/a)/R; beta=90-alpha;
+       S=a*b/2; P=a+b+c; h=a*b/c;
+     }
+     else if(hv('a')&&hv('alpha')&&alpha>0&&alpha<90){  // катет a + угол α
+       beta=90-alpha;
+       c=a/Math.cos(alpha*R);
+       b=a*Math.tan(alpha*R);
+       S=a*b/2; P=a+b+c; h=a*b/c;
+     }
+     else if(hv('a')&&hv('beta')&&beta>0&&beta<90){     // катет a + угол β
+       alpha=90-beta;
+       c=a/Math.sin(beta*R);   // a = c·sin β
+       b=a*Math.tan(alpha*R);
+       S=a*b/2; P=a+b+c; h=a*b/c;
+     }
+     else if(hv('b')&&hv('alpha')&&alpha>0&&alpha<90){  // катет b + угол α
+       beta=90-alpha;
+       c=b/Math.sin(alpha*R);  // b = c·sin α
+       a=b/Math.tan(alpha*R);
+       S=a*b/2; P=a+b+c; h=a*b/c;
+     }
+     else if(hv('b')&&hv('beta')&&beta>0&&beta<90){     // катет b + угол β
+       alpha=90-beta;
+       c=b/Math.cos(beta*R);
+       a=b*Math.tan(beta*R);
+       S=a*b/2; P=a+b+c; h=a*b/c;
+     }
+     else if(hv('c')&&hv('alpha')&&alpha>0&&alpha<90){  // гипотенуза c + угол α
+       beta=90-alpha;
+       a=c*Math.cos(alpha*R);
+       b=c*Math.sin(alpha*R);
+       S=a*b/2; P=a+b+c; h=a*b/c;
+     }
+     else if(hv('c')&&hv('beta')&&beta>0&&beta<90){     // гипотенуза c + угол β
+       alpha=90-beta;
+       a=c*Math.sin(beta*R);
+       b=c*Math.cos(beta*R);
+       S=a*b/2; P=a+b+c; h=a*b/c;
+     }
+     else if(hv('S')&&hv('a')){                         // площадь + катет a
+       b=2*S/a;
+       c=Math.sqrt(a*a+b*b);
+       alpha=Math.atan(b/a)/R; beta=90-alpha;
+       P=a+b+c; h=a*b/c;
+     }
+     else if(hv('S')&&hv('b')){                         // площадь + катет b
+       a=2*S/b;
+       c=Math.sqrt(a*a+b*b);
+       alpha=Math.atan(b/a)/R; beta=90-alpha;
+       P=a+b+c; h=a*b/c;
+     }
+     else if(hv('S')&&hv('c')){  
+       h=2*S/c;  
+                                                      // площадь + гипотенуза c
+       const sum=Math.sqrt(c*c+4*S);
+       const diff=Math.sqrt(c*c-4*S);
+       if(c*c-4*S>=0){
+         a=(sum+diff)/2; b=(sum-diff)/2;   // a — бо́льший катет (для стабильности)
+         alpha=Math.atan(b/a)/R; beta=90-alpha;
+         P=a+b+c; h=2*S/c;
+       }
+     }
+     else if(hv('h')&&hv('c')){                         // высота h + гипотенуза c
+       const hc=h*c; // = a·b
+       const sum=Math.sqrt(c*c+2*hc);
+       const disc=sum*sum-4*hc;
+       if(disc>=0){
+         a=(sum+Math.sqrt(disc))/2;
+         b=(sum-Math.sqrt(disc))/2;
+       }
+       alpha=Math.atan(b/a)/R; beta=90-alpha;
+       S=h*c/2; P=a+b+c;
+     }
+     else if(hv('h')&&hv('alpha')&&alpha>0&&alpha<90){  // высота h + угол α
+       beta=90-alpha;
+       a=h/Math.sin(alpha*R);
+       b=a*Math.tan(alpha*R);
+       c=a/Math.cos(alpha*R);
+       S=h*c/2; P=a+b+c;
+     }
+     else if(hv('h')&&hv('beta')&&beta>0&&beta<90){     // высота h + угол β
+       alpha=90-beta;
+       b=h/Math.sin(beta*R);
+       a=b*Math.tan(beta*R);
+       c=b/Math.cos(beta*R);
+       S=h*c/2; P=a+b+c;
+     }
+     else if(hv('h')&&hv('a')){                         // высота h + катет a
+       if(a>h){
+         const denom=Math.sqrt(a*a-h*h);
+         c=a*a/denom;
+         b=(h*c)/a;
+         alpha=Math.atan(b/a)/R; beta=90-alpha;
+         S=a*b/2; P=a+b+c;
+       }
+     }
+     else if(hv('h')&&hv('b')){                         // высота h + катет b
+       if(b>h){
+         const denom=Math.sqrt(b*b-h*h);
+         c=b*b/denom;
+         a=(h*c)/b;
+         alpha=Math.atan(b/a)/R; beta=90-alpha;
+         S=a*b/2; P=a+b+c;
+       }
+     }
+     else if(hv('S')&&hv('alpha')&&alpha>0&&alpha<90){  // площадь + угол α (3-параметр комбинация)
+       beta=90-alpha;
+       const sin2=Math.sin(2*alpha*R);
+       c=Math.sqrt(4*S/sin2);
+       a=c*Math.cos(alpha*R);
+       b=c*Math.sin(alpha*R);
+       P=a+b+c; h=2*S/c;
+     }
+     else if(hv('S')&&hv('beta')&&beta>0&&beta<90){     // площадь + угол β (3-параметр комбинация)
+       alpha=90-beta;
+       const sin2=Math.sin(2*beta*R);
+       c=Math.sqrt(4*S/sin2);
+       a=c*Math.sin(beta*R);
+       b=c*Math.cos(beta*R);
+       P=a+b+c; h=2*S/c;
+     }
+
+     // финальная нормализация (на случай, если пришли 3 параметра и один из них уже вычислил a+b)
+     if(a&&b){
+       c=c||Math.sqrt(a*a+b*b);
+       S=S||0.5*a*b;
+       P=P||a+b+c;
+       h=h||a*b/c;
+       if(!alpha)alpha=Math.atan(b/a)/R;
+       if(!beta)beta=90-alpha;
+     }
+
+     return{a,b,c,alpha,beta,S,P,h};
    },
    draw(ctx,W,H,v,af){
-     const a=v.a>0?v.a:1,b=v.b>0?v.b:1.5;
-     const sc=Math.min((W-72)/b,(H-60)/a),ox=36,oy=H-28;
-     const A=[ox,oy-a*sc],B=[ox+b*sc,oy],C=[ox,oy];
+     const a=v.a>0?v.a:1, b=v.b>0?v.b:1.5;
+     const sc=Math.min((W-72)/b,(H-60)/a), ox=36, oy=H-28;
+     const A=[ox,oy-a*sc], B=[ox+b*sc,oy], C=[ox,oy];
+
+     // заливка треугольника
      fillPoly(ctx,[A,B,C],'rgba(59,130,246,0.08)');
-     drawRightAngle(ctx,C[0],C[1],12);
      if(af==='S')fillPoly(ctx,[A,B,C],'rgba(59,130,246,0.22)');
-     if(af==='P')strokePoly(ctx,[A,B,C],'#a78bfa',2.5);else strokePoly(ctx,[A,B,C],'#2dd4bf',1.5);
+
+     // контур треугольника
+     if(af==='P')strokePoly(ctx,[A,B,C],'#a78bfa',2.5);
+     else strokePoly(ctx,[A,B,C],'#2dd4bf',1.5);
+
+     // выделение конкретной стороны (a, b, c)
      const segs={a:[A,C],b:[C,B],c:[A,B]};
-     if(segs[af]){const[p1,p2]=segs[af];ctx.beginPath();ctx.moveTo(...p1);ctx.lineTo(...p2);ctx.strokeStyle='#a78bfa';ctx.lineWidth=3;ctx.stroke();}
-     if(af==='h')dashedLine(ctx,A[0],A[1],A[0],B[1],'#a78bfa',1.5);
-     if(af==='m_c'){ctx.beginPath();ctx.moveTo(A[0],A[1]);ctx.lineTo((B[0]+C[0])/2,(B[1]+C[1])/2);ctx.strokeStyle='#a78bfa';ctx.lineWidth=2;ctx.setLineDash([4,3]);ctx.stroke();ctx.setLineDash([]);}
+     if(segs[af]){
+       const[p1,p2]=segs[af];
+       ctx.beginPath(); ctx.moveTo(...p1); ctx.lineTo(...p2);
+       ctx.strokeStyle='#a78bfa'; ctx.lineWidth=3; ctx.stroke();
+     }
+
+     // === ВЫСОТА К ГИПОТЕНУЗЕ ===
+     // вычисляем точку D — основание высоты из C на AB
+     const vecAB=[B[0]-A[0],B[1]-A[1]];
+     const vecAC=[C[0]-A[0],C[1]-A[1]];
+     const lenAB2=vecAB[0]*vecAB[0]+vecAB[1]*vecAB[1];
+     let t=(vecAC[0]*vecAB[0]+vecAC[1]*vecAB[1])/lenAB2;
+     t=Math.max(0,Math.min(1,t));
+     const D=[A[0]+t*vecAB[0], A[1]+t*vecAB[1]];
+
+     // обычная пунктирная высота (всегда видна)
+     ctx.save();
+     ctx.setLineDash([4,3]);
+     ctx.strokeStyle='#2dd4bf';
+     ctx.lineWidth=1.5;
+     ctx.beginPath();
+     ctx.moveTo(C[0],C[1]);
+     ctx.lineTo(D[0],D[1]);
+     ctx.stroke();
+     ctx.setLineDash([]);
+     ctx.restore();
+
+     // если выбрана высота — выделяем ярко (как стороны)
+     if(af==='h'){
+       ctx.beginPath();
+       ctx.moveTo(C[0],C[1]);
+       ctx.lineTo(D[0],D[1]);
+       ctx.strokeStyle='#a78bfa';
+       ctx.lineWidth=3;
+       ctx.stroke();
+     }
+
+     drawRightAngle(ctx,C[0],C[1],12);
+
+     // подписи сторон (как было)
      label(ctx,(A[0]+C[0])/2-14,(A[1]+C[1])/2,'a');
      label(ctx,(C[0]+B[0])/2,(C[1]+B[1])/2+16,'b');
      label(ctx,(A[0]+B[0])/2+10,(A[1]+B[1])/2-8,'c');
+
+     // дуги углов
+     drawAngleArc(ctx,C[0],C[1],[A[0]-C[0],A[1]-C[1]],[B[0]-C[0],B[1]-C[1]],20,'rgba(45,212,191,0.3)');
+     if(af==='alpha')drawAngleArc(ctx,A[0],A[1],[C[0]-A[0],C[1]-A[1]],[B[0]-A[0],B[1]-A[1]],22,'#a78bfa');
+     if(af==='beta')drawAngleArc(ctx,B[0],B[1],[A[0]-B[0],A[1]-B[1]],[C[0]-B[0],C[1]-B[1]],22,'#a78bfa');
    }
   },
   {id:'eq_tri',label:'Равносторонний △',group:'Треугольники',
@@ -168,20 +358,17 @@ const SHAPES=[
    fields:[
      {k:'a',sym:'a',name:'сторона'},{k:'S',sym:'S',name:'площадь'},
      {k:'P',sym:'P',name:'периметр'},{k:'h',sym:'h',name:'высота'},
-     {k:'R',sym:'R',name:'описанная R'},{k:'r',sym:'r',name:'вписанная r'},
    ],
    calc(v){
-     let{a,S,P,h,R,r}=v;
+     let{a,S,P,h}=v;
      const hv=k=>v[k]!=null&&+v[k]>0;
      if(!hv('a')){
        if(hv('S'))a=sqrt(4*S/sqrt(3));
        else if(hv('P'))a=P/3;
        else if(hv('h'))a=2*h/sqrt(3);
-       else if(hv('R'))a=R*sqrt(3);
-       else if(hv('r'))a=r*2*sqrt(3);
      }
-     if(a){S=sqrt(3)/4*a*a;P=3*a;h=sqrt(3)/2*a;R=a/sqrt(3);r=a/(2*sqrt(3));}
-     return{a,S,P,h,R,r};
+     if(a){S=sqrt(3)/4*a*a;P=3*a;h=sqrt(3)/2*a;}
+     return{a,S,P,h};
    },
    draw(ctx,W,H,v,af){
      const a=v.a>0?v.a:1,ht=sqrt(3)/2*a;
@@ -191,57 +378,298 @@ const SHAPES=[
      if(af==='S')fillPoly(ctx,[A,B,C],'rgba(59,130,246,0.22)');
      if(af==='h')dashedLine(ctx,cx,ty,cx,by,'#a78bfa',2);
      if(af==='P')strokePoly(ctx,[A,B,C],'#a78bfa',2.5);else strokePoly(ctx,[A,B,C],'#2dd4bf',1.5);
-     const cy2=ty+(ht*sc)/3;
-     if(af==='R')dashedArc(ctx,cx,cy2,(v.R>0?v.R:a/sqrt(3))*sc,'#a78bfa');
-     if(af==='r')dashedArc(ctx,cx,cy2,(v.r>0?v.r:a/(2*sqrt(3)))*sc,'#a78bfa');
      label(ctx,cx,(by+ty)/2+4,'a');
    }
   },
-  {id:'scalene',label:'Произвольный △',group:'Треугольники',
-   formula:'S=√[s(s-a)(s-b)(s-c)]',
-   fields:[
-     {k:'a',sym:'a',name:'сторона BC'},{k:'b',sym:'b',name:'сторона AC'},
-     {k:'c',sym:'c',name:'сторона AB'},{k:'alpha',sym:'α',name:'угол A, °'},
-     {k:'beta',sym:'β',name:'угол B, °'},{k:'gamma',sym:'γ',name:'угол C, °'},
-     {k:'S',sym:'S',name:'площадь'},{k:'P',sym:'P',name:'периметр'},
-     {k:'R',sym:'R',name:'описанная R'},{k:'r',sym:'r',name:'вписанная r'},
-   ],
-   calc(v){
-     let{a,b,c,alpha,beta,gamma,S,P,R,r}=v;
-     const hv=k=>v[k]!=null&&!isNaN(v[k])&&v[k]>0;
-     function full(a,b,c){
-       if(!a||!b||!c||a+b<=c||a+c<=b||b+c<=a)return null;
-       const s=(a+b+c)/2,sq=s*(s-a)*(s-b)*(s-c);
-       if(sq<0)return null;
-       const S2=sqrt(sq);
-       return{S:S2,P:a+b+c,R:a*b*c/(4*S2),r:S2/s,
-         alpha:acos(Math.max(-1,Math.min(1,(b*b+c*c-a*a)/(2*b*c))))/R,
-         beta:acos(Math.max(-1,Math.min(1,(a*a+c*c-b*b)/(2*a*c))))/R,
-         gamma:acos(Math.max(-1,Math.min(1,(a*a+b*b-c*c)/(2*a*b))))/R};
-     }
-     if(hv('a')&&hv('b')&&hv('c')){const res=full(a,b,c);if(res)Object.assign(v,res),({S,P,R,r,alpha,beta,gamma}=res);}
-     else if(hv('a')&&hv('b')&&hv('gamma')&&gamma>0&&gamma<180){gamma=+gamma;c=sqrt(a*a+b*b-2*a*b*cos(gamma*R));const res=full(a,b,c);if(res)({S,P,R,r,alpha,beta}=res);}
-     else if(hv('a')&&hv('alpha')&&hv('beta')&&alpha+beta<180){alpha=+alpha;beta=+beta;gamma=180-alpha-beta;b=a*sin(beta*R)/sin(alpha*R);c=a*sin(gamma*R)/sin(alpha*R);const res=full(a,b,c);if(res)({S,P,R,r}=res);}
-     else if(hv('a')&&hv('b')&&hv('alpha')&&alpha>0&&alpha<180){alpha=+alpha;const sinB=b*sin(alpha*R)/a;if(sinB<=1){beta=asin(sinB)/R;gamma=180-alpha-beta;c=a*sin(gamma*R)/sin(alpha*R);const res=full(a,b,c);if(res)({S,P,R,r}=res);}}
-     return{a,b,c,alpha,beta,gamma,S,P,R,r};
-   },
-   draw(ctx,W,H,v,af){
-     const a=v.a>0?v.a:3,bv=v.b>0?v.b:4,c=v.c>0?v.c:5;
-     const cosA=Math.max(-1,Math.min(1,(bv*bv+c*c-a*a)/(2*bv*c)));
-     const Ax=0,Bx=c,Cx=bv*cosA,Cy=bv*sqrt(1-cosA*cosA);
-     const xs=[0,Bx,Cx],ys=[0,0,Cy],minX=Math.min(...xs),maxX=Math.max(...xs),minY=0,maxY=Math.max(...ys);
-     const sc=Math.min((W-70)/(maxX-minX||1),(H-60)/(maxY-minY||1));
-     const ox=32-minX*sc,oy=H-28;
-     const A=[Ax*sc+ox,oy],B=[Bx*sc+ox,oy],C=[Cx*sc+ox,oy-Cy*sc];
-     fillPoly(ctx,[A,B,C],'rgba(59,130,246,0.08)');
-     if(af==='S')fillPoly(ctx,[A,B,C],'rgba(59,130,246,0.22)');
-     if(af==='P')strokePoly(ctx,[A,B,C],'#a78bfa',2.5);else strokePoly(ctx,[A,B,C],'#2dd4bf',1.5);
-     const segs={a:[B,C],b:[A,C],c:[A,B]};
-     if(segs[af]){const[p1,p2]=segs[af];ctx.beginPath();ctx.moveTo(...p1);ctx.lineTo(...p2);ctx.strokeStyle='#a78bfa';ctx.lineWidth=3;ctx.stroke();}
-     ctx.font='bold 12px monospace';ctx.fillStyle='#94a3b8';ctx.textAlign='center';
-     ctx.fillText('A',A[0],A[1]+16);ctx.fillText('B',B[0],B[1]+16);ctx.fillText('C',C[0],C[1]-8);
-   }
+{
+  id: 'scalene',
+  label: 'Произвольный △',
+  group: 'Треугольники',
+  formula: 'S = √[s(s-a)(s-b)(s-c)]',
+  fields: [
+    { k: 'a', sym: 'a', name: 'сторона BC' },
+    { k: 'b', sym: 'b', name: 'сторона AC' },
+    { k: 'c', sym: 'c', name: 'сторона AB' },
+    { k: 'alpha', sym: 'α', name: 'угол A, °' },
+    { k: 'beta', sym: 'β', name: 'угол B, °' },
+    { k: 'gamma', sym: 'γ', name: 'угол C, °' },
+    { k: 'S', sym: 'S', name: 'площадь' },
+    { k: 'P', sym: 'P', name: 'периметр' },
+    { k: 'h', sym: 'h', name: 'высота к стороне c' },
+  ],
+
+  calc(v) {
+    const R = Math.PI / 180;
+    const EPS = 1e-9;
+    const sq = x => Math.sqrt(Math.max(0, x));
+    const clamp = (x, lo, hi) => Math.max(lo, Math.min(hi, x));
+    const toNum = x => (x == null || x === '' || !isFinite(+x) ? null : +x);
+    const pos = x => x != null && isFinite(x) && x > EPS;
+    const ang = x => x != null && isFinite(x) && x > EPS && x < 180 - EPS;
+
+    let a = toNum(v.a);
+    let b = toNum(v.b);
+    let c = toNum(v.c);
+    let alpha = toNum(v.alpha);
+    let beta = toNum(v.beta);
+    let gamma = toNum(v.gamma);
+    let S = toNum(v.S);
+    let P = toNum(v.P);
+    let h = toNum(v.h);
+
+    const setIfEmpty = (key, value) => {
+      if (value == null || !isFinite(value)) return false;
+      if (typeof value === 'number' && value <= EPS) return false;
+      switch (key) {
+        case 'a': if (!pos(a)) { a = value; return true; } break;
+        case 'b': if (!pos(b)) { b = value; return true; } break;
+        case 'c': if (!pos(c)) { c = value; return true; return true; } break;
+        case 'alpha': if (!ang(alpha)) { alpha = value; return true; } break;
+        case 'beta': if (!ang(beta)) { beta = value; return true; } break;
+        case 'gamma': if (!ang(gamma)) { gamma = value; return true; } break;
+        case 'S': if (!pos(S)) { S = value; return true; } break;
+        case 'P': if (!pos(P)) { P = value; return true; } break;
+        case 'h': if (!pos(h)) { h = value; return true; } break;
+      }
+      return false;
+    };
+
+    const validTriangle = (aa, bb, cc) =>
+      pos(aa) && pos(bb) && pos(cc) &&
+      aa + bb > cc + EPS &&
+      aa + cc > bb + EPS &&
+      bb + cc > aa + EPS;
+
+    const fillFromSides = () => {
+      if (!validTriangle(a, b, c)) return false;
+
+      const s = (a + b + c) / 2;
+      const q = s * (s - a) * (s - b) * (s - c);
+      if (q <= EPS) return false;
+
+      S = Math.sqrt(q);
+      P = a + b + c;
+      h = 2 * S / c;
+
+      alpha = Math.acos(clamp((b * b + c * c - a * a) / (2 * b * c), -1, 1)) / R;
+      beta = Math.acos(clamp((a * a + c * c - b * b) / (2 * a * c), -1, 1)) / R;
+      gamma = 180 - alpha - beta;
+
+      return true;
+    };
+
+    const solveSSA = (knownSide, knownAngleDeg, otherSide) => {
+      if (!pos(knownSide) || !ang(knownAngleDeg) || !pos(otherSide)) return null;
+      const s = otherSide * Math.sin(knownAngleDeg * R) / knownSide;
+      if (s < -1 || s > 1) return null;
+
+      const p = Math.asin(clamp(s, -1, 1)) / R;
+      const cands = [p, 180 - p].filter(x => x > EPS && x < 180 - EPS);
+
+      for (const x of cands) {
+        if (knownAngleDeg + x < 180 - EPS) return x;
+      }
+      return null;
+    };
+
+    for (let step = 0; step < 30; step++) {
+      let changed = false;
+
+      // Сумма углов
+      if (ang(alpha) && ang(beta) && !ang(gamma)) changed = setIfEmpty('gamma', 180 - alpha - beta) || changed;
+      if (ang(alpha) && ang(gamma) && !ang(beta)) changed = setIfEmpty('beta', 180 - alpha - gamma) || changed;
+      if (ang(beta) && ang(gamma) && !ang(alpha)) changed = setIfEmpty('alpha', 180 - beta - gamma) || changed;
+
+      // Периметр
+      if (pos(a) && pos(b) && pos(c) && !pos(P)) changed = setIfEmpty('P', a + b + c) || changed;
+      if (pos(P) && pos(a) && pos(b) && !pos(c)) changed = setIfEmpty('c', P - a - b) || changed;
+      if (pos(P) && pos(a) && pos(c) && !pos(b)) changed = setIfEmpty('b', P - a - c) || changed;
+      if (pos(P) && pos(b) && pos(c) && !pos(a)) changed = setIfEmpty('a', P - b - c) || changed;
+
+      // Площадь и высота к стороне c
+      if (pos(c) && pos(h) && !pos(S)) changed = setIfEmpty('S', c * h / 2) || changed;
+      if (pos(S) && pos(c) && !pos(h)) changed = setIfEmpty('h', 2 * S / c) || changed;
+      if (pos(S) && pos(h) && !pos(c)) changed = setIfEmpty('c', 2 * S / h) || changed;
+
+      // Высота через сторону и угол
+      if (pos(b) && ang(alpha) && !pos(h)) changed = setIfEmpty('h', b * Math.sin(alpha * R)) || changed;
+      if (pos(a) && ang(beta) && !pos(h)) changed = setIfEmpty('h', a * Math.sin(beta * R)) || changed;
+      if (pos(h) && ang(alpha) && !pos(b)) changed = setIfEmpty('b', h / Math.sin(alpha * R)) || changed;
+      if (pos(h) && ang(beta) && !pos(a)) changed = setIfEmpty('a', h / Math.sin(beta * R)) || changed;
+      if (pos(h) && pos(b) && !ang(alpha) && h <= b + EPS) changed = setIfEmpty('alpha', Math.asin(clamp(h / b, -1, 1)) / R) || changed;
+      if (pos(h) && pos(a) && !ang(beta) && h <= a + EPS) changed = setIfEmpty('beta', Math.asin(clamp(h / a, -1, 1)) / R) || changed;
+
+      // Закон косинусов: 2 стороны + включённый угол
+      if (pos(b) && pos(c) && ang(alpha) && !pos(a)) changed = setIfEmpty('a', sq(b * b + c * c - 2 * b * c * Math.cos(alpha * R))) || changed;
+      if (pos(a) && pos(c) && ang(beta) && !pos(b)) changed = setIfEmpty('b', sq(a * a + c * c - 2 * a * c * Math.cos(beta * R))) || changed;
+      if (pos(a) && pos(b) && ang(gamma) && !pos(c)) changed = setIfEmpty('c', sq(a * a + b * b - 2 * a * b * Math.cos(gamma * R))) || changed;
+
+      // Площадь по двум сторонам и включённому углу
+      if (pos(b) && pos(c) && ang(alpha) && !pos(S)) changed = setIfEmpty('S', 0.5 * b * c * Math.sin(alpha * R)) || changed;
+      if (pos(a) && pos(c) && ang(beta) && !pos(S)) changed = setIfEmpty('S', 0.5 * a * c * Math.sin(beta * R)) || changed;
+      if (pos(a) && pos(b) && ang(gamma) && !pos(S)) changed = setIfEmpty('S', 0.5 * a * b * Math.sin(gamma * R)) || changed;
+
+      // Площадь + сторона + включённый угол => вторая сторона
+      if (pos(S) && pos(b) && ang(alpha) && !pos(c)) changed = setIfEmpty('c', 2 * S / (b * Math.sin(alpha * R))) || changed;
+      if (pos(S) && pos(c) && ang(alpha) && !pos(b)) changed = setIfEmpty('b', 2 * S / (c * Math.sin(alpha * R))) || changed;
+
+      if (pos(S) && pos(a) && ang(beta) && !pos(c)) changed = setIfEmpty('c', 2 * S / (a * Math.sin(beta * R))) || changed;
+      if (pos(S) && pos(c) && ang(beta) && !pos(a)) changed = setIfEmpty('a', 2 * S / (c * Math.sin(beta * R))) || changed;
+
+      if (pos(S) && pos(a) && ang(gamma) && !pos(b)) changed = setIfEmpty('b', 2 * S / (a * Math.sin(gamma * R))) || changed;
+      if (pos(S) && pos(b) && ang(gamma) && !pos(a)) changed = setIfEmpty('a', 2 * S / (b * Math.sin(gamma * R))) || changed;
+
+      // Сторона + 2 угла
+      if (pos(a) && ang(alpha) && ang(beta) && !ang(gamma)) changed = setIfEmpty('gamma', 180 - alpha - beta) || changed;
+      if (pos(a) && ang(alpha) && ang(gamma) && !ang(beta)) changed = setIfEmpty('beta', 180 - alpha - gamma) || changed;
+      if (pos(b) && ang(alpha) && ang(beta) && !ang(gamma)) changed = setIfEmpty('gamma', 180 - alpha - beta) || changed;
+      if (pos(b) && ang(beta) && ang(gamma) && !ang(alpha)) changed = setIfEmpty('alpha', 180 - beta - gamma) || changed;
+      if (pos(c) && ang(alpha) && ang(gamma) && !ang(beta)) changed = setIfEmpty('beta', 180 - alpha - gamma) || changed;
+      if (pos(c) && ang(beta) && ang(gamma) && !ang(alpha)) changed = setIfEmpty('alpha', 180 - beta - gamma) || changed;
+
+      if (pos(a) && ang(alpha) && ang(beta) && ang(gamma)) {
+        changed = setIfEmpty('b', a * Math.sin(beta * R) / Math.sin(alpha * R)) || changed;
+        changed = setIfEmpty('c', a * Math.sin(gamma * R) / Math.sin(alpha * R)) || changed;
+      }
+      if (pos(b) && ang(alpha) && ang(beta) && ang(gamma)) {
+        changed = setIfEmpty('a', b * Math.sin(alpha * R) / Math.sin(beta * R)) || changed;
+        changed = setIfEmpty('c', b * Math.sin(gamma * R) / Math.sin(beta * R)) || changed;
+      }
+      if (pos(c) && ang(alpha) && ang(beta) && ang(gamma)) {
+        changed = setIfEmpty('a', c * Math.sin(alpha * R) / Math.sin(gamma * R)) || changed;
+        changed = setIfEmpty('b', c * Math.sin(beta * R) / Math.sin(gamma * R)) || changed;
+      }
+
+      // 2 стороны + противолежащий угол (SSA)
+      if (pos(a) && pos(b) && ang(alpha) && !ang(beta)) changed = setIfEmpty('beta', solveSSA(a, alpha, b)) || changed;
+      if (pos(a) && pos(c) && ang(alpha) && !ang(gamma)) changed = setIfEmpty('gamma', solveSSA(a, alpha, c)) || changed;
+      if (pos(a) && pos(b) && ang(beta) && !ang(alpha)) changed = setIfEmpty('alpha', solveSSA(b, beta, a)) || changed;
+      if (pos(b) && pos(c) && ang(beta) && !ang(gamma)) changed = setIfEmpty('gamma', solveSSA(b, beta, c)) || changed;
+      if (pos(a) && pos(c) && ang(gamma) && !ang(alpha)) changed = setIfEmpty('alpha', solveSSA(c, gamma, a)) || changed;
+      if (pos(b) && pos(c) && ang(gamma) && !ang(beta)) changed = setIfEmpty('beta', solveSSA(c, gamma, b)) || changed;
+
+      // Высота + основание + угол
+      if (pos(c) && pos(h) && ang(alpha) && !pos(b)) changed = setIfEmpty('b', h / Math.sin(alpha * R)) || changed;
+      if (pos(c) && pos(h) && ang(beta) && !pos(a)) changed = setIfEmpty('a', h / Math.sin(beta * R)) || changed;
+
+      if (pos(c) && pos(h) && pos(b) && !pos(a)) {
+        const x = sq(b * b - h * h);
+        const y = c - x;
+        if (y > EPS) changed = setIfEmpty('a', Math.hypot(y, h)) || changed;
+        if (y > EPS) changed = setIfEmpty('beta', Math.atan2(h, y) / R) || changed;
+      }
+
+      if (pos(c) && pos(h) && pos(a) && !pos(b)) {
+        const y = sq(a * a - h * h);
+        const x = c - y;
+        if (x > EPS) changed = setIfEmpty('b', Math.hypot(x, h)) || changed;
+        if (x > EPS) changed = setIfEmpty('alpha', Math.atan2(h, x) / R) || changed;
+      }
+
+      if (pos(c) && pos(h) && ang(alpha) && !pos(a)) {
+        const x = h / Math.tan(alpha * R);
+        const y = c - x;
+        if (y > EPS) changed = setIfEmpty('a', Math.hypot(y, h)) || changed;
+        if (y > EPS) changed = setIfEmpty('beta', Math.atan2(h, y) / R) || changed;
+      }
+
+      if (pos(c) && pos(h) && ang(beta) && !pos(b)) {
+        const y = h / Math.tan(beta * R);
+        const x = c - y;
+        if (x > EPS) changed = setIfEmpty('b', Math.hypot(x, h)) || changed;
+        if (x > EPS) changed = setIfEmpty('alpha', Math.atan2(h, x) / R) || changed;
+      }
+
+      // Высота + площадь + угол
+      if (pos(S) && pos(h) && !pos(c)) changed = setIfEmpty('c', 2 * S / h) || changed;
+      if (pos(S) && pos(h) && pos(c) && ang(alpha) && !pos(b)) changed = setIfEmpty('b', h / Math.sin(alpha * R)) || changed;
+      if (pos(S) && pos(h) && pos(c) && ang(beta) && !pos(a)) changed = setIfEmpty('a', h / Math.sin(beta * R)) || changed;
+
+      // Площадь + сторона + угол, где угол не включённый, но через высоту
+      if (pos(S) && pos(a) && ang(beta) && !pos(h)) changed = setIfEmpty('h', a * Math.sin(beta * R)) || changed;
+      if (pos(S) && pos(b) && ang(alpha) && !pos(h)) changed = setIfEmpty('h', b * Math.sin(alpha * R)) || changed;
+      if (pos(S) && pos(a) && ang(beta) && !pos(c) && pos(h)) changed = setIfEmpty('c', 2 * S / h) || changed;
+      if (pos(S) && pos(b) && ang(alpha) && !pos(c) && pos(h)) changed = setIfEmpty('c', 2 * S / h) || changed;
+
+      // 3 стороны => всё остальное
+      if (validTriangle(a, b, c)) {
+        const before = [S, P, h, alpha, beta, gamma];
+        fillFromSides();
+        const after = [S, P, h, alpha, beta, gamma];
+        if (String(before) !== String(after)) changed = true;
+      }
+
+      if (!changed) break;
+    }
+
+    // Финал
+    if (validTriangle(a, b, c)) fillFromSides();
+
+    return { a, b, c, alpha, beta, gamma, S, P, h };
   },
+
+  draw(ctx, W, H, v, af) {
+    const sq = x => Math.sqrt(Math.max(0, x));
+
+    const a = v.a > 0 ? +v.a : 3;
+    const b = v.b > 0 ? +v.b : 4;
+    const c = v.c > 0 ? +v.c : 5;
+
+    const cosA = Math.max(-1, Math.min(1, (b * b + c * c - a * a) / (2 * b * c)));
+    const Ax = 0;
+    const Bx = c;
+    const Cx = b * cosA;
+    const Cy = b * sq(1 - cosA * cosA);
+
+    const xs = [0, Bx, Cx];
+    const ys = [0, 0, Cy];
+    const minX = Math.min(...xs);
+    const maxX = Math.max(...xs);
+    const minY = 0;
+    const maxY = Math.max(...ys);
+
+    const sc = Math.min((W - 70) / (maxX - minX || 1), (H - 60) / (maxY - minY || 1));
+    const ox = 32 - minX * sc;
+    const oy = H - 28;
+
+    const A = [Ax * sc + ox, oy];
+    const B = [Bx * sc + ox, oy];
+    const C = [Cx * sc + ox, oy - Cy * sc];
+
+    fillPoly(ctx, [A, B, C], af === 'S' ? 'rgba(59,130,246,0.22)' : 'rgba(59,130,246,0.08)');
+    strokePoly(ctx, [A, B, C], af === 'P' ? '#a78bfa' : '#2dd4bf', af === 'P' ? 2.5 : 1.5);
+
+    const segs = { a: [B, C], b: [A, C], c: [A, B] };
+    if (segs[af]) {
+      const [p1, p2] = segs[af];
+      ctx.beginPath();
+      ctx.moveTo(...p1);
+      ctx.lineTo(...p2);
+      ctx.strokeStyle = '#a78bfa';
+      ctx.lineWidth = 3;
+      ctx.stroke();
+    }
+
+    if (af === 'alpha') drawAngleArc(ctx, A[0], A[1], [B[0] - A[0], B[1] - A[1]], [C[0] - A[0], C[1] - A[1]], 22, '#a78bfa');
+    if (af === 'beta') drawAngleArc(ctx, B[0], B[1], [A[0] - B[0], A[1] - B[1]], [C[0] - B[0], C[1] - B[1]], 22, '#a78bfa');
+    if (af === 'gamma') drawAngleArc(ctx, C[0], C[1], [A[0] - C[0], A[1] - C[1]], [B[0] - C[0], B[1] - C[1]], 22, '#a78bfa');
+
+    if (af === 'h') {
+      const footX = C[0];
+      const footY = oy;
+      dashedLine(ctx, C[0], C[1], footX, footY, '#a78bfa', 2);
+    }
+
+    ctx.font = 'bold 12px monospace';
+    ctx.fillStyle = '#94a3b8';
+    ctx.textAlign = 'center';
+    ctx.fillText('A', A[0], A[1] + 16);
+    ctx.fillText('B', B[0], B[1] + 16);
+    ctx.fillText('C', C[0], C[1] - 8);
+  }
+}
+
+,
   {id:'isos_tri',label:'Равнобедренный △',group:'Треугольники',
    formula:'h=√(b²−(a/2)²)',
    fields:[
@@ -252,6 +680,9 @@ const SHAPES=[
    calc(v){
      let{a,b,alpha,beta,S,P,h}=v;
      const hv=k=>v[k]!=null&&+v[k]>0;
+     // угловая связь: beta = 180 - 2*alpha
+     if(hv('alpha')&&!hv('beta'))beta=180-2*+alpha;
+     if(hv('beta')&&!hv('alpha'))alpha=(180-+beta)/2;
      if(hv('a')&&hv('b')&&b>a/2){h=sqrt(b*b-(a/2)*(a/2));alpha=acos(a/(2*b))/R;beta=180-2*alpha;}
      else if(hv('a')&&hv('alpha')&&alpha>0&&alpha<90){alpha=+alpha;beta=180-2*alpha;b=a/(2*Math.cos(alpha*R));h=b*Math.sin(alpha*R);}
      else if(hv('a')&&hv('h')){b=sqrt(h*h+(a/2)*(a/2));alpha=atan(h/(a/2))/R;beta=180-2*alpha;}
@@ -270,32 +701,38 @@ const SHAPES=[
      if(af==='P')strokePoly(ctx,[A,B,C],'#a78bfa',2.5);else strokePoly(ctx,[A,B,C],'#2dd4bf',1.5);
      if(af==='a'){ctx.beginPath();ctx.moveTo(A[0],by+10);ctx.lineTo(B[0],by+10);ctx.strokeStyle='#a78bfa';ctx.lineWidth=2;ctx.stroke();}
      if(af==='b'){ctx.beginPath();ctx.moveTo(A[0],A[1]);ctx.lineTo(C[0],C[1]);ctx.strokeStyle='#a78bfa';ctx.lineWidth=3;ctx.stroke();}
+     if(af==='alpha')drawAngleArc(ctx,A[0],A[1],[B[0]-A[0],B[1]-A[1]],[C[0]-A[0],C[1]-A[1]],22,'#a78bfa');
+     if(af==='beta')drawAngleArc(ctx,C[0],C[1],[A[0]-C[0],A[1]-C[1]],[B[0]-C[0],B[1]-C[1]],22,'#a78bfa');
      label(ctx,cx,by+20,'a');
    }
   },
+
+  // ─── ЧЕТЫРЁХУГОЛЬНИКИ ───────────────────────────────────────────────────────
   {id:'square',label:'Квадрат',group:'Четырёхугольники',
    formula:'S=a², d=a√2',
    fields:[
      {k:'a',sym:'a',name:'сторона'},{k:'S',sym:'S',name:'площадь'},
      {k:'P',sym:'P',name:'периметр'},{k:'d',sym:'d',name:'диагональ'},
-     {k:'R',sym:'R',name:'описанная R'},{k:'r',sym:'r',name:'вписанная r'},
    ],
    calc(v){
-     let{a,S,P,d,R,r}=v;
+     let{a,S,P,d}=v;
      const hv=k=>v[k]!=null&&+v[k]>0;
-     if(!hv('a')){if(hv('S'))a=sqrt(S);else if(hv('P'))a=P/4;else if(hv('d'))a=d/sqrt(2);else if(hv('R'))a=R*sqrt(2);else if(hv('r'))a=r*2;}
-     if(a){S=a*a;P=4*a;d=a*sqrt(2);R=a*sqrt(2)/2;r=a/2;}
-     return{a,S,P,d,R,r};
+     if(!hv('a')){if(hv('S'))a=sqrt(S);else if(hv('P'))a=P/4;else if(hv('d'))a=d/sqrt(2);}
+     if(a){S=a*a;P=4*a;d=a*sqrt(2);}
+     return{a,S,P,d};
    },
    draw(ctx,W,H,v,af){
      const a=v.a>0?v.a:1,sc=Math.min((W-60)/a,(H-60)/a),ox=(W-a*sc)/2,oy=(H-a*sc)/2;
      ctx.fillStyle='rgba(59,130,246,0.08)';ctx.fillRect(ox,oy,a*sc,a*sc);
      if(af==='S'){ctx.fillStyle='rgba(59,130,246,0.22)';ctx.fillRect(ox,oy,a*sc,a*sc);}
      if(af==='d'){ctx.beginPath();ctx.moveTo(ox,oy);ctx.lineTo(ox+a*sc,oy+a*sc);ctx.strokeStyle='#a78bfa';ctx.lineWidth=2;ctx.stroke();}
-     if(af==='R')dashedArc(ctx,ox+a*sc/2,oy+a*sc/2,a*sc*sqrt(2)/2,'#a78bfa');
-     if(af==='r')dashedArc(ctx,ox+a*sc/2,oy+a*sc/2,a*sc/2,'#a78bfa');
      ctx.strokeStyle=af==='P'?'#a78bfa':'#2dd4bf';ctx.lineWidth=af==='P'?2.5:1.5;ctx.strokeRect(ox,oy,a*sc,a*sc);
-     label(ctx,ox+a*sc/2,oy+a*sc+18,'a');
+     if(af==='a'){
+       ctx.beginPath();ctx.moveTo(ox,oy+a*sc+10);ctx.lineTo(ox+a*sc,oy+a*sc+10);ctx.strokeStyle='#a78bfa';ctx.lineWidth=2;ctx.stroke();
+     }
+     label(ctx,ox+a*sc/2,oy+a*sc+20,'a');
+     // right angle markers
+     drawRightAngle(ctx,ox,oy+a*sc,10);
    }
   },
   {id:'rect',label:'Прямоугольник',group:'Четырёхугольники',
@@ -311,7 +748,11 @@ const SHAPES=[
      else if(hv('a')&&hv('S')){b=S/a;P=2*(a+b);d=sqrt(a*a+b*b);}
      else if(hv('a')&&hv('P')&&P>2*a){b=P/2-a;S=a*b;d=sqrt(a*a+b*b);}
      else if(hv('a')&&hv('d')&&d>a){b=sqrt(d*d-a*a);S=a*b;P=2*(a+b);}
+     else if(hv('b')&&hv('S')){a=S/b;P=2*(a+b);d=sqrt(a*a+b*b);}
+     else if(hv('b')&&hv('P')&&P>2*b){a=P/2-b;S=a*b;d=sqrt(a*a+b*b);}
+     else if(hv('b')&&hv('d')&&d>b){a=sqrt(d*d-b*b);S=a*b;P=2*(a+b);}
      else if(hv('S')&&hv('P')){const disc=P*P/4-4*S;if(disc>=0){a=(P/2+sqrt(disc))/2;b=(P/2-sqrt(disc))/2;d=sqrt(a*a+b*b);}}
+     else if(hv('S')&&hv('d')){const disc=d*d*d*d-4*S*S;if(disc>=0){a=sqrt((d*d+sqrt(disc))/2);b=sqrt((d*d-sqrt(disc))/2);P=2*(a+b);}}
      return{a,b,S,P,d};
    },
    draw(ctx,W,H,v,af){
@@ -320,95 +761,970 @@ const SHAPES=[
      if(af==='S'){ctx.fillStyle='rgba(59,130,246,0.22)';ctx.fillRect(ox,oy,a*sc,bv*sc);}
      if(af==='d'){ctx.beginPath();ctx.moveTo(ox,oy);ctx.lineTo(ox+a*sc,oy+bv*sc);ctx.strokeStyle='#a78bfa';ctx.lineWidth=2;ctx.stroke();}
      ctx.strokeStyle=af==='P'?'#a78bfa':'#2dd4bf';ctx.lineWidth=af==='P'?2.5:1.5;ctx.strokeRect(ox,oy,a*sc,bv*sc);
-     label(ctx,ox+a*sc/2,oy+bv*sc+18,'a');
-     ctx.textAlign='right';label(ctx,ox-8,oy+bv*sc/2+4,'b');
+     if(af==='a'){ctx.beginPath();ctx.moveTo(ox,oy+bv*sc+10);ctx.lineTo(ox+a*sc,oy+bv*sc+10);ctx.strokeStyle='#a78bfa';ctx.lineWidth=2;ctx.stroke();}
+     if(af==='b'){ctx.beginPath();ctx.moveTo(ox-10,oy);ctx.lineTo(ox-10,oy+bv*sc);ctx.strokeStyle='#a78bfa';ctx.lineWidth=2;ctx.stroke();}
+     label(ctx,ox+a*sc/2,oy+bv*sc+20,'a');
+     ctx.textAlign='right';label(ctx,ox-14,oy+bv*sc/2+4,'b');
+     drawRightAngle(ctx,ox,oy+bv*sc,10);
    }
   },
-  {id:'parallelogram',label:'Параллелограмм',group:'Четырёхугольники',
-   formula:'S = a·b·sin α',
-   fields:[
-     {k:'a',sym:'a',name:'основание'},{k:'b',sym:'b',name:'боковая сторона'},
-     {k:'alpha',sym:'α',name:'угол α, °'},{k:'S',sym:'S',name:'площадь'},
-     {k:'P',sym:'P',name:'периметр'},{k:'h',sym:'h',name:'высота'},
-   ],
-   calc(v){
-     let{a,b,alpha,S,P,h}=v;
-     const hv=k=>v[k]!=null&&+v[k]>0;
-     if(hv('a')&&hv('b')&&hv('alpha')&&alpha>0&&alpha<180){alpha=+alpha;h=b*Math.sin(alpha*R);S=a*h;P=2*(a+b);}
-     else if(hv('a')&&hv('b')&&hv('h')&&h<=b){S=a*h;P=2*(a+b);alpha=asin(h/b)/R;}
-     else if(hv('S')&&hv('a')&&hv('b')){h=S/a;if(h<=b)alpha=asin(h/b)/R;P=2*(a+b);}
-     return{a,b,alpha,S,P,h};
-   },
-   draw(ctx,W,H,v,af){
-     const a=v.a>0?v.a:3,bv=v.b>0?v.b:2,al=(v.alpha>0?+v.alpha:60)*R;
-     const hh=bv*Math.sin(al),dx=bv*Math.cos(al),sc=Math.min((W-80)/(a+abs(dx)),(H-60)/hh),pad=30;
-     const ox=pad+(dx<0?abs(dx)*sc:0),oy=H-pad;
-     const P1=[ox,oy],Q=[ox+a*sc,oy],Rp=[ox+a*sc+dx*sc,oy-hh*sc],Sp=[ox+dx*sc,oy-hh*sc];
-     fillPoly(ctx,[P1,Q,Rp,Sp],'rgba(59,130,246,0.08)');
-     if(af==='S')fillPoly(ctx,[P1,Q,Rp,Sp],'rgba(59,130,246,0.22)');
-     if(af==='h')dashedLine(ctx,Sp[0],Sp[1],Sp[0],P1[1],'#a78bfa',2);
-     strokePoly(ctx,[P1,Q,Rp,Sp],af==='P'?'#a78bfa':'#2dd4bf',af==='P'?2.5:1.5);
-     label(ctx,(P1[0]+Q[0])/2,oy+18,'a');
-   }
+  {
+  id: 'parallelogram',
+  label: 'Параллелограмм',
+  group: 'Четырёхугольники',
+  formula: 'S = a·b·sinα = a·h,  d₁²= a²+b²−2ab·cosα,  d₂²= a²+b²+2ab·cosα',
+  fields: [
+    { k:'a',   sym:'a',   name:'основание a' },
+    { k:'b',   sym:'b',   name:'боковая сторона b' },
+    { k:'alpha',sym:'α',  name:'острый угол α, °' },
+    { k:'beta', sym:'β',  name:'тупой угол β, °' },
+    { k:'h',   sym:'h',   name:'высота h' },
+    { k:'S',   sym:'S',   name:'площадь S' },
+    { k:'P',   sym:'P',   name:'периметр P' },
+    { k:'d1',  sym:'d₁',  name:'диагональ d₁ (меньшая)' },
+    { k:'d2',  sym:'d₂',  name:'диагональ d₂ (большая)' },
+  ],
+
+  calc(v) {
+    const R = Math.PI / 180;
+    let { a, b, alpha, beta, h, S, P, d1, d2 } = v;
+    const hv = k => v[k] != null && +v[k] > 0;
+
+    // ── helpers ──────────────────────────────────────────────────────────────
+    // Recalculate everything once a, b, alpha (acute) are known
+    const fin = () => {
+      if (a == null || b == null || alpha == null) return;
+      a = +a; b = +b; alpha = +alpha;
+      if (alpha <= 0 || alpha >= 180 || a <= 0 || b <= 0) return;
+      if (alpha > 90) alpha = 180 - alpha;   // keep acute
+      beta = 180 - alpha;
+      h  = b * Math.sin(alpha * R);
+      S  = a * h;
+      P  = 2 * (a + b);
+      d1 = Math.sqrt(a*a + b*b - 2*a*b*Math.cos(alpha * R)); // shorter
+      d2 = Math.sqrt(a*a + b*b + 2*a*b*Math.cos(alpha * R)); // longer
+    };
+
+    // cosα → α (always return acute angle 0..90)
+    const acosAcute = c => {
+      if (c < -1 || c > 1) return null;
+      let ang = Math.acos(c) / R;
+      return ang > 90 ? 180 - ang : ang;
+    };
+
+    // Quadratic: t² - p·t + q = 0  → larger root (= a, assuming a≥b)
+    const quadLarge = (p, q) => {
+      const d = p*p - 4*q;
+      if (d < 0) return [null, null];
+      return [(p + Math.sqrt(d)) / 2, (p - Math.sqrt(d)) / 2];
+    };
+
+    // ── normalise β → α ──────────────────────────────────────────────────────
+    if (hv('beta') && !hv('alpha')) { alpha = 180 - +beta; v = {...v, alpha}; }
+
+    // ── GROUP 1: both sides known ─────────────────────────────────────────────
+    // a, b, α
+    if (hv('a')&&hv('b')&&hv('alpha')) {
+      a=+a; b=+b; alpha=+alpha; fin();
+      return {a,b,alpha,beta,h,S,P,d1,d2};
+    }
+    // a, b, h  →  α=asin(h/b)
+    if (hv('a')&&hv('b')&&hv('h')) {
+      a=+a; b=+b; h=+h;
+      if (h <= b) { alpha = Math.asin(h/b)/R; fin(); }
+      return {a,b,alpha,beta,h,S,P,d1,d2};
+    }
+    // a, b, S  →  h=S/a, α=asin(h/b)
+    if (hv('a')&&hv('b')&&hv('S')) {
+      a=+a; b=+b; S=+S; h=S/a;
+      if (h <= b) { alpha = Math.asin(h/b)/R; fin(); }
+      return {a,b,alpha,beta,h,S,P,d1,d2};
+    }
+    // a, b, d1  →  cosα=(a²+b²−d1²)/(2ab)
+    if (hv('a')&&hv('b')&&hv('d1')) {
+      a=+a; b=+b; d1=+d1;
+      alpha = acosAcute((a*a+b*b-d1*d1)/(2*a*b));
+      if (alpha) fin();
+      return {a,b,alpha,beta,h,S,P,d1,d2};
+    }
+    // a, b, d2  →  cosα=(d2²−a²−b²)/(2ab)
+    if (hv('a')&&hv('b')&&hv('d2')) {
+      a=+a; b=+b; d2=+d2;
+      alpha = acosAcute((d2*d2-a*a-b*b)/(2*a*b));
+      if (alpha) fin();
+      return {a,b,alpha,beta,h,S,P,d1,d2};
+    }
+
+    // ── GROUP 2: one side + P ─────────────────────────────────────────────────
+    // a, P, α
+    if (hv('a')&&hv('P')&&hv('alpha')) {
+      a=+a; b=+P/2-a; alpha=+alpha;
+      if (b>0) fin();
+      return {a,b,alpha,beta,h,S,P,d1,d2};
+    }
+    // a, P, h
+    if (hv('a')&&hv('P')&&hv('h')) {
+      a=+a; b=+P/2-a; h=+h;
+      if (b>0&&h<=b) { alpha=Math.asin(h/b)/R; fin(); }
+      return {a,b,alpha,beta,h,S,P,d1,d2};
+    }
+    // a, P, S
+    if (hv('a')&&hv('P')&&hv('S')) {
+      a=+a; b=+P/2-a; S=+S; h=S/a;
+      if (b>0&&h<=b) { alpha=Math.asin(h/b)/R; fin(); }
+      return {a,b,alpha,beta,h,S,P,d1,d2};
+    }
+    // a, P, d1
+    if (hv('a')&&hv('P')&&hv('d1')) {
+      a=+a; b=+P/2-a; d1=+d1;
+      if (b>0) { alpha=acosAcute((a*a+b*b-d1*d1)/(2*a*b)); if(alpha)fin(); }
+      return {a,b,alpha,beta,h,S,P,d1,d2};
+    }
+    // a, P, d2
+    if (hv('a')&&hv('P')&&hv('d2')) {
+      a=+a; b=+P/2-a; d2=+d2;
+      if (b>0) { alpha=acosAcute((d2*d2-a*a-b*b)/(2*a*b)); if(alpha)fin(); }
+      return {a,b,alpha,beta,h,S,P,d1,d2};
+    }
+    // b, P, α
+    if (hv('b')&&hv('P')&&hv('alpha')) {
+      b=+b; a=+P/2-b; alpha=+alpha;
+      if (a>0) fin();
+      return {a,b,alpha,beta,h,S,P,d1,d2};
+    }
+    // b, P, h
+    if (hv('b')&&hv('P')&&hv('h')) {
+      b=+b; a=+P/2-b; h=+h;
+      if (a>0&&h<=b) { alpha=Math.asin(h/b)/R; fin(); }
+      return {a,b,alpha,beta,h,S,P,d1,d2};
+    }
+    // b, P, S
+    if (hv('b')&&hv('P')&&hv('S')) {
+      b=+b; a=+P/2-b; S=+S; h=S/a;
+      if (a>0&&h<=b) { alpha=Math.asin(h/b)/R; fin(); }
+      return {a,b,alpha,beta,h,S,P,d1,d2};
+    }
+    // b, P, d1
+    if (hv('b')&&hv('P')&&hv('d1')) {
+      b=+b; a=+P/2-b; d1=+d1;
+      if (a>0) { alpha=acosAcute((a*a+b*b-d1*d1)/(2*a*b)); if(alpha)fin(); }
+      return {a,b,alpha,beta,h,S,P,d1,d2};
+    }
+    // b, P, d2
+    if (hv('b')&&hv('P')&&hv('d2')) {
+      b=+b; a=+P/2-b; d2=+d2;
+      if (a>0) { alpha=acosAcute((d2*d2-a*a-b*b)/(2*a*b)); if(alpha)fin(); }
+      return {a,b,alpha,beta,h,S,P,d1,d2};
+    }
+
+    // ── GROUP 3: one side + α ─────────────────────────────────────────────────
+    // a, α, h  →  b=h/sinα
+    if (hv('a')&&hv('alpha')&&hv('h')) {
+      a=+a; alpha=+alpha; h=+h;
+      b = h/Math.sin(alpha*R);
+      if (b>0) fin();
+      return {a,b,alpha,beta,h,S,P,d1,d2};
+    }
+    // a, α, S  →  h=S/a, b=h/sinα
+    if (hv('a')&&hv('alpha')&&hv('S')) {
+      a=+a; alpha=+alpha; S=+S; h=S/a;
+      b = h/Math.sin(alpha*R);
+      if (b>0) fin();
+      return {a,b,alpha,beta,h,S,P,d1,d2};
+    }
+    // a, α, d1  →  b²−2b·a·cosα+(a²−d1²)=0
+    if (hv('a')&&hv('alpha')&&hv('d1')) {
+      a=+a; alpha=+alpha; d1=+d1;
+      const cosA=Math.cos(alpha*R), sinA=Math.sin(alpha*R);
+      const D=d1*d1-a*a*sinA*sinA;
+      if (D>=0) { b=a*cosA+Math.sqrt(D); if(b>0)fin(); }
+      return {a,b,alpha,beta,h,S,P,d1,d2};
+    }
+    // a, α, d2  →  b²+2b·a·cosα+(a²−d2²)=0
+    if (hv('a')&&hv('alpha')&&hv('d2')) {
+      a=+a; alpha=+alpha; d2=+d2;
+      const cosA=Math.cos(alpha*R), sinA=Math.sin(alpha*R);
+      const D=d2*d2-a*a*sinA*sinA;
+      if (D>=0) { b=-a*cosA+Math.sqrt(D); if(b>0)fin(); }
+      return {a,b,alpha,beta,h,S,P,d1,d2};
+    }
+    // b, α, S  →  a=S/(b·sinα)
+    if (hv('b')&&hv('alpha')&&hv('S')) {
+      b=+b; alpha=+alpha; S=+S;
+      a=S/(b*Math.sin(alpha*R));
+      if (a>0) fin();
+      return {a,b,alpha,beta,h,S,P,d1,d2};
+    }
+    // b, α, d1  →  a²−2a·b·cosα+(b²−d1²)=0
+    if (hv('b')&&hv('alpha')&&hv('d1')) {
+      b=+b; alpha=+alpha; d1=+d1;
+      const cosA=Math.cos(alpha*R), sinA=Math.sin(alpha*R);
+      const D=d1*d1-b*b*sinA*sinA;
+      if (D>=0) { a=b*cosA+Math.sqrt(D); if(a>0)fin(); }
+      return {a,b,alpha,beta,h,S,P,d1,d2};
+    }
+    // b, α, d2
+    if (hv('b')&&hv('alpha')&&hv('d2')) {
+      b=+b; alpha=+alpha; d2=+d2;
+      const cosA=Math.cos(alpha*R), sinA=Math.sin(alpha*R);
+      const D=d2*d2-b*b*sinA*sinA;
+      if (D>=0) { a=-b*cosA+Math.sqrt(D); if(a>0)fin(); }
+      return {a,b,alpha,beta,h,S,P,d1,d2};
+    }
+
+    // ── GROUP 4: one side + h (no α) ─────────────────────────────────────────
+    // b, h, S  →  a=S/h, α=asin(h/b)
+    if (hv('b')&&hv('h')&&hv('S')) {
+      b=+b; h=+h; S=+S; a=S/h;
+      if (h<=b) { alpha=Math.asin(h/b)/R; fin(); }
+      return {a,b,alpha,beta,h,S,P,d1,d2};
+    }
+    // b, h, d1  →  α=asin(h/b), solve a from d1
+    if (hv('b')&&hv('h')&&hv('d1')) {
+      b=+b; h=+h; d1=+d1;
+      if (h<=b) {
+        alpha=Math.asin(h/b)/R;
+        const cosA=Math.cos(alpha*R), sinA=h/b;
+        const D=d1*d1-b*b*sinA*sinA;
+        if (D>=0) { a=b*cosA+Math.sqrt(D); if(a>0)fin(); }
+      }
+      return {a,b,alpha,beta,h,S,P,d1,d2};
+    }
+    // b, h, d2
+    if (hv('b')&&hv('h')&&hv('d2')) {
+      b=+b; h=+h; d2=+d2;
+      if (h<=b) {
+        alpha=Math.asin(h/b)/R;
+        const cosA=Math.cos(alpha*R), sinA=h/b;
+        const D=d2*d2-b*b*sinA*sinA;
+        if (D>=0) { a=-b*cosA+Math.sqrt(D); if(a>0)fin(); }
+      }
+      return {a,b,alpha,beta,h,S,P,d1,d2};
+    }
+
+    // ── GROUP 5: h + α (no sides directly) ───────────────────────────────────
+    // h, α, S  →  b=h/sinα, a=S/h
+    if (hv('h')&&hv('alpha')&&hv('S')) {
+      h=+h; alpha=+alpha; S=+S;
+      b=h/Math.sin(alpha*R); a=S/h;
+      if (a>0&&b>0) fin();
+      return {a,b,alpha,beta,h,S,P,d1,d2};
+    }
+    // h, α, P  →  b=h/sinα, a=P/2−b
+    if (hv('h')&&hv('alpha')&&hv('P')) {
+      h=+h; alpha=+alpha;
+      b=h/Math.sin(alpha*R); a=+P/2-b;
+      if (a>0&&b>0) fin();
+      return {a,b,alpha,beta,h,S,P,d1,d2};
+    }
+    // h, α, d1  →  b=h/sinα, solve a from d1
+    if (hv('h')&&hv('alpha')&&hv('d1')) {
+      h=+h; alpha=+alpha; d1=+d1;
+      b=h/Math.sin(alpha*R);
+      const cosA=Math.cos(alpha*R), sinA=Math.sin(alpha*R);
+      const D=d1*d1-b*b*sinA*sinA;
+      if (D>=0) { a=b*cosA+Math.sqrt(D); if(a>0)fin(); }
+      return {a,b,alpha,beta,h,S,P,d1,d2};
+    }
+    // h, α, d2
+    if (hv('h')&&hv('alpha')&&hv('d2')) {
+      h=+h; alpha=+alpha; d2=+d2;
+      b=h/Math.sin(alpha*R);
+      const cosA=Math.cos(alpha*R), sinA=Math.sin(alpha*R);
+      const D=d2*d2-b*b*sinA*sinA;
+      if (D>=0) { a=-b*cosA+Math.sqrt(D); if(a>0)fin(); }
+      return {a,b,alpha,beta,h,S,P,d1,d2};
+    }
+
+    // ── GROUP 6: S + α + P ───────────────────────────────────────────────────
+    // S, α, P  →  a+b=P/2, ab=S/sinα  →  квадратное уравнение
+    if (hv('S')&&hv('alpha')&&hv('P')) {
+      S=+S; alpha=+alpha;
+      const sumAB=+P/2, prodAB=S/Math.sin(alpha*R);
+      [a,b]=quadLarge(sumAB,prodAB);
+      if (a&&b&&a>0&&b>0) fin();
+      return {a,b,alpha,beta,h,S,P,d1,d2};
+    }
+
+    // ── GROUP 7: two diagonals known ─────────────────────────────────────────
+    // d1²+d2²=2(a²+b²),  d2²−d1²=4ab·cosα
+
+    // d1, d2, a  →  b²=(d1²+d2²)/2−a²
+    if (hv('d1')&&hv('d2')&&hv('a')) {
+      d1=+d1; d2=+d2; a=+a;
+      const b2=(d1*d1+d2*d2)/2-a*a;
+      if (b2>0) {
+        b=Math.sqrt(b2);
+        alpha=acosAcute((a*a+b*b-d1*d1)/(2*a*b));
+        if (alpha) fin();
+      }
+      return {a,b,alpha,beta,h,S,P,d1,d2};
+    }
+    // d1, d2, b
+    if (hv('d1')&&hv('d2')&&hv('b')) {
+      d1=+d1; d2=+d2; b=+b;
+      const a2=(d1*d1+d2*d2)/2-b*b;
+      if (a2>0) {
+        a=Math.sqrt(a2);
+        alpha=acosAcute((a*a+b*b-d1*d1)/(2*a*b));
+        if (alpha) fin();
+      }
+      return {a,b,alpha,beta,h,S,P,d1,d2};
+    }
+    // d1, d2, α  →  ab·cosα=(d2²−d1²)/4, a²+b²=(d1²+d2²)/2  →  решаем систему
+    if (hv('d1')&&hv('d2')&&hv('alpha')) {
+      d1=+d1; d2=+d2; alpha=+alpha;
+      const cosA=Math.cos(alpha*R);
+      if (Math.abs(cosA)>1e-10) {
+        const prodAB=(d2*d2-d1*d1)/(4*cosA);
+        const s2=(d1*d1+d2*d2)/2;
+        const sumAB=Math.sqrt(Math.max(0,s2+2*prodAB));
+        [a,b]=quadLarge(sumAB,prodAB);
+        if (a&&b&&a>0&&b>0) fin();
+      }
+      return {a,b,alpha,beta,h,S,P,d1,d2};
+    }
+    // d1, d2, h  →  numeric: h=b·sinα, d1²=a²+b²−2ab·cosα, d2²=a²+b²+2ab·cosα
+    //   b²sin²α+(ab−b·h_via_b)... use d1,d2,S approach after deriving from h
+    //   Alternative: d1²+d2²=2(a²+b²), so a²+b² known; but still 3 unknowns (a,b,α).
+    //   Requires one more constraint → underdetermined. Skip.
+
+    // d1, d2, S  →  ab=√(S²+((d2²−d1²)/4)²), a²+b²=(d1²+d2²)/2
+    if (hv('d1')&&hv('d2')&&hv('S')) {
+      d1=+d1; d2=+d2; S=+S;
+      const prodAB=Math.sqrt(S*S+((d2*d2-d1*d1)/4)**2);
+      const s2=(d1*d1+d2*d2)/2;
+      const sumAB=Math.sqrt(Math.max(0,s2+2*prodAB));
+      [a,b]=quadLarge(sumAB,prodAB);
+      if (a&&b&&a>0&&b>0) {
+        alpha=acosAcute((a*a+b*b-d1*d1)/(2*a*b));
+        if (alpha) fin();
+      }
+      return {a,b,alpha,beta,h,S,P,d1,d2};
+    }
+    // d1, d2, P  →  a+b=P/2, a²+b²=(d1²+d2²)/2  →  ab=((P/2)²−(d1²+d2²)/2)/2
+    if (hv('d1')&&hv('d2')&&hv('P')) {
+      d1=+d1; d2=+d2;
+      const sumAB=+P/2, s2=(d1*d1+d2*d2)/2;
+      const prodAB=(sumAB*sumAB-s2)/2;
+      [a,b]=quadLarge(sumAB,prodAB);
+      if (a&&b&&a>0&&b>0) {
+        alpha=acosAcute((a*a+b*b-d1*d1)/(2*a*b));
+        if (alpha) fin();
+      }
+      return {a,b,alpha,beta,h,S,P,d1,d2};
+    }
+
+    return {a,b,alpha,beta,h,S,P,d1,d2};
   },
-  {id:'rhombus',label:'Ромб',group:'Четырёхугольники',
-   formula:'S = d₁d₂/2',
-   fields:[
-     {k:'a',sym:'a',name:'сторона'},{k:'alpha',sym:'α',name:'острый угол °'},
-     {k:'d1',sym:'d₁',name:'диагональ 1'},{k:'d2',sym:'d₂',name:'диагональ 2'},
-     {k:'S',sym:'S',name:'площадь'},{k:'P',sym:'P',name:'периметр'},{k:'h',sym:'h',name:'высота'},
-   ],
-   calc(v){
-     let{a,alpha,d1,d2,S,P,h}=v;
-     const hv=k=>v[k]!=null&&+v[k]>0;
-     if(hv('d1')&&hv('d2')){a=0.5*sqrt(d1*d1+d2*d2);S=0.5*d1*d2;P=4*a;alpha=2*asin(d1/(2*a))/R;if(alpha>90)alpha=180-alpha;h=S/a;}
-     else if(hv('a')&&hv('alpha')&&alpha>0&&alpha<180){alpha=+alpha;const ang=alpha<=90?alpha:180-alpha;d1=2*a*Math.sin(ang*R/2);d2=2*a*Math.cos(ang*R/2);S=0.5*d1*d2;P=4*a;h=a*Math.sin(ang*R);}
-     else if(hv('a')&&hv('d1')&&d1<2*a){d2=2*sqrt(a*a-(d1/2)*(d1/2));S=0.5*d1*d2;P=4*a;h=S/a;alpha=2*asin(d1/(2*a))/R;}
-     return{a,alpha,d1,d2,S,P,h};
-   },
-   draw(ctx,W,H,v,af){
-     const d1=v.d1>0?v.d1:3,d2=v.d2>0?v.d2:2,sc=Math.min((W-60)/d1,(H-60)/d2),cx=W/2,cy=H/2;
-     const T=[cx,cy-d2*sc/2],Rp=[cx+d1*sc/2,cy],Bo=[cx,cy+d2*sc/2],L=[cx-d1*sc/2,cy];
-     fillPoly(ctx,[T,Rp,Bo,L],'rgba(59,130,246,0.08)');
-     if(af==='S')fillPoly(ctx,[T,Rp,Bo,L],'rgba(59,130,246,0.22)');
-     if(af==='d1'){ctx.beginPath();ctx.moveTo(L[0],cy);ctx.lineTo(Rp[0],cy);ctx.strokeStyle='#a78bfa';ctx.lineWidth=2.5;ctx.stroke();}
-     if(af==='d2'){ctx.beginPath();ctx.moveTo(cx,T[1]);ctx.lineTo(cx,Bo[1]);ctx.strokeStyle='#a78bfa';ctx.lineWidth=2.5;ctx.stroke();}
-     strokePoly(ctx,[T,Rp,Bo,L],af==='P'?'#a78bfa':'#2dd4bf',af==='P'?2.5:1.5);
-     dashedLine(ctx,cx,T[1],cx,Bo[1],'rgba(59,130,246,0.2)',1);
-     dashedLine(ctx,L[0],cy,Rp[0],cy,'rgba(59,130,246,0.2)',1);
-   }
+
+  draw(ctx, W, H, v, af) {
+    const R = Math.PI / 180;
+    const abs = Math.abs;
+    const a  = v.a > 0 ? +v.a : 3;
+    const bv = v.b > 0 ? +v.b : 2;
+    const al = (v.alpha > 0 ? +v.alpha : 60) * R;
+    const hh = bv * Math.sin(al);
+    const dx = bv * Math.cos(al);
+    const sc = Math.min((W - 80) / (a + abs(dx)), (H - 60) / hh);
+    const pad = 30;
+    const ox  = pad + (dx < 0 ? abs(dx) * sc : 0);
+    const oy  = H - pad;
+
+    // Vertices: P1=bottom-left, Q=bottom-right, Rp=top-right, Sp=top-left
+    const P1 = [ox,                   oy];
+    const Q  = [ox + a * sc,          oy];
+    const Rp = [ox + a*sc + dx*sc,    oy - hh*sc];
+    const Sp = [ox + dx*sc,           oy - hh*sc];
+
+    // Note: diagonal P1-Rp = d2 (longer), Q-Sp = d1 (shorter)
+
+    // Fill
+    fillPoly(ctx, [P1,Q,Rp,Sp], 'rgba(59,130,246,0.08)');
+    if (af === 'S') fillPoly(ctx, [P1,Q,Rp,Sp], 'rgba(59,130,246,0.22)');
+
+    // Always draw diagonals as faint dashed lines
+    dashedLine(ctx, P1[0],P1[1], Rp[0],Rp[1], 'rgba(59,130,246,0.18)', 1);
+    dashedLine(ctx, Q[0], Q[1],  Sp[0],Sp[1],  'rgba(59,130,246,0.18)', 1);
+
+    // Highlight specific elements
+    if (af === 'h') {
+      dashedLine(ctx, Sp[0], Sp[1], Sp[0], P1[1], '#a78bfa', 2);
+    }
+    if (af === 'a') {
+      ctx.beginPath(); ctx.moveTo(P1[0], oy+12); ctx.lineTo(Q[0], oy+12);
+      ctx.strokeStyle = '#a78bfa'; ctx.lineWidth = 2; ctx.stroke();
+    }
+    if (af === 'b') {
+      ctx.beginPath(); ctx.moveTo(P1[0], P1[1]); ctx.lineTo(Sp[0], Sp[1]);
+      ctx.strokeStyle = '#a78bfa'; ctx.lineWidth = 3; ctx.stroke();
+    }
+    if (af === 'alpha') {
+      drawAngleArc(ctx, P1[0],P1[1],
+        [Q[0]-P1[0], Q[1]-P1[1]], [Sp[0]-P1[0], Sp[1]-P1[1]], 24, '#a78bfa');
+    }
+    if (af === 'beta') {
+      drawAngleArc(ctx, Q[0],Q[1],
+        [P1[0]-Q[0], P1[1]-Q[1]], [Rp[0]-Q[0], Rp[1]-Q[1]], 24, '#a78bfa');
+    }
+    // d1 = Q–Sp (shorter diagonal)
+    if (af === 'd1') {
+      ctx.beginPath(); ctx.moveTo(Q[0],Q[1]); ctx.lineTo(Sp[0],Sp[1]);
+      ctx.strokeStyle = '#a78bfa'; ctx.lineWidth = 2.5; ctx.stroke();
+    }
+    // d2 = P1–Rp (longer diagonal)
+    if (af === 'd2') {
+      ctx.beginPath(); ctx.moveTo(P1[0],P1[1]); ctx.lineTo(Rp[0],Rp[1]);
+      ctx.strokeStyle = '#a78bfa'; ctx.lineWidth = 2.5; ctx.stroke();
+    }
+
+    // Outline
+    strokePoly(ctx, [P1,Q,Rp,Sp],
+      af === 'P' ? '#a78bfa' : '#2dd4bf',
+      af === 'P' ? 2.5 : 1.5);
+
+    // Labels
+    label(ctx, (P1[0]+Q[0])/2, oy+22, 'a');
+    label(ctx, (P1[0]+Sp[0])/2 - 10, (P1[1]+Sp[1])/2, 'b');
+  }
+},
+  // ═══════════════════════════════════════════════════════════════
+//  РОМБ  — все комбинации параметров, высота убрана
+// ═══════════════════════════════════════════════════════════════
+{
+  id: 'rhombus',
+  label: 'Ромб',
+  group: 'Четырёхугольники',
+  formula: 'S = a²·sinα = d₁·d₂/2,  P = 4a',
+  fields: [
+    { k:'a',   sym:'a',   name:'сторона a' },
+    { k:'alpha',sym:'α',  name:'острый угол α, °' },
+    { k:'beta', sym:'β',  name:'тупой угол β, °' },
+    { k:'d1',  sym:'d₁',  name:'диагональ d₁ (меньшая)' },
+    { k:'d2',  sym:'d₂',  name:'диагональ d₂ (большая)' },
+    { k:'S',   sym:'S',   name:'площадь S' },
+    { k:'P',   sym:'P',   name:'периметр P' },
+  ],
+
+  calc(v) {
+    const R = Math.PI / 180;
+    let { a, alpha, beta, d1, d2, S, P } = v;
+    const hv = k => v[k] != null && +v[k] > 0;
+
+    // Пересчитать всё из стороны a и острого угла alpha (уже числа)
+    const fin = () => {
+  if (!a || !alpha) return;
+  if (alpha <= 0 || alpha >= 180) return;
+
+  beta = 180 - alpha;
+
+  d1 = 2 * a * Math.sin(alpha * R / 2);
+  d2 = 2 * a * Math.cos(alpha * R / 2);
+  S  = a * a * Math.sin(alpha * R);
+  P  = 4 * a;
+};
+
+    // β → α
+    // ── нормализация углов ─────────────────────────────
+if (hv('alpha') && !hv('beta')) {
+  alpha = +alpha;
+  if (alpha > 0 && alpha < 180) {
+    beta = 180 - alpha;
+  }
+}
+
+if (hv('beta') && !hv('alpha')) {
+  beta = +beta;
+  if (beta > 0 && beta < 180) {
+    alpha = 180 - beta;
+  }
+}
+    // ── (a, α) ──────────────────────────────────────────────────
+    if (hv('a') && hv('alpha')) {
+      a = +a; alpha = +alpha; fin();
+      return { a, alpha, beta, d1, d2, S, P };
+    }
+
+    // ── (a, d1)  sin(α/2) = d1/(2a) ────────────────────────────
+    if (hv('a') && hv('d1')) {
+      a = +a; d1 = +d1;
+      const s = d1 / (2 * a);
+      if (s > 0 && s <= 1) { alpha = 2 * Math.asin(s) / R; fin(); }
+      return { a, alpha, beta, d1, d2, S, P };
+    }
+
+    // ── (a, d2)  cos(α/2) = d2/(2a) ────────────────────────────
+    if (hv('a') && hv('d2')) {
+      a = +a; d2 = +d2;
+      const c = d2 / (2 * a);
+      if (c > 0 && c <= 1) { alpha = 2 * Math.acos(c) / R; fin(); }
+      return { a, alpha, beta, d1, d2, S, P };
+    }
+
+    // ── (a, S)  sinα = S/a² ─────────────────────────────────────
+    if (hv('a') && hv('S')) {
+      a = +a; S = +S;
+      const s = S / (a * a);
+      if (s > 0 && s <= 1) { alpha = Math.asin(s) / R; fin(); }
+      return { a, alpha, beta, d1, d2, S, P };
+    }
+
+    // ── (P, α) ──────────────────────────────────────────────────
+    if (hv('P') && hv('alpha')) {
+      a = +P / 4; alpha = +alpha; fin();
+      return { a, alpha, beta, d1, d2, S, P };
+    }
+
+    // ── (P, d1) ─────────────────────────────────────────────────
+    if (hv('P') && hv('d1')) {
+      a = +P / 4; d1 = +d1;
+      const s = d1 / (2 * a);
+      if (s > 0 && s <= 1) { alpha = 2 * Math.asin(s) / R; fin(); }
+      return { a, alpha, beta, d1, d2, S, P };
+    }
+
+    // ── (P, d2) ─────────────────────────────────────────────────
+    if (hv('P') && hv('d2')) {
+      a = +P / 4; d2 = +d2;
+      const c = d2 / (2 * a);
+      if (c > 0 && c <= 1) { alpha = 2 * Math.acos(c) / R; fin(); }
+      return { a, alpha, beta, d1, d2, S, P };
+    }
+
+    // ── (P, S) ──────────────────────────────────────────────────
+    if (hv('P') && hv('S')) {
+      a = +P / 4; S = +S;
+      const s = S / (a * a);
+      if (s > 0 && s <= 1) { alpha = Math.asin(s) / R; fin(); }
+      return { a, alpha, beta, d1, d2, S, P };
+    }
+
+    // ── (d1, d2)  a = √(d1²+d2²)/2 ─────────────────────────────
+    if (hv('d1') && hv('d2')) {
+      d1 = +d1; d2 = +d2;
+      a = Math.sqrt(d1 * d1 + d2 * d2) / 2;
+      alpha = 2 * Math.asin(d1 / (2 * a)) / R;
+      fin();
+      return { a, alpha, beta, d1, d2, S, P };
+    }
+
+    // ── (d1, α)  a = d1 / (2·sin(α/2)) ─────────────────────────
+    if (hv('d1') && hv('alpha')) {
+      d1 = +d1; alpha = +alpha;
+      if (alpha > 90) alpha = 180 - alpha;
+      const sa = Math.sin(alpha * R / 2);
+      if (sa > 0) { a = d1 / (2 * sa); fin(); }
+      return { a, alpha, beta, d1, d2, S, P };
+    }
+
+    // ── (d2, α)  a = d2 / (2·cos(α/2)) ─────────────────────────
+    if (hv('d2') && hv('alpha')) {
+      d2 = +d2; alpha = +alpha;
+      if (alpha > 90) alpha = 180 - alpha;
+      const ca = Math.cos(alpha * R / 2);
+      if (ca > 0) { a = d2 / (2 * ca); fin(); }
+      return { a, alpha, beta, d1, d2, S, P };
+    }
+
+    // ── (d1, S)  d2 = 2S/d1 ─────────────────────────────────────
+    if (hv('d1') && hv('S')) {
+      d1 = +d1; S = +S;
+      d2 = 2 * S / d1;
+      a  = Math.sqrt(d1 * d1 + d2 * d2) / 2;
+      alpha = 2 * Math.asin(d1 / (2 * a)) / R;
+      fin();
+      return { a, alpha, beta, d1, d2, S, P };
+    }
+
+    // ── (d2, S)  d1 = 2S/d2 ─────────────────────────────────────
+    if (hv('d2') && hv('S')) {
+      d2 = +d2; S = +S;
+      d1 = 2 * S / d2;
+      a  = Math.sqrt(d1 * d1 + d2 * d2) / 2;
+      alpha = 2 * Math.asin(d1 / (2 * a)) / R;
+      fin();
+      return { a, alpha, beta, d1, d2, S, P };
+    }
+
+    // ── (S, α)  a = √(S/sinα) ───────────────────────────────────
+    if (hv('S') && hv('alpha')) {
+      S = +S; alpha = +alpha;
+      if (alpha > 90) alpha = 180 - alpha;
+      const sa = Math.sin(alpha * R);
+      if (sa > 0) { a = Math.sqrt(S / sa); fin(); }
+      return { a, alpha, beta, d1, d2, S, P };
+    }
+
+    return { a, alpha, beta, d1, d2, S, P };
   },
-  {id:'trapezoid',label:'Трапеция',group:'Четырёхугольники',
-   formula:'S = (a+b)/2 · h',
-   fields:[
-     {k:'a',sym:'a',name:'основание (большее)'},{k:'b',sym:'b',name:'основание (меньшее)'},
-     {k:'c',sym:'c',name:'боковая c'},{k:'d',sym:'d',name:'боковая d'},
-     {k:'h',sym:'h',name:'высота'},{k:'S',sym:'S',name:'площадь'},
-     {k:'P',sym:'P',name:'периметр'},{k:'m',sym:'m',name:'средняя линия'},
-   ],
-   calc(v){
-     let{a,b,c,d,h,S,P,m}=v;
-     const hv=k=>v[k]!=null&&+v[k]>0;
-     if(hv('a')&&hv('b')&&a>b){
-       if(hv('h')){S=(a+b)/2*h;m=(a+b)/2;if(hv('c')&&hv('d'))P=a+b+c+d;}
-       else if(hv('c')&&hv('d')){const s=(a-b)/2;if(c>s&&d>s){h=sqrt(c*c-s*s);S=(a+b)/2*h;P=a+b+c+d;m=(a+b)/2;}}
-     }
-     if(hv('S')&&hv('a')&&hv('b')){h=2*S/(a+b);m=(a+b)/2;}
-     if(hv('m')&&hv('h'))S=m*h;
-     if(hv('a')&&hv('b'))m=(a+b)/2;
-     return{a,b,c,d,h,S,P,m};
-   },
-   draw(ctx,W,H,v,af){
-     const a=v.a>0?v.a:4,bv=v.b>0?v.b:2,h=v.h>0?v.h:2,sc=Math.min((W-60)/a,(H-60)/h),ox=(W-a*sc)/2,oy=H-24,off=(a-bv)*sc/2;
-     const P1=[ox,oy],Q=[ox+a*sc,oy],Rp=[ox+a*sc-off,oy-h*sc],Sp=[ox+off,oy-h*sc];
-     fillPoly(ctx,[P1,Q,Rp,Sp],'rgba(59,130,246,0.08)');
-     if(af==='S')fillPoly(ctx,[P1,Q,Rp,Sp],'rgba(59,130,246,0.22)');
-     if(af==='h')dashedLine(ctx,W/2,oy,W/2,oy-h*sc,'#a78bfa',2);
-     if(af==='m'){const my=oy-h*sc/2;dashedLine(ctx,(ox+ox+off)/2,my,(ox+a*sc+ox+a*sc-off)/2,my,'#a78bfa',2);}
-     strokePoly(ctx,[P1,Q,Rp,Sp],af==='P'?'#a78bfa':'#2dd4bf',af==='P'?2.5:1.5);
-     label(ctx,(P1[0]+Q[0])/2,oy+20,'a');label(ctx,(Sp[0]+Rp[0])/2,Sp[1]-14,'b');
-   }
+
+  draw(ctx, W, H, v, af) {
+    const d1v = v.d1 > 0 ? +v.d1 : 3;
+    const d2v = v.d2 > 0 ? +v.d2 : 4;
+    const sc = Math.min((W - 60) / d1v, (H - 60) / d2v);
+    const cx = W / 2, cy = H / 2;
+    const T  = [cx, cy - d1v * sc / 2]; // малая вверх
+const Bo = [cx, cy + d1v * sc / 2]; // малая вниз
+const Rp = [cx + d2v * sc / 2, cy]; // большая вправо
+const L  = [cx - d2v * sc / 2, cy]; // большая влево
+
+    fillPoly(ctx, [T, Rp, Bo, L], 'rgba(59,130,246,0.08)');
+    if (af === 'S') fillPoly(ctx, [T, Rp, Bo, L], 'rgba(59,130,246,0.22)');
+
+    if (af === 'd1') { // малая (теперь вертикальная)
+  ctx.beginPath();
+  ctx.moveTo(cx, T[1]);
+  ctx.lineTo(cx, Bo[1]);
+  ctx.strokeStyle = '#a78bfa';
+  ctx.lineWidth = 2.5;
+  ctx.stroke();
+}
+
+if (af === 'd2') { // большая (теперь горизонтальная)
+  ctx.beginPath();
+  ctx.moveTo(L[0], cy);
+  ctx.lineTo(Rp[0], cy);
+  ctx.strokeStyle = '#a78bfa';
+  ctx.lineWidth = 2.5;
+  ctx.stroke();
+}
+    if (af === 'a')  { ctx.beginPath(); ctx.moveTo(T[0], T[1]); ctx.lineTo(Rp[0], Rp[1]); ctx.strokeStyle = '#a78bfa'; ctx.lineWidth = 3;   ctx.stroke(); }
+    if (af === 'alpha') drawAngleArc(ctx, L[0], cy,   [T[0] - L[0], T[1] - cy],   [Bo[0] - L[0], Bo[1] - cy],   22, '#a78bfa');
+    if (af === 'beta')  drawAngleArc(ctx, T[0], T[1], [L[0] - T[0], L[1] - T[1]], [Rp[0] - T[0], Rp[1] - T[1]], 22, '#a78bfa');
+
+    strokePoly(ctx, [T, Rp, Bo, L], af === 'P' ? '#a78bfa' : '#2dd4bf', af === 'P' ? 2.5 : 1.5);
+    dashedLine(ctx, cx,   T[1], cx,   Bo[1], 'rgba(59,130,246,0.2)', 1);
+    dashedLine(ctx, L[0], cy,   Rp[0], cy,   'rgba(59,130,246,0.2)', 1);
+  }
+},
+
+
+// ═══════════════════════════════════════════════════════════════
+//  ТРАПЕЦИЯ  — все комбинации параметров
+// ═══════════════════════════════════════════════════════════════
+{
+  
+  id: 'trapezoid',
+  label: 'Трапеция',
+  group: 'Четырёхугольники',
+  formula: 'S = (a+b)/2 · h = m·h',
+  fields: [
+    { k: 'a', sym: 'a', name: 'основание a (большее)' },
+    { k: 'b', sym: 'b', name: 'основание b (меньшее)' },
+    { k: 'c', sym: 'c', name: 'боковая c (левая)' },
+    { k: 'd', sym: 'd', name: 'боковая d (правая)' },
+    { k: 'h', sym: 'h', name: 'высота h' },
+    { k: 'S', sym: 'S', name: 'площадь S' },
+    { k: 'P', sym: 'P', name: 'периметр P' },
+    { k: 'm', sym: 'm', name: 'средняя линия m' },
+    { k: 'alpha', sym: 'α', name: 'угол при a у c, °' },
+    { k: 'beta', sym: 'β', name: 'угол при a у d, °' },
+  ],
+
+  calc(v) {
+    const R = Math.PI / 180;
+    const EPS = 1e-9;
+    const sq = x => Math.sqrt(Math.max(0, x));
+    const toNum = x => (x == null || x === '' || !isFinite(+x) ? null : +x);
+    const pos = x => x != null && isFinite(x) && x > EPS;
+    const eq = (x, y, eps = 1e-7) => pos(x) && pos(y) && Math.abs(x - y) <= eps;
+
+    let a = toNum(v.a);
+    let b = toNum(v.b);
+    let c = toNum(v.c);
+    let d = toNum(v.d);
+    let h = toNum(v.h);
+    let S = toNum(v.S);
+    let P = toNum(v.P);
+    let m = toNum(v.m);
+    let alpha = toNum(v.alpha);
+    let beta = toNum(v.beta);
+
+    if (pos(a) && pos(b) && b > a) [a, b] = [b, a];
+
+    let x = null; // горизонтальная проекция слева
+    let y = null; // горизонтальная проекция справа
+    let isoForced = false;
+
+    const setIfEmpty = (name, value) => {
+      if (!pos(value)) return false;
+      switch (name) {
+        case 'a': if (!pos(a)) { a = value; return true; } break;
+        case 'b': if (!pos(b)) { b = value; return true; } break;
+        case 'c': if (!pos(c)) { c = value; return true; } break;
+        case 'd': if (!pos(d)) { d = value; return true; } break;
+        case 'h': if (!pos(h)) { h = value; return true; } break;
+        case 'S': if (!pos(S)) { S = value; return true; } break;
+        case 'P': if (!pos(P)) { P = value; return true; } break;
+        case 'm': if (!pos(m)) { m = value; return true; } break;
+        case 'alpha': if (!pos(alpha)) { alpha = value; return true; } break;
+        case 'beta': if (!pos(beta)) { beta = value; return true; } break;
+        case 'x': if (!pos(x)) { x = value; return true; } break;
+        case 'y': if (!pos(y)) { y = value; return true; } break;
+      }
+      return false;
+    };
+
+    const finalize = () => {
+      if (pos(a) && pos(b) && b > a) [a, b] = [b, a];
+
+      if (pos(a) && pos(b)) m = (a + b) / 2;
+      if (pos(m) && pos(h)) S = m * h;
+      if (pos(a) && pos(b) && pos(h)) S = (a + b) * h / 2;
+      if (pos(a) && pos(b) && pos(c) && pos(d)) P = a + b + c + d;
+
+      if (pos(h) && pos(c) && h <= c + EPS) {
+        x = sq(c * c - h * h);
+        alpha = Math.atan2(h, x) / R;
+      }
+      if (pos(h) && pos(d) && h <= d + EPS) {
+        y = sq(d * d - h * h);
+        beta = Math.atan2(h, y) / R;
+      }
+
+      if (pos(a) && pos(b) && pos(x) && pos(y)) {
+        const delta = a - b;
+        if (Math.abs((x + y) - delta) > 1e-5) {
+          const k = delta / Math.max(EPS, x + y);
+          x *= k;
+          y *= k;
+          if (pos(h)) {
+            c = Math.hypot(x, h);
+            d = Math.hypot(y, h);
+            alpha = Math.atan2(h, x) / R;
+            beta = Math.atan2(h, y) / R;
+          }
+        }
+      }
+
+      return { a, b, c, d, h, S, P, m, alpha, beta };
+    };
+
+    const delta = () => (pos(a) && pos(b) ? a - b : null);
+    const sumBases = () => (pos(a) && pos(b) ? a + b : null);
+
+    // Предзаполнение из базовых формул
+    if (pos(m) && pos(a) && !pos(b)) b = 2 * m - a;
+    if (pos(m) && pos(b) && !pos(a)) a = 2 * m - b;
+    if (pos(S) && pos(h) && !pos(m)) m = S / h;
+    if (pos(S) && pos(h) && pos(a) && !pos(b)) b = 2 * S / h - a;
+    if (pos(S) && pos(h) && pos(b) && !pos(a)) a = 2 * S / h - b;
+    if (pos(P) && pos(c) && pos(d) && pos(a) && !pos(b)) b = P - a - c - d;
+    if (pos(P) && pos(c) && pos(d) && pos(b) && !pos(a)) a = P - b - c - d;
+
+    // Шаг 1. Высота из частых комбинаций
+    if (!pos(h)) {
+      if (pos(S) && pos(m)) h = S / m;
+      else if (pos(S) && pos(a) && pos(b)) h = 2 * S / (a + b);
+      else if (pos(c) && pos(alpha)) h = c * Math.sin(alpha * R);
+      else if (pos(d) && pos(beta)) h = d * Math.sin(beta * R);
+      else if (pos(a) && pos(b) && pos(alpha) && pos(beta)) {
+        const sa = Math.sin(alpha * R), ca = Math.cos(alpha * R);
+        const sb = Math.sin(beta * R), cb = Math.cos(beta * R);
+        const den = ca / Math.max(EPS, sa) + cb / Math.max(EPS, sb);
+        if (den > EPS) h = (a - b) / den;
+      } else if (pos(a) && pos(b) && pos(c) && pos(d) && a > b) {
+        const D = a - b;
+        const xx = (c * c - d * d + D * D) / (2 * D);
+        const h2 = c * c - xx * xx;
+        if (h2 > EPS) h = Math.sqrt(h2);
+      }
+    }
+
+    // Шаг 2. Проекции x/y
+    if (!pos(x)) {
+      if (pos(h) && pos(c) && c + EPS >= h) x = sq(c * c - h * h);
+      else if (pos(h) && pos(alpha)) x = h / Math.tan(alpha * R);
+    }
+    if (!pos(y)) {
+      if (pos(h) && pos(d) && d + EPS >= h) y = sq(d * d - h * h);
+      else if (pos(h) && pos(beta)) y = h / Math.tan(beta * R);
+    }
+
+    // Шаг 3. Разница оснований
+    let D = delta();
+    if (!pos(D)) {
+      if (pos(x) && pos(y)) D = x + y;
+      else if (pos(h) && pos(alpha) && pos(beta)) {
+        D = h / Math.tan(alpha * R) + h / Math.tan(beta * R);
+      }
+    }
+
+    // Шаг 4. Средняя линия / сумма оснований
+    let SUM = sumBases();
+    if (!pos(SUM)) {
+      if (pos(m)) SUM = 2 * m;
+      else if (pos(S) && pos(h)) SUM = 2 * S / h;
+      else if (pos(P) && pos(c) && pos(d)) SUM = P - c - d;
+    }
+    if (!pos(m) && pos(SUM)) m = SUM / 2;
+
+    // Шаг 5. Восстановить основания
+    if (pos(SUM) && pos(D)) {
+      if (!pos(a)) a = (SUM + D) / 2;
+      if (!pos(b)) b = (SUM - D) / 2;
+    }
+    if (pos(a) && pos(D) && !pos(b)) b = a - D;
+    if (pos(b) && pos(D) && !pos(a)) a = b + D;
+
+    // Шаг 6. Если известны основания и одна проекция, добрать вторую
+    D = delta();
+    if (pos(D)) {
+      if (pos(x) && !pos(y)) y = D - x;
+      if (pos(y) && !pos(x)) x = D - y;
+    }
+
+    // Шаг 7. Частый случай равнобедренной трапеции:
+    // если асимметрии нет, но есть одна боковая/один угол/одна проекция
+    const canAssumeIso =
+      pos(D) &&
+      !pos(x) &&
+      !pos(y) &&
+      (
+        (pos(c) && !pos(d)) ||
+        (pos(d) && !pos(c)) ||
+        (pos(alpha) && !pos(beta)) ||
+        (pos(beta) && !pos(alpha))
+      );
+
+    if (canAssumeIso) {
+      x = y = D / 2;
+      isoForced = true;
+      if (pos(h) && pos(x)) {
+        if (pos(c) && !pos(d)) d = Math.hypot(x, h);
+        if (pos(d) && !pos(c)) c = Math.hypot(y, h);
+        if (pos(alpha) && !pos(beta)) beta = alpha;
+        if (pos(beta) && !pos(alpha)) alpha = beta;
+      }
+    }
+
+    // Шаг 8. Достроить боковые стороны и углы
+    if (pos(h) && pos(x)) {
+      if (!pos(c)) c = Math.hypot(x, h);
+      if (!pos(alpha)) alpha = Math.atan2(h, x) / R;
+    }
+    if (pos(h) && pos(y)) {
+      if (!pos(d)) d = Math.hypot(y, h);
+      if (!pos(beta)) beta = Math.atan2(h, y) / R;
+    }
+
+    // Шаг 9. Из периметра
+    if (pos(P)) {
+      if (pos(a) && pos(b) && pos(c) && !pos(d)) d = P - a - b - c;
+      if (pos(a) && pos(b) && pos(d) && !pos(c)) c = P - a - b - d;
+      if (pos(c) && pos(d) && pos(a) && !pos(b)) b = P - a - c - d;
+      if (pos(c) && pos(d) && pos(b) && !pos(a)) a = P - b - c - d;
+      if (pos(m) && pos(c) && pos(d) && !pos(a) && !pos(b)) {
+        SUM = P - c - d;
+        a = m + (SUM - 2 * m + (x || 0) + (y || 0)) / 2;
+        b = SUM - a;
+      }
+    }
+
+    // Шаг 10. Полезные частые комбинации с площадью
+    if (pos(S) && pos(h) && !pos(m)) m = S / h;
+    if (pos(S) && pos(c) && pos(alpha) && !pos(h)) h = c * Math.sin(alpha * R);
+    if (pos(S) && pos(d) && pos(beta) && !pos(h)) h = d * Math.sin(beta * R);
+
+    // Шаг 11. Если есть h + боковая, но нет оснований/площади:
+    // для равнобедренной трапеции можно найти только вторую боковую/угол, а не основания.
+    if (isoForced && pos(h) && pos(c) && !pos(d)) d = c;
+    if (isoForced && pos(h) && pos(d) && !pos(c)) c = d;
+    if (isoForced && pos(alpha) && !pos(beta)) beta = alpha;
+    if (isoForced && pos(beta) && !pos(alpha)) alpha = beta;
+
+    // Шаг 12. Симметрия, если явно равнобедренная по двум боковым/двум углам
+    if (pos(c) && pos(d) && eq(c, d) && pos(h) && !pos(x) && pos(D)) {
+      x = y = D / 2;
+    }
+    if (pos(alpha) && pos(beta) && eq(alpha, beta) && pos(h) && !pos(x) && pos(D)) {
+      x = y = D / 2;
+      c = Math.hypot(x, h);
+      d = Math.hypot(y, h);
+    }
+
+    return finalize();
   },
+
+  draw(ctx, W, H, v, af) {
+    const R = Math.PI / 180;
+    const sq = x => Math.sqrt(Math.max(0, x));
+    const pos = x => x != null && +x > 0;
+
+    let a = pos(v.a) ? +v.a : 6;
+    let b = pos(v.b) ? +v.b : 3.5;
+    let h = pos(v.h) ? +v.h : 2.5;
+    if (b > a) [a, b] = [b, a];
+
+    const D = Math.max(0.5, a - b);
+
+    let x = null;
+    let y = null;
+
+    if (pos(v.h) && pos(v.c) && +v.c >= +v.h) x = sq(v.c * v.c - v.h * v.h);
+    else if (pos(v.h) && pos(v.alpha)) x = +v.h / Math.tan(+v.alpha * R);
+
+    if (pos(v.h) && pos(v.d) && +v.d >= +v.h) y = sq(v.d * v.d - v.h * v.h);
+    else if (pos(v.h) && pos(v.beta)) y = +v.h / Math.tan(+v.beta * R);
+
+    if (x == null && y == null) {
+      x = D / 2;
+      y = D / 2;
+    } else if (x == null) {
+      y = Math.max(0, Math.min(D, y));
+      x = D - y;
+    } else if (y == null) {
+      x = Math.max(0, Math.min(D, x));
+      y = D - x;
+    }
+
+    const sum = Math.max(1e-6, x + y);
+    if (Math.abs(sum - D) > 1e-6) {
+      x *= D / sum;
+      y *= D / sum;
+    }
+
+    const sc = Math.min((W - 80) / a, (H - 80) / h);
+    const ox = (W - a * sc) / 2;
+    const oy = H - 30;
+
+    const A = [ox, oy];
+    const B = [ox + a * sc, oy];
+    const Dp = [ox + x * sc, oy - h * sc];
+    const Cp = [ox + (a - y) * sc, oy - h * sc];
+
+    fillPoly(ctx, [A, B, Cp, Dp], af === 'S' ? 'rgba(59,130,246,0.22)' : 'rgba(59,130,246,0.08)');
+
+    if (af === 'h') dashedLine(ctx, Dp[0], Dp[1], Dp[0], A[1], '#a78bfa', 2);
+
+    if (af === 'm') {
+      const M1 = [(A[0] + Dp[0]) / 2, (A[1] + Dp[1]) / 2];
+      const M2 = [(B[0] + Cp[0]) / 2, (B[1] + Cp[1]) / 2];
+      dashedLine(ctx, M1[0], M1[1], M2[0], M2[1], '#a78bfa', 2);
+    }
+
+    const strokeColor = af === 'P' ? '#a78bfa' : '#2dd4bf';
+    const strokeWidth = af === 'P' ? 2.5 : 1.5;
+    strokePoly(ctx, [A, B, Cp, Dp], strokeColor, strokeWidth);
+
+    if (af === 'a') { ctx.lineWidth = 3; ctx.strokeStyle = '#a78bfa'; ctx.beginPath(); ctx.moveTo(...A); ctx.lineTo(...B); ctx.stroke(); }
+    if (af === 'b') { ctx.lineWidth = 3; ctx.strokeStyle = '#a78bfa'; ctx.beginPath(); ctx.moveTo(...Dp); ctx.lineTo(...Cp); ctx.stroke(); }
+    if (af === 'c') { ctx.lineWidth = 3; ctx.strokeStyle = '#a78bfa'; ctx.beginPath(); ctx.moveTo(...A); ctx.lineTo(...Dp); ctx.stroke(); }
+    if (af === 'd') { ctx.lineWidth = 3; ctx.strokeStyle = '#a78bfa'; ctx.beginPath(); ctx.moveTo(...B); ctx.lineTo(...Cp); ctx.stroke(); }
+
+    if (af === 'alpha') drawAngleArc(ctx, A[0], A[1], [B[0] - A[0], B[1] - A[1]], [Dp[0] - A[0], Dp[1] - A[1]], 25, '#a78bfa');
+    if (af === 'beta') drawAngleArc(ctx, B[0], B[1], [A[0] - B[0], A[1] - B[1]], [Cp[0] - B[0], Cp[1] - B[1]], 25, '#a78bfa');
+
+    ctx.fillStyle = '#94a3b8';
+    ctx.font = '12px monospace';
+    label(ctx, (A[0] + B[0]) / 2, A[1] + 20, 'a');
+    label(ctx, (Dp[0] + Cp[0]) / 2, Dp[1] - 15, 'b');
+  }
+}
+
+,
+
+  // ─── КРИВЫЕ ─────────────────────────────────────────────────────────────────
   {id:'circle',label:'Круг',group:'Кривые',
    formula:'S=πr², C=2πr',
    fields:[
@@ -461,6 +1777,8 @@ const SHAPES=[
      label(ctx,cx+a*sc/2+3,cy+14,'a');label(ctx,cx+4,cy-bv*sc/2-4,'b');
    }
   },
+
+  // ─── ТЕЛА ВРАЩЕНИЯ ───────────────────────────────────────────────────────────
   {id:'sphere',label:'Сфера',group:'Тела вращения',
    formula:'S=4πr², V=4/3·πr³',
    fields:[
@@ -498,6 +1816,7 @@ const SHAPES=[
      else if(hv('r')&&hv('V')){h=V/(PI*r*r);S_lat=2*PI*r*h;S_tot=2*PI*r*(r+h);}
      else if(hv('h')&&hv('V')){r=sqrt(V/(PI*h));S_lat=2*PI*r*h;S_tot=2*PI*r*(r+h);}
      else if(hv('r')&&hv('S_lat')){h=S_lat/(2*PI*r);S_tot=2*PI*r*(r+h);V=PI*r*r*h;}
+     else if(hv('r')&&hv('S_tot')){h=S_tot/(2*PI*r)-r;if(h>0){S_lat=2*PI*r*h;V=PI*r*r*h;}}
      return{r,h,S_lat,S_tot,V};
    },
    draw(ctx,W,H,v,af){
@@ -529,7 +1848,7 @@ const SHAPES=[
      else if(hv('r')&&hv('l')&&l>r){h=sqrt(l*l-r*r);S_lat=PI*r*l;S_tot=PI*r*(r+l);V=PI*r*r*h/3;alpha=2*atan(r/h)/R;}
      else if(hv('r')&&hv('V')){h=3*V/(PI*r*r);l=sqrt(r*r+h*h);S_lat=PI*r*l;S_tot=PI*r*(r+l);alpha=2*atan(r/h)/R;}
      else if(hv('h')&&hv('V')){r=sqrt(3*V/(PI*h));l=sqrt(r*r+h*h);S_lat=PI*r*l;S_tot=PI*r*(r+l);alpha=2*atan(r/h)/R;}
-     else if(hv('r')&&hv('alpha')&&alpha>0&&alpha<180){h=r/Math.tan((alpha/2)*R);l=sqrt(r*r+h*h);S_lat=PI*r*l;S_tot=PI*r*(r+l);V=PI*r*r*h/3;}
+     else if(hv('r')&&hv('alpha')&&alpha>0&&alpha<180){h=r/tan((alpha/2)*R);l=sqrt(r*r+h*h);S_lat=PI*r*l;S_tot=PI*r*(r+l);V=PI*r*r*h/3;}
      else if(hv('r')&&hv('S_lat')){l=S_lat/(PI*r);if(l>r){h=sqrt(l*l-r*r);S_tot=PI*r*(r+l);V=PI*r*r*h/3;alpha=2*atan(r/h)/R;}}
      return{r,h,l,S_lat,S_tot,V,alpha};
    },
@@ -573,6 +1892,7 @@ const SHAPES=[
   },
 ];
 
+// ─── DRAWING HELPERS ──────────────────────────────────────────────────────────
 function fillPoly(ctx,pts,fill){ctx.beginPath();pts.forEach((p,i)=>i?ctx.lineTo(...p):ctx.moveTo(...p));ctx.closePath();ctx.fillStyle=fill;ctx.fill();}
 function strokePoly(ctx,pts,col,lw){ctx.beginPath();pts.forEach((p,i)=>i?ctx.lineTo(...p):ctx.moveTo(...p));ctx.closePath();ctx.strokeStyle=col;ctx.lineWidth=lw;ctx.stroke();}
 function dashedLine(ctx,x1,y1,x2,y2,col,lw){ctx.save();ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.strokeStyle=col;ctx.lineWidth=lw;ctx.setLineDash([5,4]);ctx.stroke();ctx.restore();}
@@ -589,7 +1909,31 @@ function arrowLine(ctx,x1,y1,x2,y2,col){
 function label(ctx,x,y,text){ctx.font='bold 12px monospace';ctx.fillStyle='#60a5fa';ctx.textAlign='center';ctx.fillText(text,x,y);}
 function drawRightAngle(ctx,x,y,s){ctx.strokeStyle='rgba(45,212,191,0.5)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(x+s,y);ctx.lineTo(x+s,y-s);ctx.lineTo(x,y-s);ctx.stroke();}
 
-// Animated background
+function drawAngleArc(ctx,vx,vy,dir1,dir2,radius,col){
+  ctx.save();
+  let ang1=atan2(dir1[1],dir1[0]);
+  let ang2=atan2(dir2[1],dir2[0]);
+  if(ang1<0)ang1+=2*PI;
+  if(ang2<0)ang2+=2*PI;
+  let diff=ang2-ang1;
+  if(diff<0)diff+=2*PI;
+  // pick the shorter arc (interior angle)
+  let startA,endA,ccw;
+  if(diff<=PI){startA=ang1;endA=ang2;ccw=false;}
+  else{startA=ang2;endA=ang1;ccw=false;}
+  ctx.beginPath();
+  ctx.moveTo(vx,vy);
+  ctx.arc(vx,vy,radius,startA,endA,ccw);
+  ctx.closePath();
+  ctx.fillStyle=col==='#a78bfa'?'rgba(167,139,250,0.25)':'rgba(45,212,191,0.15)';
+  ctx.fill();
+  ctx.beginPath();
+  ctx.arc(vx,vy,radius,startA,endA,ccw);
+  ctx.strokeStyle=col;ctx.lineWidth=1.5;ctx.stroke();
+  ctx.restore();
+}
+
+// ─── ANIMATED BACKGROUND ─────────────────────────────────────────────────────
 const bgCanvas=document.getElementById('bg');
 const bgCtx=bgCanvas.getContext('2d');
 const mathSymbols=['∫','∑','π','√','∞','Δ','α','β','γ','θ','λ','σ','∂','∇','≈','≠','±','×','∈','lim','sin','cos','tan','log','dx','dy','c²','a²','b²','r²','φ'];
@@ -627,6 +1971,7 @@ function drawBg(){
 
 initBg();drawBg();
 
+// ─── APP STATE ────────────────────────────────────────────────────────────────
 let currentId=null,activeField=null;
 
 function getIconPath(id){
@@ -674,8 +2019,18 @@ function selectShape(id){
   def.fields.forEach(f=>{
     const inp=document.getElementById('inp_'+f.k);
     inp.addEventListener('focus',()=>{activeField=f.k;renderCanvas();});
-    inp.addEventListener('blur',()=>{activeField=null;renderCanvas();});
-    inp.addEventListener('input',()=>{inp.classList.add('user-set');inp.classList.remove('computed');});
+    inp.addEventListener('blur',()=>{
+      activeField=null;
+      // при потере фокуса — считаем сразу (число уже полностью введено)
+      clearComputed(f.k);
+      autoCalculate();
+      renderCanvas();
+    });
+    inp.addEventListener('input',()=>{
+      inp.classList.add('user-set');inp.classList.remove('computed');
+      clearComputed(f.k);
+      scheduleCalc();
+    });
   });
   renderCanvas();
 }
@@ -686,21 +2041,58 @@ function getVals(){
   return v;
 }
 
-function calculate(){
+function getUserKeys(){
+  const s=new Set();
+  document.querySelectorAll('[data-key]').forEach(inp=>{if(inp.classList.contains('user-set')&&inp.value)s.add(inp.dataset.key);});
+  return s;
+}
+
+// Сбросить вычисленные поля кроме пользовательского
+function clearComputed(exceptKey){
+  document.querySelectorAll('[data-key]').forEach(inp=>{
+    if(inp.dataset.key!==exceptKey&&inp.classList.contains('computed')){
+      inp.value='';inp.classList.remove('computed');
+    }
+  });
+  renderCanvas();
+}
+
+// Debounce: вычислять не мгновенно, а через паузу после ввода
+let calcTimer=null;
+function scheduleCalc(){
+  clearTimeout(calcTimer);
+  calcTimer=setTimeout(()=>autoCalculate(),700);
+}
+
+function autoCalculate(){
   if(!currentId)return;
   const def=SHAPES.find(s=>s.id===currentId);
-  const userKeys=new Set();
-  document.querySelectorAll('[data-key]').forEach(inp=>{if(inp.value)userKeys.add(inp.dataset.key);});
+  const userKeys=getUserKeys();
+  // Check if any user input at all
+  if(userKeys.size===0){
+    // clear all computed
+    document.querySelectorAll('[data-key]').forEach(inp=>{if(inp.classList.contains('computed')){inp.value='';inp.classList.remove('computed');}});
+    document.getElementById('status').textContent='';
+    renderCanvas();return;
+  }
   const v=getVals();
   try{
-    const res=def.calc(v);let n=0;
-    Object.entries(res).forEach(([k,val])=>{
-      if(val!=null&&!isNaN(val)&&isFinite(val)&&val>0){n++;
-        if(!userKeys.has(k)){const inp=document.getElementById('inp_'+k);if(inp){inp.value=fmt(val);inp.classList.add('computed');inp.classList.remove('user-set');}}}
+    const res=def.calc(v);
+    let computed=0,total=def.fields.length;
+    def.fields.forEach(f=>{
+      const inp=document.getElementById('inp_'+f.k);if(!inp)return;
+      if(userKeys.has(f.k))return; // don't overwrite user input
+      const val=res[f.k];
+      if(val!=null&&!isNaN(val)&&isFinite(val)&&val>0){
+        inp.value=fmt(val);inp.classList.add('computed');inp.classList.remove('user-set');computed++;
+      } else {
+        // clear stale computed values
+        if(inp.classList.contains('computed')){inp.value='';inp.classList.remove('computed');}
+      }
     });
     const st=document.getElementById('status');
-    if(n>0){st.textContent='✓ Вычислено успешно';st.className='status';}
-    else{st.textContent='⚠ Введите больше данных';st.className='status err';}
+    if(computed>0){st.textContent='✓ Вычислено автоматически';st.className='status';}
+    else{st.textContent='⚠ Недостаточно параметров для вычисления';st.className='status err';}
     renderCanvas();
   }catch(e){
     const st=document.getElementById('status');st.textContent='Ошибка: '+e.message;st.className='status err';
