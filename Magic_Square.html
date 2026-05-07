@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>✦ Магический Квадрат</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;600&family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #06090f;
+  --surface: #0c1220;
+  --surface2: #111827;
+  --border: #1c3352;
+  --border-light: #2a4a6b;
+  --gold: #c8a44a;
+  --gold-light: #f0d060;
+  --gold-dim: #8a6f30;
+  --cyan: #4dd9f5;
+  --cyan-dim: rgba(77,217,245,0.15);
+  --text: #ddd0b8;
+  --text-dim: #6a8aa8;
+  --text-bright: #f0e8d0;
+  --red: #e06060;
+  --green: #5fbf80;
+  --purple: #9b7fe0;
+  --glow-gold: rgba(200,164,74,0.25);
+  --glow-cyan: rgba(77,217,245,0.15);
+  --cell-size: 60px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Cinzel', serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Cosmic background */
+.bg-layer {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background:
+    radial-gradient(ellipse 60% 40% at 20% 30%, rgba(77,130,245,0.04) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 60% at 80% 70%, rgba(200,164,74,0.05) 0%, transparent 70%),
+    radial-gradient(ellipse 80% 80% at 50% 50%, rgba(100,60,200,0.03) 0%, transparent 70%);
+}
+.grid-layer {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background-image:
+    linear-gradient(rgba(28,51,82,0.18) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(28,51,82,0.18) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+
+.container {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 40px 20px 60px;
+  position: relative; z-index: 1;
+}
+
+/* ─── Header ─── */
+header { text-align: center; margin-bottom: 48px; }
+
+.title {
+  font-family: 'Cinzel Decorative', cursive;
+  font-size: clamp(2rem, 7vw, 4.2rem);
+  font-weight: 900;
+  background: linear-gradient(135deg, var(--gold-dim) 0%, var(--gold-light) 45%, var(--gold) 70%, var(--gold-dim) 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shimmer 5s linear infinite;
+  letter-spacing: 0.04em;
+  margin-bottom: 8px;
+}
+@keyframes shimmer {
+  from { background-position: 0 center; }
+  to   { background-position: 200% center; }
+}
+
+.ornament {
+  display: flex; align-items: center; gap: 16px; margin: 14px auto;
+  width: fit-content;
+}
+.ornament-line {
+  width: 90px; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold-dim), transparent);
+}
+.ornament svg { color: var(--gold); }
+
+.subtitle {
+  font-size: 0.72rem; color: var(--text-dim);
+  letter-spacing: 0.28em; text-transform: uppercase;
+  margin-top: 6px;
+}
+
+/* ─── Panel ─── */
+.panel {
+  background: linear-gradient(135deg, rgba(12,18,32,0.95), rgba(17,24,39,0.98));
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 28px 28px 22px;
+  margin-bottom: 24px;
+  position: relative;
+  overflow: hidden;
+}
+.panel::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold-dim), transparent);
+}
+
+.panel-title {
+  font-size: 0.68rem; letter-spacing: 0.25em; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 22px;
+  display: flex; align-items: center; gap: 12px;
+}
+.panel-title::after {
+  content: ''; flex: 1; height: 1px;
+  background: linear-gradient(90deg, var(--border-light), transparent);
+}
+
+.controls-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px 28px;
+}
+@media (max-width: 640px) {
+  .controls-grid { grid-template-columns: 1fr; }
+  .panel { padding: 20px 16px 16px; }
+}
+
+/* ─── Form fields ─── */
+.field { display: flex; flex-direction: column; gap: 8px; }
+
+.field-label {
+  font-size: 0.68rem; letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--gold); display: flex; align-items: center; gap: 6px;
+}
+.field-hint {
+  font-size: 0.65rem; color: var(--text-dim); font-family: 'JetBrains Mono', monospace;
+  letter-spacing: 0; text-transform: none;
+}
+
+select, input[type="number"], input[type="text"] {
+  background: rgba(6,9,15,0.85);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  color: var(--text-bright);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.95rem;
+  padding: 10px 13px;
+  width: 100%;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  -webkit-appearance: none; appearance: none;
+  cursor: pointer;
+}
+select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236a8aa8' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 32px; }
+select:focus, input:focus {
+  outline: none;
+  border-color: var(--gold);
+  box-shadow: 0 0 0 2px var(--glow-gold);
+}
+select option { background: #0c1220; }
+
+/* ─── Tabs ─── */
+.tabs { display: flex; border: 1px solid var(--border); border-radius: 5px; overflow: hidden; }
+.tab-btn {
+  flex: 1; background: transparent; border: none;
+  color: var(--text-dim); cursor: pointer;
+  font-family: 'Cinzel', serif; font-size: 0.68rem;
+  letter-spacing: 0.12em; padding: 9px 8px; text-transform: uppercase;
+  transition: all 0.15s;
+}
+.tab-btn.active { background: rgba(200,164,74,0.12); color: var(--gold); }
+.tab-btn + .tab-btn { border-left: 1px solid var(--border); }
+.tab-btn:hover:not(.active) { color: var(--text); }
+
+/* ─── Compass / Direction selector ─── */
+.dir-section { display: flex; flex-direction: column; gap: 8px; }
+.compass-wrap { display: flex; gap: 20px; align-items: flex-start; }
+.compass {
+  display: grid;
+  grid-template-columns: repeat(3, 44px);
+  grid-template-rows: repeat(3, 44px);
+  gap: 3px;
+}
+.dir-btn {
+  background: rgba(6,9,15,0.85);
+  border: 1px solid var(--border);
+  border-radius: 4px; color: var(--text-dim);
+  cursor: pointer; font-size: 1.1rem;
+  transition: all 0.15s;
+  display: flex; align-items: center; justify-content: center;
+}
+.dir-btn:hover:not(:disabled) { border-color: var(--gold); color: var(--gold); background: rgba(200,164,74,0.08); }
+.dir-btn.active {
+  background: rgba(200,164,74,0.18);
+  border-color: var(--gold);
+  color: var(--gold-light);
+  box-shadow: 0 0 12px var(--glow-gold);
+}
+.dir-btn.center {
+  color: var(--text-dim); font-size: 0.55rem; letter-spacing: 0.05em;
+  font-family: 'Cinzel', serif; cursor: default;
+  line-height: 1.3; text-align: center;
+}
+.dir-btn:disabled { opacity: 0.3; cursor: default; }
+
+.start-pos-info {
+  background: rgba(77,217,245,0.06);
+  border: 1px solid rgba(77,217,245,0.18);
+  border-radius: 4px; color: var(--cyan);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem; padding: 8px 12px; line-height: 1.7;
+  margin-top: 2px; flex: 1;
+}
+
+/* ─── Algo info ─── */
+.algo-badge {
+  background: rgba(155,127,224,0.07);
+  border: 1px solid rgba(155,127,224,0.25);
+  border-radius: 5px; color: var(--purple);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem; padding: 10px 14px;
+  line-height: 1.7; margin-top: 18px;
+}
+
+/* ─── Custom pos inputs ─── */
+.custom-pos-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.small-label { font-size: 0.62rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-dim); margin-bottom: 4px; display: block; }
+
+/* ─── Error / Message ─── */
+.msg { border-radius: 5px; font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; padding: 11px 15px; margin-top: 14px; display: none; }
+.msg.error { background: rgba(224,96,96,0.08); border: 1px solid rgba(224,96,96,0.3); color: var(--red); }
+.msg.warn  { background: rgba(240,208,96,0.07); border: 1px solid rgba(240,208,96,0.25); color: var(--gold); }
+
+/* ─── Generate button ─── */
+.gen-btn {
+  display: block; width: 100%; margin-top: 22px;
+  background: linear-gradient(100deg, #5c3e10, #c8a44a 40%, #f0d060 60%, #8a6f30);
+  background-size: 300% auto;
+  border: none; border-radius: 6px;
+  color: #06090f;
+  cursor: pointer; font-family: 'Cinzel', serif;
+  font-size: 0.88rem; font-weight: 700;
+  letter-spacing: 0.22em; padding: 15px 30px;
+  text-transform: uppercase;
+  transition: background-position 0.5s, box-shadow 0.2s, transform 0.1s;
+}
+.gen-btn:hover { background-position: right center; box-shadow: 0 4px 24px rgba(200,164,74,0.4); }
+.gen-btn:active { transform: scale(0.98); }
+
+/* ─── Result panel ─── */
+.result-panel {
+  opacity: 0; transform: translateY(16px);
+  transition: opacity 0.45s ease, transform 0.45s ease;
+  pointer-events: none;
+}
+.result-panel.show { opacity: 1; transform: none; pointer-events: auto; }
+
+/* ─── Info row ─── */
+.info-row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-bottom: 22px; }
+.pill {
+  border-radius: 20px; font-family: 'JetBrains Mono', monospace;
+  font-size: 0.78rem; padding: 6px 15px; white-space: nowrap;
+}
+.pill-gold { background: rgba(200,164,74,0.1); border: 1px solid rgba(200,164,74,0.3); color: var(--gold); }
+.pill-gold strong { color: var(--gold-light); }
+.pill-green { background: rgba(95,191,128,0.1); border: 1px solid rgba(95,191,128,0.35); color: var(--green); }
+.pill-red   { background: rgba(224,96,96,0.1);  border: 1px solid rgba(224,96,96,0.35);  color: var(--red); }
+
+/* ─── Magic grid wrapper ─── */
+.grid-scroll { overflow-x: auto; padding: 4px 0; }
+.grid-scroll-inner { display: flex; justify-content: center; min-width: fit-content; }
+
+/* ─── Grid + sum annotations ─── */
+.annotated-grid { display: inline-flex; flex-direction: column; gap: 0; }
+.grid-row { display: flex; align-items: center; gap: 0; }
+.magic-grid { display: flex; flex-direction: column; gap: var(--cell-gap, 4px); }
+.grid-col-sums { display: flex; gap: var(--cell-gap, 4px); margin-top: 4px; }
+
+.cell {
+  width: var(--cell-size);
+  height: var(--cell-size);
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 400;
+  color: var(--text);
+  cursor: default;
+  transition: background 0.15s, border-color 0.15s;
+  position: relative;
+  flex-shrink: 0;
+  opacity: 0;
+  animation: cellIn 0.28s ease forwards;
+}
+@keyframes cellIn {
+  from { opacity: 0; transform: scale(0.7); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+.cell.diag-main { background: rgba(200,164,74,0.12); border-color: rgba(200,164,74,0.35); color: var(--gold-light); }
+.cell.diag-anti { background: rgba(77,217,245,0.08);  border-color: rgba(77,217,245,0.3);  color: var(--cyan); }
+.cell.diag-both { background: rgba(155,127,224,0.14); border-color: rgba(155,127,224,0.4); color: #c4aaff; }
+
+.cell.hover-row { background: rgba(200,164,74,0.14) !important; }
+.cell.hover-col { background: rgba(77,217,245,0.12) !important; }
+
+.sum-cell {
+  width: var(--cell-size);
+  height: var(--cell-size);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  flex-shrink: 0;
+  border-radius: 4px;
+}
+.sum-row { color: var(--gold); margin-left: var(--cell-gap, 4px); }
+.sum-col { color: var(--cyan); }
+.sum-diag { color: var(--purple); font-size: 0.65rem; }
+
+/* Legend */
+.legend {
+  display: flex; gap: 16px; flex-wrap: wrap; margin-top: 16px;
+  font-family: 'JetBrains Mono', monospace; font-size: 0.7rem;
+}
+.legend-item { display: flex; align-items: center; gap: 6px; color: var(--text-dim); }
+.legend-box { width: 14px; height: 14px; border-radius: 2px; border: 1px solid; flex-shrink: 0; }
+
+/* verification details */
+.verify-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 8px; margin-top: 16px; }
+.verify-item {
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 5px; padding: 8px 12px;
+  font-family: 'JetBrains Mono', monospace; font-size: 0.72rem;
+  display: flex; align-items: center; gap: 8px;
+}
+.verify-icon { font-size: 0.85rem; }
+
+/* ─── Responsive cell sizing ─── */
+@media (max-width: 500px) { :root { --cell-size: 44px; } }
+</style>
+</head>
+<body>
+<div class="bg-layer"></div>
+<div class="grid-layer"></div>
+
+<div class="container">
+
+<header>
+  <div class="title">Магический Квадрат</div>
+  <div class="ornament">
+    <div class="ornament-line"></div>
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.4">
+      <polygon points="9,1 11,7 17,7 12.5,11 14.5,17 9,13 3.5,17 5.5,11 1,7 7,7"/>
+    </svg>
+    <div class="ornament-line"></div>
+  </div>
+  <div class="subtitle">Генератор &amp; Исследователь магических квадратов</div>
+</header>
+
+<!-- ═══ Controls Panel ═══ -->
+<div class="panel">
+  <div class="panel-title">Параметры квадрата</div>
+
+  <div class="controls-grid">
+
+    <!-- Size -->
+    <div class="field">
+      <label class="field-label">Размерность N×N</label>
+      <select id="sizeSelect" onchange="onSizeChange()">
+        <option value="3">3×3  (нечётный)</option>
+        <option value="4">4×4  (кратный 4)</option>
+        <option value="5">5×5  (нечётный)</option>
+        <option value="6">6×6  (нечётный×2 — Страчи)</option>
+        <option value="7">7×7  (нечётный)</option>
+        <option value="8">8×8  (кратный 4)</option>
+        <option value="9">9×9  (нечётный)</option>
+        <option value="10">10×10 (нечётный×2 — Страчи)</option>
+      </select>
+    </div>
+
+    <!-- Starting value / Target sum -->
+    <div class="field">
+      <label class="field-label">Исходные данные</label>
+      <div class="tabs" style="margin-bottom:8px">
+        <button class="tab-btn active" id="tabStart" onclick="setValueMode('start')">Нач. значение</button>
+        <button class="tab-btn" id="tabSum" onclick="setValueMode('sum')">Сумма строки</button>
+      </div>
+      <div id="inputStart">
+        <input type="number" id="startValue" value="1" placeholder="Начальное число (≥ 1)">
+        <div class="field-hint" id="startHint">Числа от 1 до 9, сумма = 15</div>
+      </div>
+      <div id="inputSum" style="display:none">
+        <input type="number" id="sumValue" placeholder="Целевая сумма" oninput="onSumInput()">
+        <div class="field-hint" id="sumHint">Для нач.=1 и N=3: сумма = 15</div>
+      </div>
+    </div>
+
+    <!-- Direction (odd only) -->
+    <div class="field dir-section" id="dirGroup">
+      <label class="field-label">Направление заполнения</label>
+      <div class="compass-wrap">
+        <div class="compass" id="compass">
+          <button class="dir-btn" data-d="NW" onclick="selectDir('NW')" title="↖ Вверх-влево">↖</button>
+          <button class="dir-btn" data-d="N"  onclick="selectDir('N')"  title="↑ Вверх" disabled>↑</button>
+          <button class="dir-btn active" data-d="NE" onclick="selectDir('NE')" title="↗ Вверх-вправо">↗</button>
+          <button class="dir-btn" data-d="W"  onclick="selectDir('W')"  title="← Влево" disabled>←</button>
+          <div class="dir-btn center">НАЧАЛО</div>
+          <button class="dir-btn" data-d="E"  onclick="selectDir('E')"  title="→ Вправо" disabled>→</button>
+          <button class="dir-btn" data-d="SW" onclick="selectDir('SW')" title="↙ Вниз-влево">↙</button>
+          <button class="dir-btn" data-d="S"  onclick="selectDir('S')"  title="↓ Вниз" disabled>↓</button>
+          <button class="dir-btn" data-d="SE" onclick="selectDir('SE')" title="↘ Вниз-вправо">↘</button>
+        </div>
+        <div class="start-pos-info" id="startPosInfo">
+          Начало: верхняя строка, центральный столбец
+        </div>
+      </div>
+    </div>
+
+    <!-- Custom start position (odd only) -->
+    <div class="field" id="posGroup">
+      <label class="field-label">Начальная позиция</label>
+      <select id="startPos" onchange="onStartPosChange()">
+        <option value="canonical">Канонический старт (рекоменд.)</option>
+        <option value="custom">Произвольная позиция ⚠</option>
+      </select>
+      <div id="customPosDiv" style="display:none; margin-top:8px;">
+        <div class="custom-pos-grid">
+          <div>
+            <span class="small-label">Строка (1 – N)</span>
+            <input type="number" id="customRow" value="1" min="1" max="9">
+          </div>
+          <div>
+            <span class="small-label">Столбец (1 – N)</span>
+            <input type="number" id="customCol" value="1" min="1" max="9">
+          </div>
+        </div>
+        <div class="msg warn" id="warnPos" style="display:block; margin-top:8px">
+          ⚠ Произвольная позиция может нарушить магические свойства. Результат будет проверен автоматически.
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /controls-grid -->
+
+  <div class="algo-badge" id="algoBadge">
+    Алгоритм: Метод Симеозе | Нечётные квадраты | Диагональное движение ↗ | Блокировка → шаг вниз
+  </div>
+
+  <div class="msg error" id="errorMsg"></div>
+
+  <button class="gen-btn" onclick="generate()">
+    ✦ Сгенерировать магический квадрат ✦
+  </button>
+</div>
+
+<!-- ═══ Result ═══ -->
+<div class="panel result-panel" id="resultPanel">
+  <div class="panel-title">Результат</div>
+
+  <div class="info-row" id="infoRow"></div>
+
+  <div class="grid-scroll">
+    <div class="grid-scroll-inner">
+      <div id="gridOutput"></div>
+    </div>
+  </div>
+
+  <div class="legend">
+    <div class="legend-item">
+      <div class="legend-box" style="background:rgba(200,164,74,0.12);border-color:rgba(200,164,74,0.35)"></div>
+      Главная диагональ
+    </div>
+    <div class="legend-item">
+      <div class="legend-box" style="background:rgba(77,217,245,0.08);border-color:rgba(77,217,245,0.3)"></div>
+      Побочная диагональ
+    </div>
+    <div class="legend-item">
+      <div class="legend-box" style="background:rgba(155,127,224,0.14);border-color:rgba(155,127,224,0.4)"></div>
+      Обе диагонали
+    </div>
+    <div class="legend-item" style="margin-left:auto; color:var(--gold); font-size:0.68rem">
+      Наведите на ячейку для подсветки строки/столбца
+    </div>
+  </div>
+
+  <div class="verify-grid" id="verifyGrid"></div>
+</div>
+
+</div><!-- /container -->
+
+<script>
+// ─── State ───────────────────────────────────────────────────────────
+let selectedDir = 'NE';
+let valueMode   = 'start';
+let currentSq   = null;
+
+// Direction configs for Siamese method:
+// dr,dc = primary step; altDr,altDc = fallback when blocked; getStart = canonical start fn
+const DIRS = {
+  NE: { dr:-1, dc: 1, altDr: 1, altDc: 0, getStart: n=>[0,        Math.floor(n/2)], label:'↗ Вверх-вправо', startLabel:'верхняя строка, центральный столбец' },
+  NW: { dr:-1, dc:-1, altDr: 1, altDc: 0, getStart: n=>[0,        Math.floor(n/2)], label:'↖ Вверх-влево',  startLabel:'верхняя строка, центральный столбец' },
+  SE: { dr: 1, dc: 1, altDr:-1, altDc: 0, getStart: n=>[n-1,      Math.floor(n/2)], label:'↘ Вниз-вправо',  startLabel:'нижняя строка, центральный столбец'  },
+  SW: { dr: 1, dc:-1, altDr:-1, altDc: 0, getStart: n=>[n-1,      Math.floor(n/2)], label:'↙ Вниз-влево',   startLabel:'нижняя строка, центральный столбец'  },
+};
+
+// ─── UI callbacks ─────────────────────────────────────────────────────
+function onSizeChange() {
+  const n = +document.getElementById('sizeSelect').value;
+  const isOdd = n % 2 !== 0;
+  document.getElementById('dirGroup').style.display  = isOdd ? '' : 'none';
+  document.getElementById('posGroup').style.display  = isOdd ? '' : 'none';
+  updateAlgoBadge();
+  updateValueHints();
+}
+
+function selectDir(d) {
+  selectedDir = d;
+  document.querySelectorAll('.dir-btn[data-d]').forEach(b => b.classList.remove('active'));
+  document.querySelector(`.dir-btn[data-d="${d}"]`).classList.add('active');
+  updateStartPosInfo();
+  updateAlgoBadge();
+}
+
+function updateStartPosInfo() {
+  const n = +document.getElementById('sizeSelect').value;
+  const dir = DIRS[selectedDir];
+  const [r, c] = dir.getStart(n);
+  const posSel = document.getElementById('startPos').value;
+  if (posSel === 'canonical') {
+    document.getElementById('startPosInfo').innerHTML =
+      `Начало: ${dir.startLabel}<br>Позиция: (строка ${r+1}, столбец ${c+1})`;
+  }
+}
+
+function onStartPosChange() {
+  const v = document.getElementById('startPos').value;
+  document.getElementById('customPosDiv').style.display = v === 'custom' ? '' : 'none';
+  if (v !== 'custom') updateStartPosInfo();
+  else document.getElementById('startPosInfo').textContent = 'Позиция задана вручную';
+}
+
+function setValueMode(mode) {
+  valueMode = mode;
+  document.getElementById('tabStart').classList.toggle('active', mode === 'start');
+  document.getElementById('tabSum').classList.toggle('active',   mode === 'sum');
+  document.getElementById('inputStart').style.display = mode === 'start' ? '' : 'none';
+  document.getElementById('inputSum').style.display   = mode === 'sum'   ? '' : 'none';
+  updateValueHints();
+}
+
+function updateValueHints() {
+  const n = +document.getElementById('sizeSelect').value;
+  const sv = parseInt(document.getElementById('startValue').value) || 1;
+  const magSum = n * (2*sv + n*n - 1) / 2;
+  document.getElementById('startHint').textContent = `Числа от ${sv} до ${sv+n*n-1}, сумма строки = ${magSum}`;
+  document.getElementById('sumHint').textContent   = `Для нач.=${sv} и N=${n}: сумма = ${magSum}`;
+}
+
+function onSumInput() {
+  const n  = +document.getElementById('sizeSelect').value;
+  const S  = parseInt(document.getElementById('sumValue').value);
+  if (!isNaN(S)) {
+    const sv = computeStartVal(n, S);
+    if (sv !== null)
+      document.getElementById('sumHint').textContent = `→ Начальное значение: ${sv}`;
+    else
+      document.getElementById('sumHint').textContent = `⚠ Нет целочисленного решения`;
+  }
+}
+
+function updateAlgoBadge() {
+  const n = +document.getElementById('sizeSelect').value;
+  const el = document.getElementById('algoBadge');
+  if (n % 2 !== 0) {
+    const dir = DIRS[selectedDir];
+    el.textContent = `Алгоритм: Метод Симеозе | Нечётные квадраты | Ход ${dir.label} | При блокировке — шаг ${dir.altDr===1?'вниз':'вверх'}`;
+  } else if (n % 4 === 0) {
+    el.textContent = `Алгоритм: Диагональные перестановки (кратный 4) | Заполнение по строкам → отражение элементов на диагоналях каждого блока 4×4`;
+  } else {
+    el.textContent = `Алгоритм: Метод Страчи (4k+2) | Деление на 4 квадранта из нечётного кв. порядка ${n/2} + перестановки столбцов`;
+  }
+}
+
+// ─── Validation / helpers ─────────────────────────────────────────────
+function computeStartVal(n, S) {
+  // S = n*(2*sv + n²-1)/2  →  sv = (2S/n - n² + 1) / 2
+  if ((2*S) % n !== 0) return null;
+  const num = 2*S/n - n*n + 1;
+  if (num % 2 !== 0) return null;
+  return num / 2;
+}
+
+function showError(msg) {
+  const el = document.getElementById('errorMsg');
+  el.textContent = '⚠ ' + msg;
+  el.style.display = 'block';
+}
+function clearError() {
+  document.getElementById('errorMsg').style.display = 'none';
+}
+
+// ─── Algorithms ───────────────────────────────────────────────────────
+
+// Siamese (odd, any direction + start)
+function generateOdd(n, r0, c0, dr, dc, altDr, altDc, sv) {
+  const sq = Array.from({length:n}, () => Array(n).fill(0));
+  let r = r0, c = c0;
+  for (let k = sv; k < sv + n*n; k++) {
+    sq[r][c] = k;
+    let nr = ((r + dr) % n + n) % n;
+    let nc = ((c + dc) % n + n) % n;
+    if (sq[nr][nc] !== 0) {
+      nr = ((r + altDr) % n + n) % n;
+      nc = ((c + altDc) % n + n) % n;
+    }
+    r = nr; c = nc;
+  }
+  return sq;
+}
+
+// Doubly even (n = 4k): sequential fill then diagonal swap
+function generateDoublyEven(n, sv) {
+  const sq = [];
+  let v = sv;
+  for (let r = 0; r < n; r++) { sq.push([]); for (let c=0;c<n;c++) sq[r].push(v++); }
+  const total = n * n;
+  for (let r = 0; r < n; r++) {
+    for (let c = 0; c < n; c++) {
+      const rm = r%4, cm = c%4;
+      if (rm === cm || rm + cm === 3)   // on diagonal of 4×4 sub-block
+        sq[r][c] = sv + total - 1 - (sq[r][c] - sv);
+    }
+  }
+  return sq;
+}
+
+// Singly even (n = 4k+2): Strachey method
+function generateSinglyEven(n, sv) {
+  const h = n / 2; // odd
+  const h2 = h * h;
+  // Build sub-square (Siamese NE from top-center)
+  const M = generateOdd(h, 0, Math.floor(h/2), -1, 1, 1, 0, 1);
+  const sq = Array.from({length:n}, () => Array(n).fill(0));
+  for (let r = 0; r < h; r++) {
+    for (let c = 0; c < h; c++) {
+      const m = M[r][c];
+      sq[r][c]         = sv - 1 + m;          // TL
+      sq[r][c + h]     = sv - 1 + m + 2*h2;   // TR
+      sq[r + h][c]     = sv - 1 + m + 3*h2;   // BL
+      sq[r + h][c + h] = sv - 1 + m + h2;     // BR
+    }
+  }
+  // Left column swaps: TL ↔ BL for first k columns
+  const k = (n - 2) / 4;
+  const midR = Math.floor(h / 2);
+  for (let r = 0; r < h; r++) {
+    for (let j = 0; j < k; j++) {
+      let col = j;
+      if (r === midR && j === 0) col = k; // middle row: swap col k instead of col 0 only
+      [sq[r][col], sq[r+h][col]] = [sq[r+h][col], sq[r][col]];
+    }
+  }
+  // Right column swaps: TR ↔ BR for last (k-1) columns
+  for (let r = 0; r < h; r++) {
+    for (let j = 1; j < k; j++) {
+      const col = n - j;
+      [sq[r][col], sq[r+h][col]] = [sq[r+h][col], sq[r][col]];
+    }
+  }
+  return sq;
+}
+
+// ─── Verify ───────────────────────────────────────────────────────────
+function verify(sq) {
+  const n = sq.length;
+  const target = sq[0].reduce((a,b)=>a+b,0);
+  const details = { target, rows:true, cols:true, diag1:true, diag2:true };
+  const rowSums = [], colSums = [];
+  let d1=0, d2=0;
+  for (let r=0;r<n;r++) {
+    const rs = sq[r].reduce((a,b)=>a+b,0); rowSums.push(rs);
+    if (rs !== target) details.rows = false;
+    let cs = 0; for (let c=0;c<n;c++) cs += sq[c][r]; colSums.push(cs);
+    if (cs !== target) details.cols = false;
+    d1 += sq[r][r]; d2 += sq[r][n-1-r];
+  }
+  if (d1 !== target) details.diag1 = false;
+  if (d2 !== target) details.diag2 = false;
+  details.rowSums = rowSums; details.colSums = colSums;
+  details.d1 = d1; details.d2 = d2;
+  details.valid = details.rows && details.cols && details.diag1 && details.diag2;
+  return details;
+}
+
+// ─── Main generate ────────────────────────────────────────────────────
+function generate() {
+  clearError();
+  const n  = +document.getElementById('sizeSelect').value;
+  let sv;
+
+  if (valueMode === 'start') {
+    sv = parseInt(document.getElementById('startValue').value);
+    if (isNaN(sv)) { showError('Введите начальное значение'); return; }
+  } else {
+    const S = parseInt(document.getElementById('sumValue').value);
+    if (isNaN(S)) { showError('Введите целевую сумму строки'); return; }
+    sv = computeStartVal(n, S);
+    if (sv === null) {
+      showError(`Для N=${n} сумма ${S} не даёт целочисленного начального значения. Попробуйте другое значение.`);
+      return;
+    }
+  }
+
+  let sq;
+  if (n % 2 !== 0) {
+    const dir = DIRS[selectedDir];
+    let r0, c0;
+    const posSel = document.getElementById('startPos').value;
+    if (posSel === 'canonical') {
+      [r0, c0] = dir.getStart(n);
+    } else {
+      r0 = Math.max(0, Math.min(n-1, (+document.getElementById('customRow').value || 1) - 1));
+      c0 = Math.max(0, Math.min(n-1, (+document.getElementById('customCol').value || 1) - 1));
+    }
+    sq = generateOdd(n, r0, c0, dir.dr, dir.dc, dir.altDr, dir.altDc, sv);
+  } else if (n % 4 === 0) {
+    sq = generateDoublyEven(n, sv);
+  } else {
+    sq = generateSinglyEven(n, sv);
+  }
+
+  currentSq = sq;
+  renderSquare(sq, n);
+  updateValueHints();
+}
+
+// ─── Render ───────────────────────────────────────────────────────────
+function renderSquare(sq, n) {
+  const details = verify(sq);
+
+  // Cell size
+  const maxSize = Math.min(62, Math.max(34, Math.floor(480 / n)));
+  document.documentElement.style.setProperty('--cell-size', maxSize + 'px');
+  document.documentElement.style.setProperty('--cell-gap', '4px');
+
+  const maxVal = Math.max(...sq.flat().map(Math.abs));
+  const fs = maxVal >= 10000 ? '0.65rem' : maxVal >= 1000 ? '0.75rem' : maxVal >= 100 ? '0.85rem' : '1rem';
+
+  // ─ Info row
+  const infoRow = document.getElementById('infoRow');
+  infoRow.innerHTML = `
+    <div class="pill pill-gold">Размер: <strong>${n}×${n}</strong></div>
+    <div class="pill pill-gold">Магическая сумма: <strong>${details.target}</strong></div>
+    <div class="pill ${details.valid ? 'pill-green' : 'pill-red'}">${details.valid ? '✓ Магический квадрат' : '✗ Квадрат не магический'}</div>
+  `;
+
+  // ─ Grid
+  const out = document.getElementById('gridOutput');
+  out.innerHTML = '';
+
+  // diagonal sets
+  const mainD = new Set(), antiD = new Set();
+  for (let i=0;i<n;i++) { mainD.add(i*n+i); antiD.add(i*n+(n-1-i)); }
+
+  // Build annotated grid
+  const wrapper = document.createElement('div');
+  wrapper.style.display = 'inline-block';
+
+  const gridEl = document.createElement('div');
+  gridEl.style.cssText = `display:grid; grid-template-columns:repeat(${n},${maxSize}px) auto; grid-template-rows:repeat(${n},${maxSize}px) auto; gap:4px;`;
+
+  sq.forEach((row, r) => {
+    row.forEach((val, c) => {
+      const idx = r * n + c;
+      const cell = document.createElement('div');
+      cell.className = 'cell';
+      cell.textContent = val;
+      cell.style.fontSize = fs;
+      cell.style.animationDelay = (idx * 18) + 'ms';
+
+      // diagonal highlight
+      const onMain = mainD.has(idx), onAnti = antiD.has(idx);
+      if (onMain && onAnti) cell.classList.add('diag-both');
+      else if (onMain)      cell.classList.add('diag-main');
+      else if (onAnti)      cell.classList.add('diag-anti');
+
+      // hover: highlight row + col
+      cell.addEventListener('mouseenter', () => {
+        gridEl.querySelectorAll('.cell').forEach((el, idx2) => {
+          const r2 = Math.floor(idx2/n), c2 = idx2%n;
+          el.classList.remove('hover-row','hover-col');
+          if (r2 === r) el.classList.add('hover-row');
+          if (c2 === c) el.classList.add('hover-col');
+        });
+      });
+      cell.addEventListener('mouseleave', () => {
+        gridEl.querySelectorAll('.cell').forEach(el => el.classList.remove('hover-row','hover-col'));
+      });
+
+      cell.style.gridColumn = c+1;
+      cell.style.gridRow    = r+1;
+      gridEl.appendChild(cell);
+    });
+
+    // Row sum annotation
+    const sumCell = document.createElement('div');
+    sumCell.className = 'sum-cell sum-row';
+    sumCell.style.fontSize = '0.72rem';
+    sumCell.textContent = '= ' + details.rowSums[r];
+    if (details.rowSums[r] !== details.target) sumCell.style.color = 'var(--red)';
+    sumCell.style.gridColumn = n+1;
+    sumCell.style.gridRow    = r+1;
+    gridEl.appendChild(sumCell);
+  });
+
+  // Column sum row
+  for (let c=0;c<n;c++) {
+    const sumCell = document.createElement('div');
+    sumCell.className = 'sum-cell sum-col';
+    sumCell.style.fontSize = '0.72rem';
+    sumCell.textContent = details.colSums[c];
+    if (details.colSums[c] !== details.target) sumCell.style.color = 'var(--red)';
+    sumCell.style.gridColumn = c+1;
+    sumCell.style.gridRow    = n+1;
+    gridEl.appendChild(sumCell);
+  }
+
+  // Diagonal sums (corner of annotation area)
+  const cornerCell = document.createElement('div');
+  cornerCell.className = 'sum-cell sum-diag';
+  cornerCell.innerHTML = `↘${details.d1}<br>↗${details.d2}`;
+  cornerCell.style.lineHeight = '1.6';
+  cornerCell.style.gridColumn = n+1;
+  cornerCell.style.gridRow    = n+1;
+  if (!details.diag1 || !details.diag2) cornerCell.style.color = 'var(--red)';
+  gridEl.appendChild(cornerCell);
+
+  out.appendChild(gridEl);
+
+  // ─ Verify details
+  const vGrid = document.getElementById('verifyGrid');
+  vGrid.innerHTML = '';
+  const checks = [
+    { label:'Строки',           ok: details.rows,  note:`Все ${n} строк суммируются в ${details.target}` },
+    { label:'Столбцы',          ok: details.cols,  note:`Все ${n} столбцов суммируются в ${details.target}` },
+    { label:'Главная диагональ',ok: details.diag1, note:`Диагональ ↘ = ${details.d1}` },
+    { label:'Побочная диагональ',ok:details.diag2, note:`Диагональ ↗ = ${details.d2}` },
+  ];
+  checks.forEach(ch => {
+    const el = document.createElement('div');
+    el.className = 'verify-item';
+    el.style.borderColor = ch.ok ? 'rgba(95,191,128,0.25)' : 'rgba(224,96,96,0.25)';
+    el.innerHTML = `<span class="verify-icon">${ch.ok ? '✓' : '✗'}</span>
+      <div style="color:${ch.ok?'var(--green)':'var(--red)'}; font-size:0.7rem; line-height:1.5;">
+        <div style="font-weight:600">${ch.label}</div>
+        <div style="opacity:0.75">${ch.note}</div>
+      </div>`;
+    vGrid.appendChild(el);
+  });
+
+  // Show result panel
+  document.getElementById('resultPanel').classList.add('show');
+  document.getElementById('resultPanel').scrollIntoView({ behavior:'smooth', block:'nearest' });
+}
+
+// ─── Init ─────────────────────────────────────────────────────────────
+document.getElementById('startValue').addEventListener('input', updateValueHints);
+onSizeChange();
+updateAlgoBadge();
+updateStartPosInfo();
+</script>
+</body>
+</html>
