@@ -37,7 +37,6 @@ body {
   overflow-x: hidden;
 }
 
-/* Cosmic background */
 .bg-layer {
   position: fixed; inset: 0; z-index: 0; pointer-events: none;
   background:
@@ -60,7 +59,6 @@ body {
   position: relative; z-index: 1;
 }
 
-/* ─── Header ─── */
 header { text-align: center; margin-bottom: 48px; }
 
 .title {
@@ -97,7 +95,6 @@ header { text-align: center; margin-bottom: 48px; }
   margin-top: 6px;
 }
 
-/* ─── Panel ─── */
 .panel {
   background: linear-gradient(135deg, rgba(12,18,32,0.95), rgba(17,24,39,0.98));
   border: 1px solid var(--border);
@@ -133,7 +130,6 @@ header { text-align: center; margin-bottom: 48px; }
   .panel { padding: 20px 16px 16px; }
 }
 
-/* ─── Form fields ─── */
 .field { display: flex; flex-direction: column; gap: 8px; }
 
 .field-label {
@@ -166,7 +162,6 @@ select:focus, input:focus {
 }
 select option { background: #0c1220; }
 
-/* ─── Tabs ─── */
 .tabs { display: flex; border: 1px solid var(--border); border-radius: 5px; overflow: hidden; }
 .tab-btn {
   flex: 1; background: transparent; border: none;
@@ -179,7 +174,6 @@ select option { background: #0c1220; }
 .tab-btn + .tab-btn { border-left: 1px solid var(--border); }
 .tab-btn:hover:not(.active) { color: var(--text); }
 
-/* ─── Compass / Direction selector ─── */
 .dir-section { display: flex; flex-direction: column; gap: 8px; }
 .compass-wrap { display: flex; gap: 20px; align-items: flex-start; }
 .compass {
@@ -219,7 +213,6 @@ select option { background: #0c1220; }
   margin-top: 2px; flex: 1;
 }
 
-/* ─── Algo info ─── */
 .algo-badge {
   background: rgba(155,127,224,0.07);
   border: 1px solid rgba(155,127,224,0.25);
@@ -229,16 +222,13 @@ select option { background: #0c1220; }
   line-height: 1.7; margin-top: 18px;
 }
 
-/* ─── Custom pos inputs ─── */
 .custom-pos-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .small-label { font-size: 0.62rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-dim); margin-bottom: 4px; display: block; }
 
-/* ─── Error / Message ─── */
 .msg { border-radius: 5px; font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; padding: 11px 15px; margin-top: 14px; display: none; }
 .msg.error { background: rgba(224,96,96,0.08); border: 1px solid rgba(224,96,96,0.3); color: var(--red); }
 .msg.warn  { background: rgba(240,208,96,0.07); border: 1px solid rgba(240,208,96,0.25); color: var(--gold); }
 
-/* ─── Generate button ─── */
 .gen-btn {
   display: block; width: 100%; margin-top: 22px;
   background: linear-gradient(100deg, #5c3e10, #c8a44a 40%, #f0d060 60%, #8a6f30);
@@ -254,7 +244,6 @@ select option { background: #0c1220; }
 .gen-btn:hover { background-position: right center; box-shadow: 0 4px 24px rgba(200,164,74,0.4); }
 .gen-btn:active { transform: scale(0.98); }
 
-/* ─── Result panel ─── */
 .result-panel {
   opacity: 0; transform: translateY(16px);
   transition: opacity 0.45s ease, transform 0.45s ease;
@@ -262,7 +251,6 @@ select option { background: #0c1220; }
 }
 .result-panel.show { opacity: 1; transform: none; pointer-events: auto; }
 
-/* ─── Info row ─── */
 .info-row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-bottom: 22px; }
 .pill {
   border-radius: 20px; font-family: 'JetBrains Mono', monospace;
@@ -273,11 +261,9 @@ select option { background: #0c1220; }
 .pill-green { background: rgba(95,191,128,0.1); border: 1px solid rgba(95,191,128,0.35); color: var(--green); }
 .pill-red   { background: rgba(224,96,96,0.1);  border: 1px solid rgba(224,96,96,0.35);  color: var(--red); }
 
-/* ─── Magic grid wrapper ─── */
 .grid-scroll { overflow-x: auto; padding: 4px 0; }
 .grid-scroll-inner { display: flex; justify-content: center; min-width: fit-content; }
 
-/* ─── Grid + sum annotations ─── */
 .annotated-grid { display: inline-flex; flex-direction: column; gap: 0; }
 .grid-row { display: flex; align-items: center; gap: 0; }
 .magic-grid { display: flex; flex-direction: column; gap: var(--cell-gap, 4px); }
@@ -343,7 +329,6 @@ select option { background: #0c1220; }
 }
 .verify-icon { font-size: 0.85rem; }
 
-/* ─── Responsive cell sizing ─── */
 @media (max-width: 500px) { :root { --cell-size: 44px; } }
 </style>
 </head>
@@ -365,13 +350,11 @@ select option { background: #0c1220; }
   <div class="subtitle">Генератор &amp; Исследователь магических квадратов</div>
 </header>
 
-<!-- ═══ Controls Panel ═══ -->
 <div class="panel">
   <div class="panel-title">Параметры квадрата</div>
 
   <div class="controls-grid">
 
-    <!-- Size -->
     <div class="field">
       <label class="field-label">Размерность N×N</label>
       <select id="sizeSelect" onchange="onSizeChange()">
@@ -386,7 +369,6 @@ select option { background: #0c1220; }
       </select>
     </div>
 
-    <!-- Starting value / Target sum -->
     <div class="field">
       <label class="field-label">Исходные данные</label>
       <div class="tabs" style="margin-bottom:8px">
@@ -403,7 +385,6 @@ select option { background: #0c1220; }
       </div>
     </div>
 
-    <!-- Direction (odd only) -->
     <div class="field dir-section" id="dirGroup">
       <label class="field-label">Направление заполнения</label>
       <div class="compass-wrap">
@@ -424,7 +405,6 @@ select option { background: #0c1220; }
       </div>
     </div>
 
-    <!-- Custom start position (odd only) -->
     <div class="field" id="posGroup">
       <label class="field-label">Начальная позиция</label>
       <select id="startPos" onchange="onStartPosChange()">
@@ -448,7 +428,7 @@ select option { background: #0c1220; }
       </div>
     </div>
 
-  </div><!-- /controls-grid -->
+  </div>
 
   <div class="algo-badge" id="algoBadge">
     Алгоритм: Метод Симеозе | Нечётные квадраты | Диагональное движение ↗ | Блокировка → шаг вниз
@@ -461,7 +441,6 @@ select option { background: #0c1220; }
   </button>
 </div>
 
-<!-- ═══ Result ═══ -->
 <div class="panel result-panel" id="resultPanel">
   <div class="panel-title">Результат</div>
 
@@ -494,16 +473,13 @@ select option { background: #0c1220; }
   <div class="verify-grid" id="verifyGrid"></div>
 </div>
 
-</div><!-- /container -->
+</div>
 
 <script>
-// ─── State ───────────────────────────────────────────────────────────
 let selectedDir = 'NE';
 let valueMode   = 'start';
 let currentSq   = null;
 
-// Direction configs for Siamese method:
-// dr,dc = primary step; altDr,altDc = fallback when blocked; getStart = canonical start fn
 const DIRS = {
   NE: { dr:-1, dc: 1, altDr: 1, altDc: 0, getStart: n=>[0,        Math.floor(n/2)], label:'↗ Вверх-вправо', startLabel:'верхняя строка, центральный столбец' },
   NW: { dr:-1, dc:-1, altDr: 1, altDc: 0, getStart: n=>[0,        Math.floor(n/2)], label:'↖ Вверх-влево',  startLabel:'верхняя строка, центральный столбец' },
@@ -511,7 +487,6 @@ const DIRS = {
   SW: { dr: 1, dc:-1, altDr:-1, altDc: 0, getStart: n=>[n-1,      Math.floor(n/2)], label:'↙ Вниз-влево',   startLabel:'нижняя строка, центральный столбец'  },
 };
 
-// ─── UI callbacks ─────────────────────────────────────────────────────
 function onSizeChange() {
   const n = +document.getElementById('sizeSelect').value;
   const isOdd = n % 2 !== 0;
@@ -589,9 +564,7 @@ function updateAlgoBadge() {
   }
 }
 
-// ─── Validation / helpers ─────────────────────────────────────────────
 function computeStartVal(n, S) {
-  // S = n*(2*sv + n²-1)/2  →  sv = (2S/n - n² + 1) / 2
   if ((2*S) % n !== 0) return null;
   const num = 2*S/n - n*n + 1;
   if (num % 2 !== 0) return null;
@@ -606,10 +579,7 @@ function showError(msg) {
 function clearError() {
   document.getElementById('errorMsg').style.display = 'none';
 }
-
-// ─── Algorithms ───────────────────────────────────────────────────────
-
-// Siamese (odd, any direction + start)
+  
 function generateOdd(n, r0, c0, dr, dc, altDr, altDc, sv) {
   const sq = Array.from({length:n}, () => Array(n).fill(0));
   let r = r0, c = c0;
@@ -626,7 +596,6 @@ function generateOdd(n, r0, c0, dr, dc, altDr, altDc, sv) {
   return sq;
 }
 
-// Doubly even (n = 4k): sequential fill then diagonal swap
 function generateDoublyEven(n, sv) {
   const sq = [];
   let v = sv;
@@ -635,40 +604,36 @@ function generateDoublyEven(n, sv) {
   for (let r = 0; r < n; r++) {
     for (let c = 0; c < n; c++) {
       const rm = r%4, cm = c%4;
-      if (rm === cm || rm + cm === 3)   // on diagonal of 4×4 sub-block
+      if (rm === cm || rm + cm === 3)   
         sq[r][c] = sv + total - 1 - (sq[r][c] - sv);
     }
   }
   return sq;
 }
 
-// Singly even (n = 4k+2): Strachey method
 function generateSinglyEven(n, sv) {
   const h = n / 2; // odd
   const h2 = h * h;
-  // Build sub-square (Siamese NE from top-center)
   const M = generateOdd(h, 0, Math.floor(h/2), -1, 1, 1, 0, 1);
   const sq = Array.from({length:n}, () => Array(n).fill(0));
   for (let r = 0; r < h; r++) {
     for (let c = 0; c < h; c++) {
       const m = M[r][c];
-      sq[r][c]         = sv - 1 + m;          // TL
-      sq[r][c + h]     = sv - 1 + m + 2*h2;   // TR
-      sq[r + h][c]     = sv - 1 + m + 3*h2;   // BL
-      sq[r + h][c + h] = sv - 1 + m + h2;     // BR
+      sq[r][c]         = sv - 1 + m;          
+      sq[r][c + h]     = sv - 1 + m + 2*h2;   
+      sq[r + h][c]     = sv - 1 + m + 3*h2;   
+      sq[r + h][c + h] = sv - 1 + m + h2;    
     }
   }
-  // Left column swaps: TL ↔ BL for first k columns
   const k = (n - 2) / 4;
   const midR = Math.floor(h / 2);
   for (let r = 0; r < h; r++) {
     for (let j = 0; j < k; j++) {
       let col = j;
-      if (r === midR && j === 0) col = k; // middle row: swap col k instead of col 0 only
+      if (r === midR && j === 0) col = k; 
       [sq[r][col], sq[r+h][col]] = [sq[r+h][col], sq[r][col]];
     }
   }
-  // Right column swaps: TR ↔ BR for last (k-1) columns
   for (let r = 0; r < h; r++) {
     for (let j = 1; j < k; j++) {
       const col = n - j;
@@ -678,7 +643,6 @@ function generateSinglyEven(n, sv) {
   return sq;
 }
 
-// ─── Verify ───────────────────────────────────────────────────────────
 function verify(sq) {
   const n = sq.length;
   const target = sq[0].reduce((a,b)=>a+b,0);
@@ -700,7 +664,6 @@ function verify(sq) {
   return details;
 }
 
-// ─── Main generate ────────────────────────────────────────────────────
 function generate() {
   clearError();
   const n  = +document.getElementById('sizeSelect').value;
@@ -742,11 +705,9 @@ function generate() {
   updateValueHints();
 }
 
-// ─── Render ───────────────────────────────────────────────────────────
 function renderSquare(sq, n) {
   const details = verify(sq);
 
-  // Cell size
   const maxSize = Math.min(62, Math.max(34, Math.floor(480 / n)));
   document.documentElement.style.setProperty('--cell-size', maxSize + 'px');
   document.documentElement.style.setProperty('--cell-gap', '4px');
@@ -754,7 +715,6 @@ function renderSquare(sq, n) {
   const maxVal = Math.max(...sq.flat().map(Math.abs));
   const fs = maxVal >= 10000 ? '0.65rem' : maxVal >= 1000 ? '0.75rem' : maxVal >= 100 ? '0.85rem' : '1rem';
 
-  // ─ Info row
   const infoRow = document.getElementById('infoRow');
   infoRow.innerHTML = `
     <div class="pill pill-gold">Размер: <strong>${n}×${n}</strong></div>
@@ -762,15 +722,12 @@ function renderSquare(sq, n) {
     <div class="pill ${details.valid ? 'pill-green' : 'pill-red'}">${details.valid ? '✓ Магический квадрат' : '✗ Квадрат не магический'}</div>
   `;
 
-  // ─ Grid
   const out = document.getElementById('gridOutput');
   out.innerHTML = '';
 
-  // diagonal sets
   const mainD = new Set(), antiD = new Set();
   for (let i=0;i<n;i++) { mainD.add(i*n+i); antiD.add(i*n+(n-1-i)); }
 
-  // Build annotated grid
   const wrapper = document.createElement('div');
   wrapper.style.display = 'inline-block';
 
@@ -786,13 +743,11 @@ function renderSquare(sq, n) {
       cell.style.fontSize = fs;
       cell.style.animationDelay = (idx * 18) + 'ms';
 
-      // diagonal highlight
       const onMain = mainD.has(idx), onAnti = antiD.has(idx);
       if (onMain && onAnti) cell.classList.add('diag-both');
       else if (onMain)      cell.classList.add('diag-main');
       else if (onAnti)      cell.classList.add('diag-anti');
 
-      // hover: highlight row + col
       cell.addEventListener('mouseenter', () => {
         gridEl.querySelectorAll('.cell').forEach((el, idx2) => {
           const r2 = Math.floor(idx2/n), c2 = idx2%n;
@@ -810,7 +765,6 @@ function renderSquare(sq, n) {
       gridEl.appendChild(cell);
     });
 
-    // Row sum annotation
     const sumCell = document.createElement('div');
     sumCell.className = 'sum-cell sum-row';
     sumCell.style.fontSize = '0.72rem';
@@ -821,7 +775,6 @@ function renderSquare(sq, n) {
     gridEl.appendChild(sumCell);
   });
 
-  // Column sum row
   for (let c=0;c<n;c++) {
     const sumCell = document.createElement('div');
     sumCell.className = 'sum-cell sum-col';
@@ -833,7 +786,6 @@ function renderSquare(sq, n) {
     gridEl.appendChild(sumCell);
   }
 
-  // Diagonal sums (corner of annotation area)
   const cornerCell = document.createElement('div');
   cornerCell.className = 'sum-cell sum-diag';
   cornerCell.innerHTML = `↘${details.d1}<br>↗${details.d2}`;
@@ -845,7 +797,6 @@ function renderSquare(sq, n) {
 
   out.appendChild(gridEl);
 
-  // ─ Verify details
   const vGrid = document.getElementById('verifyGrid');
   vGrid.innerHTML = '';
   const checks = [
@@ -866,12 +817,10 @@ function renderSquare(sq, n) {
     vGrid.appendChild(el);
   });
 
-  // Show result panel
   document.getElementById('resultPanel').classList.add('show');
   document.getElementById('resultPanel').scrollIntoView({ behavior:'smooth', block:'nearest' });
 }
 
-// ─── Init ─────────────────────────────────────────────────────────────
 document.getElementById('startValue').addEventListener('input', updateValueHints);
 onSizeChange();
 updateAlgoBadge();
