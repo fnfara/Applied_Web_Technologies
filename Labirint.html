@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Лабиринт — Поиск пути</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,sans-serif;background:var(--color-background-tertiary,#f5f5f0);color:var(--color-text-primary,#111);padding:1.5rem;min-height:100vh}
+h1{font-size:22px;font-weight:500;margin-bottom:1.5rem}
+.layout{display:grid;grid-template-columns:1fr 320px;gap:1.5rem;align-items:start}
+@media(max-width:680px){.layout{grid-template-columns:1fr}}
+
+.card{background:var(--color-background-primary,#fff);border:0.5px solid var(--color-border-tertiary,rgba(0,0,0,0.15));border-radius:12px;padding:1.25rem}
+.panel-title{font-size:13px;font-weight:500;color:var(--color-text-secondary,#666);text-transform:uppercase;letter-spacing:.06em;margin-bottom:1rem}
+
+.maze-wrap{overflow:auto;min-height:120px}
+.maze-grid{display:inline-grid;gap:2px;padding:4px}
+.cell{border-radius:3px;cursor:pointer;transition:opacity .1s}
+.cell:hover{opacity:.8}
+.cell.wall{background:#3c3c3a}
+.cell.open{background:var(--color-background-secondary,#f0ede8);border:0.5px solid var(--color-border-tertiary,rgba(0,0,0,0.12))}
+.cell.start{background:#1d9e75}
+.cell.end{background:#d85a30}
+.cell.visited{background:#b5d4f4}
+.cell.path{background:#ef9f27}
+.cell.path-start{background:#1d9e75}
+.cell.path-end{background:#d85a30}
+
+.tabs{display:flex;gap:4px;margin-bottom:1rem}
+.tab{font-size:13px;padding:6px 14px;border-radius:6px;border:0.5px solid var(--color-border-tertiary,rgba(0,0,0,0.15));cursor:pointer;background:transparent;color:var(--color-text-secondary,#666);font-family:inherit}
+.tab.active{background:var(--color-background-secondary,#f0ede8);color:var(--color-text-primary,#111);border-color:var(--color-border-secondary,rgba(0,0,0,0.3))}
+.tab-panel{display:none}.tab-panel.active{display:block}
+
+label{display:block;font-size:13px;color:var(--color-text-secondary,#666);margin-bottom:4px}
+textarea{width:100%;font-family:monospace;font-size:12px;padding:8px;border:0.5px solid var(--color-border-tertiary,rgba(0,0,0,0.15));border-radius:8px;background:var(--color-background-secondary,#f0ede8);color:var(--color-text-primary,#111);resize:vertical;min-height:160px;line-height:1.5}
+input[type=range]{width:100%}
+input[type=number]{width:60px;padding:4px 8px;border:0.5px solid var(--color-border-tertiary);border-radius:6px;background:var(--color-background-secondary);font-family:inherit;font-size:13px;color:var(--color-text-primary)}
+.row{display:flex;align-items:center;gap:8px;margin-bottom:.75rem}
+.row label{margin:0;min-width:80px}
+.val{font-size:13px;font-weight:500;min-width:28px}
+
+button{font-family:inherit;font-size:13px;padding:7px 16px;border:0.5px solid var(--color-border-secondary,rgba(0,0,0,0.3));border-radius:8px;background:transparent;color:var(--color-text-primary,#111);cursor:pointer;margin-right:6px;margin-bottom:6px}
+button:hover{background:var(--color-background-secondary,#f0ede8)}
+button:active{transform:scale(.98)}
+button.primary{background:#1d9e75;color:#fff;border-color:#1d9e75}
+button.primary:hover{background:#0f6e56}
+button.danger{background:#d85a30;color:#fff;border-color:#d85a30}
+button.danger:hover{background:#993c1d}
+
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:1rem}
+.stat{background:var(--color-background-secondary,#f0ede8);border-radius:8px;padding:.75rem;text-align:center}
+.stat-val{font-size:20px;font-weight:500;line-height:1}
+.stat-lbl{font-size:11px;color:var(--color-text-secondary,#666);margin-top:4px}
+
+.legend{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:1rem}
+.leg{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--color-text-secondary)}
+.leg-dot{width:14px;height:14px;border-radius:3px;flex-shrink:0}
+
+.msg{font-size:13px;padding:8px 12px;border-radius:8px;margin-top:.75rem}
+.msg.ok{background:#eaf3de;color:#3b6d11}
+.msg.err{background:#fcebeb;color:#a32d2d}
+.msg.info{background:#e6f1fb;color:#185fa5}
+</style>
+</head>
+<body>
+
+<h1>Лабиринт — поиск минимального пути</h1>
+
+<div class="layout">
+  <div class="card">
+    <div class="panel-title">Визуализация</div>
+    <div class="legend">
+      <span class="leg"><span class="leg-dot" style="background:#3c3c3a"></span># стена</span>
+      <span class="leg"><span class="leg-dot" style="background:var(--color-background-secondary,#f0ede8);border:0.5px solid #ccc"></span>_ проход</span>
+      <span class="leg"><span class="leg-dot" style="background:#1d9e75"></span>J старт</span>
+      <span class="leg"><span class="leg-dot" style="background:#d85a30"></span>O финиш</span>
+      <span class="leg"><span class="leg-dot" style="background:#ef9f27"></span>путь</span>
+      <span class="leg"><span class="leg-dot" style="background:#b5d4f4"></span>просмотрено</span>
+    </div>
+    <div class="maze-wrap">
+      <div class="maze-grid" id="mazeGrid"></div>
+    </div>
+    <div id="mazeMsg"></div>
+    <div class="stats" id="statsBox" style="display:none">
+      <div class="stat"><div class="stat-val" id="sDist">—</div><div class="stat-lbl">Длина пути</div></div>
+      <div class="stat"><div class="stat-val" id="sVisited">—</div><div class="stat-lbl">Просмотрено</div></div>
+      <div class="stat"><div class="stat-val" id="sWalls">—</div><div class="stat-lbl">Стен %</div></div>
+      <div class="stat"><div class="stat-val" id="sOpen">—</div><div class="stat-lbl">Проходов %</div></div>
+    </div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:1rem">
+    <div class="card">
+      <div class="tabs">
+        <button class="tab active" onclick="switchTab('editor')">Редактор</button>
+        <button class="tab" onclick="switchTab('gen')">Генератор</button>
+        <button class="tab" onclick="switchTab('edit')">Ред. ячеек</button>
+      </div>
+
+      <div class="tab-panel active" id="tab-editor">
+        <label>Формат: # стена, _ проход, J старт, O финиш</label>
+        <textarea id="mazeText" spellcheck="false">###J#
+# # #
+# # #
+#   #
+# ###
+# ##
+## #
+# # O
+# # #</textarea>
+        <button class="primary" onclick="loadFromText()" style="margin-top:8px">Загрузить</button>
+        <button onclick="exportMaze()">Экспорт</button>
+      </div>
+
+      <div class="tab-panel" id="tab-gen">
+        <div class="row"><label>Строки</label><input type="number" id="genRows" value="15" min="4" max="40"></div>
+        <div class="row"><label>Столбцы</label><input type="number" id="genCols" value="20" min="4" max="60"></div>
+        <div class="row"><label>Стены %</label><input type="range" id="wallPct" min="10" max="75" value="35" step="1" oninput="document.getElementById('wallVal').textContent=this.value+'%'"><span class="val" id="wallVal">35%</span></div>
+        <div class="row">
+          <label>Гарантия пути</label>
+          <input type="checkbox" id="ensurePath" checked>
+        </div>
+        <button class="primary" onclick="generateMaze()">Генерировать</button>
+        <button onclick="generateMaze(true)">Лабиринт (рекурс.)</button>
+      </div>
+
+      <div class="tab-panel" id="tab-edit">
+        <p style="font-size:13px;color:var(--color-text-secondary);margin-bottom:.75rem">Нажмите на ячейку для смены типа.<br>Порядок: проход → стена → старт → финиш</p>
+        <p style="font-size:12px;color:var(--color-text-secondary)" id="editHint">Режим редактирования активен</p>
+        <button onclick="updateTextFromMaze()">Обновить текст</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="panel-title">Управление</div>
+      <button class="primary" onclick="findPath()">Найти путь (BFS)</button>
+      <button onclick="resetDisplay()">Сброс пути</button>
+      <button class="danger" onclick="clearAll()">Очистить</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let maze=[], rows=0, cols=0, startPos=null, endPos=null;
+let animTimer=null, editMode=false;
+
+const DEFAULT=`###J#\n# # #\n# # #\n#   #\n# ###\n# ##\n## #\n# # O\n# # #`;
+
+function switchTab(name){
+  document.querySelectorAll('.tab').forEach((t,i)=>{
+    t.classList.toggle('active',['editor','gen','edit'][i]===name);
+  });
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  editMode=(name==='edit');
+}
+
+function parseMaze(text){
+  const lines=text.split('\n').filter(l=>l.length>0);
+  const maxW=Math.max(...lines.map(l=>l.length));
+  return lines.map(line=>{
+    const pad=line.padEnd(maxW,' ');
+    return pad.split('').map(ch=>(ch===' '?'_':ch));
+  });
+}
+
+function mazeToText(m){
+  return m.map(row=>row.map(c=>(c==='_'?' ':c)).join('')).join('\n');
+}
+
+function findSpecial(m){
+  let s=null,e=null;
+  for(let r=0;r<m.length;r++) for(let c=0;c<m[r].length;c++){
+    if(m[r][c]==='J') s=[r,c];
+    if(m[r][c]==='O') e=[r,c];
+  }
+  return {s,e};
+}
+
+function loadMaze(m){
+  if(animTimer){clearTimeout(animTimer);animTimer=null;}
+  maze=m; rows=m.length; cols=m[0]?.length||0;
+  const {s,e}=findSpecial(m);
+  startPos=s; endPos=e;
+  renderMaze();
+  updateStats();
+  document.getElementById('mazeMsg').innerHTML='';
+  document.getElementById('statsBox').style.display='none';
+}
+
+function loadFromText(){
+  const txt=document.getElementById('mazeText').value.trim();
+  if(!txt){showMsg('Введите лабиринт','err');return;}
+  try{const m=parseMaze(txt);loadMaze(m);}
+  catch(e){showMsg('Ошибка разбора: '+e.message,'err');}
+}
+
+function renderMaze(cellClass=null){
+  const grid=document.getElementById('mazeGrid');
+  const cs=cellSize();
+  grid.style.gridTemplateColumns=`repeat(${cols},${cs}px)`;
+  grid.innerHTML='';
+  for(let r=0;r<rows;r++) for(let c=0;c<cols;c++){
+    const d=document.createElement('div');
+    d.className='cell '+getCellClass(maze[r][c]);
+    d.style.width=cs+'px'; d.style.height=cs+'px';
+    d.dataset.r=r; d.dataset.c=c;
+    d.addEventListener('click',onCellClick);
+    grid.appendChild(d);
+  }
+}
+
+function getCellClass(ch){
+  if(ch==='#') return 'wall';
+  if(ch==='J') return 'start';
+  if(ch==='O') return 'end';
+  return 'open';
+}
+
+function cellSize(){
+  const maxDim=Math.max(rows,cols);
+  if(maxDim<=8) return 40;
+  if(maxDim<=15) return 32;
+  if(maxDim<=25) return 24;
+  if(maxDim<=40) return 18;
+  return 14;
+}
+
+function onCellClick(e){
+  if(!editMode) return;
+  const r=+e.target.dataset.r, c=+e.target.dataset.c;
+  const cycle={'_':'#','#':'J','J':'O','O':'_'};
+  const cur=maze[r][c];
+  if(cur==='J'&&startPos&&startPos[0]===r&&startPos[1]===c) startPos=null;
+  if(cur==='O'&&endPos&&endPos[0]===r&&endPos[1]===c) endPos=null;
+  maze[r][c]=cycle[cur]||'_';
+  if(maze[r][c]==='J'){
+    if(startPos) maze[startPos[0]][startPos[1]]='_';
+    startPos=[r,c];
+  }
+  if(maze[r][c]==='O'){
+    if(endPos) maze[endPos[0]][endPos[1]]='_';
+    endPos=[r,c];
+  }
+  e.target.className='cell '+getCellClass(maze[r][c]);
+  document.getElementById('editHint').textContent=`[${r},${c}] = ${maze[r][c]}`;
+  updateStats();
+}
+
+function bfs(){
+  if(!startPos||!endPos){showMsg('Не найден старт (J) или финиш (O)','err');return null;}
+  const queue=[[startPos[0],startPos[1],[]]];
+  const vis=new Set([`${startPos[0]},${startPos[1]}`]);
+  const visitedOrder=[];
+  const dirs=[[-1,0],[1,0],[0,-1],[0,1]];
+  while(queue.length){
+    const [r,c,path]=queue.shift();
+    visitedOrder.push([r,c]);
+    if(r===endPos[0]&&c===endPos[1]) return{path:[...path,[r,c]],visited:visitedOrder};
+    for(const[dr,dc]of dirs){
+      const nr=r+dr,nc=c+dc,key=`${nr},${nc}`;
+      if(nr>=0&&nr<rows&&nc>=0&&nc<cols&&!vis.has(key)&&maze[nr][nc]!=='#'){
+        vis.add(key); queue.push([nr,nc,[...path,[r,c]]]);
+      }
+    }
+  }
+  return null;
+}
+
+function findPath(){
+  if(animTimer){clearTimeout(animTimer);animTimer=null;}
+  resetDisplay(false);
+  const result=bfs();
+  if(!result){showMsg('Путь не найден. Лабиринт непроходим.','err');return;}
+  animateSolve(result.visited, result.path);
+}
+
+function animateSolve(visited, path){
+  let i=0;
+  const cells=document.querySelectorAll('.cell');
+  const cellMap={};
+  cells.forEach(c=>{cellMap[`${c.dataset.r},${c.dataset.c}`]=c;});
+  function step(){
+    if(i<visited.length){
+      const[r,c]=visited[i];
+      const key=`${r},${c}`;
+      const cell=cellMap[key];
+      if(cell&&maze[r][c]!=='J'&&maze[r][c]!=='O') cell.classList.add('visited');
+      i++; animTimer=setTimeout(step,12);
+    } else {
+      showPath(path,cellMap);
+    }
+  }
+  step();
+  document.getElementById('statsBox').style.display='grid';
+  document.getElementById('sDist').textContent=path.length;
+  document.getElementById('sVisited').textContent=visited.length;
+}
+
+function showPath(path,cellMap){
+  path.forEach(([r,c])=>{
+    const key=`${r},${c}`;
+    const cell=cellMap[key];
+    if(!cell) return;
+    cell.classList.remove('visited','open');
+    if(maze[r][c]==='J') cell.classList.add('path-start');
+    else if(maze[r][c]==='O') cell.classList.add('path-end');
+    else cell.classList.add('path');
+  });
+  showMsg(`Минимальный путь найден: ${path.length} шагов, просмотрено ${document.getElementById('sVisited').textContent} ячеек`,'ok');
+}
+
+function resetDisplay(full=true){
+  if(animTimer){clearTimeout(animTimer);animTimer=null;}
+  document.querySelectorAll('.cell').forEach(c=>{
+    c.classList.remove('visited','path','path-start','path-end');
+    const r=+c.dataset.r,cc=+c.dataset.c;
+    c.className='cell '+getCellClass(maze[r][cc]);
+  });
+  if(full){document.getElementById('mazeMsg').innerHTML='';document.getElementById('statsBox').style.display='none';}
+}
+
+function clearAll(){
+  if(animTimer){clearTimeout(animTimer);animTimer=null;}
+  document.getElementById('mazeGrid').innerHTML='';
+  document.getElementById('mazeMsg').innerHTML='';
+  document.getElementById('statsBox').style.display='none';
+  maze=[]; rows=0; cols=0; startPos=null; endPos=null;
+}
+
+function updateStats(){
+  if(!rows) return;
+  let walls=0,total=rows*cols;
+  for(let r=0;r<rows;r++) for(let c=0;c<cols;c++) if(maze[r][c]==='#') walls++;
+  document.getElementById('sWalls').textContent=Math.round(walls/total*100)+'%';
+  document.getElementById('sOpen').textContent=Math.round((total-walls)/total*100)+'%';
+}
+
+function generateMaze(perfect=false){
+  const r=Math.max(4,Math.min(40,+document.getElementById('genRows').value));
+  const c=Math.max(4,Math.min(60,+document.getElementById('genCols').value));
+  const pct=+document.getElementById('wallPct').value;
+  const ensure=document.getElementById('ensurePath').checked;
+  let m;
+  if(perfect) m=recursiveBacktrack(r,c);
+  else m=randomFill(r,c,pct,ensure);
+  document.getElementById('mazeText').value=mazeToText(m);
+  loadMaze(m);
+}
+
+function randomFill(r,c,wallPct,ensure){
+  let m=[];
+  for(let i=0;i<r;i++){m.push([]);for(let j=0;j<c;j++) m[i].push(Math.random()*100<wallPct?'#':'_');}
+  m[0][0]='J'; m[r-1][c-1]='O';
+  if(ensure) m=ensureConnected(m,r,c,[0,0],[r-1,c-1]);
+  return m;
+}
+
+function ensureConnected(m,r,c,s,e){
+  const vis=new Set([`${s[0]},${s[1]}`]);
+  const q=[s]; const dirs=[[-1,0],[1,0],[0,-1],[0,1]];
+  while(q.length){const[cr,cc]=q.shift();for(const[dr,dc]of dirs){const nr=cr+dr,nc=cc+dc,k=`${nr},${nc}`;if(nr>=0&&nr<r&&nc>=0&&nc<c&&!vis.has(k)&&m[nr][nc]!=='#'){vis.add(k);q.push([nr,nc]);}}}
+  if(vis.has(`${e[0]},${e[1]}`)) return m;
+  const path=astarPath(m,r,c,s,e);
+  if(path) path.forEach(([pr,pc])=>{if(m[pr][pc]==='#') m[pr][pc]='_';});
+  m[s[0]][s[1]]='J'; m[e[0]][e[1]]='O';
+  return m;
+}
+
+function astarPath(m,rows,cols,s,e){
+  const q=[[s,[s]]]; const vis=new Set([`${s[0]},${s[1]}`]);
+  const dirs=[[-1,0],[1,0],[0,-1],[0,1]];
+  while(q.length){
+    const[pos,path]=q.shift();
+    if(pos[0]===e[0]&&pos[1]===e[1]) return path;
+    for(const[dr,dc]of dirs){const nr=pos[0]+dr,nc=pos[1]+dc,k=`${nr},${nc}`;if(nr>=0&&nr<rows&&nc>=0&&nc<cols&&!vis.has(k)){vis.add(k);q.push([[nr,nc],[...path,[nr,nc]]]);}}}
+  return null;
+}
+
+function recursiveBacktrack(r,c){
+  const m=[];
+  for(let i=0;i<r;i++){m.push([]);for(let j=0;j<c;j++) m[i].push('#');}
+  const stack=[[0,0]]; m[0][0]='_';
+  const dirs=[[0,2],[0,-2],[2,0],[-2,0]];
+  while(stack.length){
+    const[cr,cc]=stack[stack.length-1];
+    const nbrs=dirs.map(([dr,dc])=>[cr+dr,cc+dc]).filter(([nr,nc])=>nr>=0&&nr<r&&nc>=0&&nc<c&&m[nr][nc]==='#');
+    if(!nbrs.length){stack.pop();continue;}
+    const[nr,nc]=nbrs[Math.floor(Math.random()*nbrs.length)];
+    m[Math.floor((cr+nr)/2)][Math.floor((cc+nc)/2)]='_';
+    m[nr][nc]='_'; stack.push([nr,nc]);
+  }
+  m[0][0]='J'; m[r-1][c-1]='O';
+  return m;
+}
+
+function exportMaze(){
+  const txt=mazeToText(maze);
+  const blob=new Blob([txt],{type:'text/plain'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+  a.download='maze.txt'; a.click();
+}
+
+function updateTextFromMaze(){
+  document.getElementById('mazeText').value=mazeToText(maze);
+}
+
+function showMsg(txt,type='info'){
+  document.getElementById('mazeMsg').innerHTML=`<div class="msg ${type}">${txt}</div>`;
+}
+
+loadMaze(parseMaze(DEFAULT));
+updateStats();
+document.getElementById('statsBox').style.display='grid';
+</script>
+</body>
+</html>
