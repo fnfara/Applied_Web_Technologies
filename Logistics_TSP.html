@@ -34,8 +34,7 @@ body {
   min-height: 100vh;
   overflow-x: hidden;
 }
-
-/* ─── GRID BACKGROUND ─── */
+  
 body::before {
   content: '';
   position: fixed;
@@ -49,7 +48,6 @@ body::before {
   z-index: 0;
 }
 
-/* ─── HEADER ─── */
 header {
   position: relative;
   z-index: 10;
@@ -94,7 +92,6 @@ header {
   background: var(--amber-glow);
 }
 
-/* ─── STEPS NAV ─── */
 .steps-nav {
   position: relative;
   z-index: 10;
@@ -158,7 +155,6 @@ header {
   background: var(--border);
 }
 
-/* ─── MAIN LAYOUT ─── */
 .main {
   position: relative;
   z-index: 10;
@@ -167,7 +163,6 @@ header {
   padding: 32px 40px;
 }
 
-/* ─── PANELS ─── */
 .panel {
   display: none;
   animation: fadeIn 0.3s ease;
@@ -194,7 +189,6 @@ header {
   letter-spacing: 0.3px;
 }
 
-/* ─── CARDS ─── */
 .card {
   background: var(--surface);
   border: 1px solid var(--border);
@@ -230,7 +224,6 @@ header {
   text-transform: uppercase;
 }
 
-/* ─── FORM ELEMENTS ─── */
 .form-row {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
@@ -271,7 +264,6 @@ input:focus, select:focus {
 
 input::placeholder { color: var(--muted); opacity: 0.6; }
 
-/* ─── BUTTONS ─── */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -326,7 +318,6 @@ input::placeholder { color: var(--muted); opacity: 0.6; }
   box-shadow: 0 0 20px rgba(61,220,132,0.4);
 }
 
-/* ─── MATRIX ─── */
 .matrix-container {
   overflow-x: auto;
   margin-top: 12px;
@@ -411,7 +402,6 @@ input::placeholder { color: var(--muted); opacity: 0.6; }
   text-align: center;
 }
 
-/* ─── NAVIGATION BUTTONS ─── */
 .nav-row {
   display: flex;
   gap: 12px;
@@ -419,7 +409,6 @@ input::placeholder { color: var(--muted); opacity: 0.6; }
   align-items: center;
 }
 
-/* ─── RESULT PANEL ─── */
 .result-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -482,7 +471,6 @@ input::placeholder { color: var(--muted); opacity: 0.6; }
   margin-top: 4px;
 }
 
-/* ─── ROUTE LIST ─── */
 .route-list {
   display: flex;
   align-items: center;
@@ -512,7 +500,6 @@ input::placeholder { color: var(--muted); opacity: 0.6; }
   font-size: 18px;
 }
 
-/* ─── CANVAS ─── */
 #graphCanvas {
   width: 100%;
   background: var(--surface);
@@ -520,7 +507,6 @@ input::placeholder { color: var(--muted); opacity: 0.6; }
   display: block;
 }
 
-/* ─── ALLOCATION TABLE ─── */
 .alloc-table {
   width: 100%;
   border-collapse: collapse;
@@ -560,7 +546,6 @@ input::placeholder { color: var(--muted); opacity: 0.6; }
 .badge-amber { background: var(--amber-glow); color: var(--amber); border: 1px solid var(--amber-dim); }
 .badge-red { background: rgba(255,77,109,0.15); color: var(--red); border: 1px solid rgba(255,77,109,0.3); }
 
-/* ─── SECTION TITLE ─── */
 .section-title {
   font-family: var(--mono);
   font-size: 11px;
@@ -582,7 +567,6 @@ input::placeholder { color: var(--muted); opacity: 0.6; }
   background: var(--amber);
 }
 
-/* ─── SPINNER ─── */
 .spinner {
   display: inline-block;
   width: 16px; height: 16px;
@@ -616,8 +600,7 @@ input::placeholder { color: var(--muted); opacity: 0.6; }
   letter-spacing: 3px;
   text-transform: uppercase;
 }
-
-/* ─── ERROR MESSAGE ─── */
+  
 .error-msg {
   background: rgba(255,77,109,0.1);
   border: 1px solid rgba(255,77,109,0.3);
@@ -640,7 +623,6 @@ input::placeholder { color: var(--muted); opacity: 0.6; }
   letter-spacing: 0.5px;
 }
 
-/* ─── ADD BUTTON AREA ─── */
 .add-area {
   border: 1px dashed var(--border);
   padding: 16px;
@@ -664,13 +646,11 @@ input::placeholder { color: var(--muted); opacity: 0.6; }
 
 .add-area:hover span { color: var(--amber); }
 
-/* ─── SCROLLBAR ─── */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: var(--bg); }
 ::-webkit-scrollbar-thumb { background: var(--border); }
 ::-webkit-scrollbar-thumb:hover { background: var(--amber-dim); }
 
-/* ─── SETTINGS STEP ─── */
 .settings-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -687,13 +667,11 @@ input::placeholder { color: var(--muted); opacity: 0.6; }
 </head>
 <body>
 
-<!-- COMPUTING OVERLAY -->
 <div class="computing-overlay" id="computingOverlay">
   <div class="spinner" style="width:32px;height:32px;border-width:3px;"></div>
   <div class="computing-text">ВЫЧИСЛЕНИЕ ОПТИМАЛЬНОГО МАРШРУТА...</div>
 </div>
 
-<!-- HEADER -->
 <header>
   <div class="logo">
     <div class="logo-main">ЛОГИСТИКА</div>
@@ -709,7 +687,6 @@ input::placeholder { color: var(--muted); opacity: 0.6; }
   </div>
 </header>
 
-<!-- STEPS NAV -->
 <div class="steps-nav">
   <div class="step-item active" id="nav0" onclick="goStep(0)">
     <div class="step-num">1</div><span>СКЛАД</span>
@@ -736,10 +713,8 @@ input::placeholder { color: var(--muted); opacity: 0.6; }
   </div>
 </div>
 
-<!-- MAIN CONTENT -->
 <div class="main">
 
-  <!-- ══════════ STEP 0: WAREHOUSE ══════════ -->
   <div class="panel active" id="panel0">
     <div class="panel-title">СКЛАД</div>
     <div class="panel-desc">Укажите товары на складе (от 2 до 5 видов), их количество и стоимость.</div>
@@ -757,7 +732,6 @@ input::placeholder { color: var(--muted); opacity: 0.6; }
     </div>
   </div>
 
-  <!-- ══════════ STEP 1: STORES ══════════ -->
   <div class="panel" id="panel1">
     <div class="panel-title">МАГАЗИНЫ</div>
     <div class="panel-desc">Укажите магазины (от 2 до 10). Координаты используются для визуализации и расчёта расстояний.</div>
@@ -776,7 +750,6 @@ input::placeholder { color: var(--muted); opacity: 0.6; }
     </div>
   </div>
 
-  <!-- ══════════ STEP 2: DEMAND ══════════ -->
   <div class="panel" id="panel2">
     <div class="panel-title">СПРОС</div>
     <div class="panel-desc">Укажите спрос каждого магазина на каждый товар (в кг). 0 = нет спроса.</div>
@@ -789,7 +762,6 @@ input::placeholder { color: var(--muted); opacity: 0.6; }
     </div>
   </div>
 
-  <!-- ══════════ STEP 3: DISTANCES ══════════ -->
   <div class="panel" id="panel3">
     <div class="panel-title">МАТРИЦА РАССТОЯНИЙ</div>
     <div class="panel-desc">Расстояния между узлами (в км). Строки = откуда, Столбцы = куда. Матрица симметрична.</div>
@@ -809,7 +781,6 @@ input::placeholder { color: var(--muted); opacity: 0.6; }
     </div>
   </div>
 
-  <!-- ══════════ STEP 4: SETTINGS ══════════ -->
   <div class="panel" id="panel4">
     <div class="panel-title">ПАРАМЕТРЫ</div>
     <div class="panel-desc">Укажите транспортные расходы и ограничения грузовика.</div>
@@ -865,32 +836,24 @@ input::placeholder { color: var(--muted); opacity: 0.6; }
     </div>
   </div>
 
-  <!-- ══════════ STEP 5: RESULTS ══════════ -->
   <div class="panel" id="panel5">
     <div class="panel-title">РЕЗУЛЬТАТ</div>
     <div class="panel-desc">Оптимальное распределение товаров и маршрут доставки.</div>
 
-    <!-- Stats -->
     <div class="result-grid" id="statsGrid"></div>
-
-    <!-- Route -->
     <div class="section-title">ОПТИМАЛЬНЫЙ МАРШРУТ</div>
     <div class="route-list" id="routeDisplay"></div>
     <div style="margin-top:8px;font-family:var(--mono);font-size:12px;color:var(--muted);" id="routeInfo"></div>
 
-    <!-- Graph -->
     <div class="section-title">ГРАФ МАРШРУТА</div>
     <canvas id="graphCanvas" height="500"></canvas>
 
-    <!-- Allocation -->
     <div class="section-title">РАСПРЕДЕЛЕНИЕ ТОВАРОВ</div>
     <div id="allocationTable"></div>
 
-    <!-- Per-store detail -->
     <div class="section-title">ДЕТАЛИ ПО МАГАЗИНАМ</div>
     <div id="storeDetails"></div>
 
-    <!-- Top routes -->
     <div class="section-title">ТОП-5 МАРШРУТОВ</div>
     <div id="topRoutes"></div>
 
@@ -901,17 +864,14 @@ input::placeholder { color: var(--muted); opacity: 0.6; }
     </div>
   </div>
 
-</div><!-- /main -->
+</div>
 
 <script>
-// ══════════════════════════════════════════════════
-//  STATE
-// ══════════════════════════════════════════════════
 let state = {
   goods: [],
   stores: [],
-  demand: {},      // demand[storeIdx][goodIdx] = kg
-  distances: [],   // n×n matrix (0=warehouse, 1..n=stores)
+  demand: {},      
+  distances: [],  
   settings: {
     costPerKm: 50,
     truckCapacity: 5000,
@@ -927,11 +887,8 @@ let currentStep = 0;
 let goodCounter = 0;
 let storeCounter = 0;
 
-// ══════════════════════════════════════════════════
-//  INIT
-// ══════════════════════════════════════════════════
+
 window.onload = () => {
-  // Default goods
   addGood('Зерно', 2000, 12, 1);
   addGood('Сахар', 1500, 18, 1);
   addGood('Масло', 800, 45, 0.9);
@@ -942,9 +899,7 @@ window.onload = () => {
   addStore('Магазин Г', 60, 140);
 };
 
-// ══════════════════════════════════════════════════
-//  NAVIGATION
-// ══════════════════════════════════════════════════
+
 function goStep(s) {
   document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.step-item').forEach(n => n.classList.remove('active'));
@@ -975,9 +930,6 @@ function showErr(id, show) {
   document.getElementById(id).style.display = show ? 'block' : 'none';
 }
 
-// ══════════════════════════════════════════════════
-//  VALIDATION
-// ══════════════════════════════════════════════════
 function validateStep(s) {
   if (s === 0) {
     collectGoods();
@@ -1005,9 +957,7 @@ function validateStep(s) {
   return true;
 }
 
-// ══════════════════════════════════════════════════
-//  GOODS
-// ══════════════════════════════════════════════════
+
 function addGood(name='', qty=1000, price=20) {
   if (state.goods.length >= 5) return;
   const id = ++goodCounter;
@@ -1060,9 +1010,6 @@ function collectGoods() {
   })).filter(g => g.name);
 }
 
-// ══════════════════════════════════════════════════
-//  STORES
-// ══════════════════════════════════════════════════
 function addStore(name='', x=0, y=0) {
   if (state.stores.length >= 10) return;
   const id = ++storeCounter;
@@ -1116,9 +1063,6 @@ function collectStores() {
   }));
 }
 
-// ══════════════════════════════════════════════════
-//  DEMAND GRID
-// ══════════════════════════════════════════════════
 function buildDemandGrid() {
   const container = document.getElementById('demandGrid');
   container.innerHTML = '';
@@ -1159,7 +1103,6 @@ function buildDemandGrid() {
     html += '</tr>';
   });
 
-  // Warehouse stock row
   html += `<tr>`;
   html += `<td style="background:var(--surface2);border:1px solid var(--border);padding:8px 14px;color:var(--amber);font-size:10px;letter-spacing:1px;">НА СКЛАДЕ (кг)</td>`;
   state.goods.forEach(g => {
@@ -1172,7 +1115,6 @@ function buildDemandGrid() {
   wrapper.innerHTML = html;
   container.appendChild(wrapper);
 
-  // Set demand from state and update totals
   state.stores.forEach((_, si) => updateDemandTotal(si));
 }
 
@@ -1195,18 +1137,14 @@ function collectDemand() {
   });
 }
 
-// ══════════════════════════════════════════════════
-//  DISTANCE MATRIX
-// ══════════════════════════════════════════════════
 function buildDistanceMatrix() {
   autoCalcDistances();
   renderDistMatrix();
 }
 
 function autoCalcDistances() {
-  const n = state.stores.length + 1; // 0=warehouse
+  const n = state.stores.length + 1; 
   const nodes = [{ x: 0, y: 0, name: 'СКЛАД' }, ...state.stores];
-  // Warehouse at origin (0,0), stores have their coords
   state.distances = Array.from({ length: n }, (_, i) =>
     Array.from({ length: n }, (_, j) => {
       if (i === j) return 0;
@@ -1225,7 +1163,6 @@ function renderDistMatrix() {
   const tbl = document.getElementById('distMatrix');
   tbl.innerHTML = '';
 
-  // Header
   let hdr = '<thead><tr><th></th>';
   nodes.forEach(name => { hdr += `<th>${name.substring(0,10)}</th>`; });
   hdr += '</tr></thead>';
@@ -1251,7 +1188,6 @@ function renderDistMatrix() {
           const v = +inp.value;
           if (!state.distances[i]) state.distances[i] = [];
           state.distances[i][j] = v;
-          // Mirror
           const mirror = document.getElementById(`dist_${j}_${i}`);
           if (mirror) mirror.value = v;
           if (!state.distances[j]) state.distances[j] = [];
@@ -1276,9 +1212,6 @@ function collectDistances() {
   );
 }
 
-// ══════════════════════════════════════════════════
-//  OPTIMIZATION ENGINE
-// ══════════════════════════════════════════════════
 async function runOptimization() {
   // Collect settings
   state.settings.costPerKm = +document.getElementById('costPerKm').value;
@@ -1291,14 +1224,13 @@ async function runOptimization() {
 
   document.getElementById('computingOverlay').classList.add('show');
 
-  await new Promise(r => setTimeout(r, 100)); // allow repaint
+  await new Promise(r => setTimeout(r, 100)); 
 
   try {
     const result = optimize();
     state.result = result;
     markDone(4);
     goStep(5);
-    // Render AFTER panel is visible so canvas has correct clientWidth
     await new Promise(r => setTimeout(r, 60));
     renderResults(result);
   } catch(e) {
@@ -1320,7 +1252,6 @@ function optimize() {
   let bestResult = null;
   const allResults = [];
 
-  // Try all subsets of stores (2^n)
   const totalSubsets = 1 << n;
   for (let mask = 1; mask < totalSubsets; mask++) {
     const storeIndices = [];
@@ -1328,31 +1259,20 @@ function optimize() {
       if (mask & (1 << b)) storeIndices.push(b);
     }
 
-    // Allocate goods to stores in this subset
     const allocation = allocateGoods(storeIndices, goods, demand);
-    if (!allocation) continue; // infeasible
-
-    // Check truck capacity
+    if (!allocation) continue; 
     const totalWeight = allocation.totalWeight;
     if (totalWeight > truckCapacity) continue;
 
-    // Revenue from delivered goods
     const revenue = allocation.revenue;
 
-    // Find optimal route through storeIndices (nodes 0=warehouse, store i => i+1 in dist matrix)
     const routeResult = findOptimalRoute(storeIndices, dist, tspMethod, routeType);
     const totalDist = routeResult.distance;
 
-    // Travel time
-    const travelTime = totalDist / truckSpeed; // hours
+    const travelTime = totalDist / truckSpeed; 
 
-    // Storage cost (goods in transit)
     const storageCostTotal = totalWeight * storageCost * travelTime;
-
-    // Delivery cost
     const deliveryCost = totalDist * costPerKm;
-
-    // Net profit
     const netProfit = revenue - deliveryCost - storageCostTotal;
 
     const res = {
@@ -1378,7 +1298,6 @@ function optimize() {
   }
 
   if (!bestResult) {
-    // Even if all negative, pick least bad
     if (allResults.length > 0) {
       allResults.sort((a, b) => b.netProfit - a.netProfit);
       bestResult = allResults[0];
@@ -1393,9 +1312,8 @@ function optimize() {
 }
 
 function allocateGoods(storeIndices, goods, demand) {
-  // Remaining stock per good
   const stock = goods.map(g => g.quantity);
-  const allocation = {}; // allocation[si][gi] = kg delivered
+  const allocation = {}; 
   let totalRevenue = 0;
   let totalWeight = 0;
 
@@ -1407,14 +1325,13 @@ function allocateGoods(storeIndices, goods, demand) {
       allocation[si][gi] = canDeliver;
       stock[gi] -= canDeliver;
       totalRevenue += canDeliver * goods[gi].pricePerKg;
-      totalWeight += canDeliver; // simplified: 1kg = 1kg
+      totalWeight += canDeliver; 
     }
   }
 
   return { allocation, revenue: totalRevenue, totalWeight, remainingStock: stock };
 }
 
-// ─── TSP METHODS ───────────────────────────────────
 function findOptimalRoute(storeIndices, dist, method, routeType) {
   if (storeIndices.length === 0) return { route: [0], distance: 0, dist_per_leg: [] };
   if (storeIndices.length === 1) {
@@ -1427,14 +1344,12 @@ function findOptimalRoute(storeIndices, dist, method, routeType) {
     return { route, distance: d, dist_per_leg: legs };
   }
 
-  // Map storeIndices → node indices (warehouse=0, store_i → i+1)
   const nodes = storeIndices.map(si => si + 1);
 
   let bestRoute = null;
   let bestDist = Infinity;
 
   if (method === 'bruteforce' && nodes.length <= 8) {
-    // Try all permutations
     const perms = permutations(nodes);
     for (const perm of perms) {
       const fullRoute = routeType === 'roundtrip' ? [0, ...perm, 0] : [0, ...perm];
@@ -1442,12 +1357,10 @@ function findOptimalRoute(storeIndices, dist, method, routeType) {
       if (d < bestDist) { bestDist = d; bestRoute = fullRoute; }
     }
   } else if (method === 'dynamic' && nodes.length <= 15) {
-    // Held-Karp DP
     const result = heldKarp(nodes, dist, routeType);
     bestRoute = result.route;
     bestDist = result.distance;
   } else {
-    // Nearest neighbor heuristic
     const result = nearestNeighbor(nodes, dist, routeType);
     bestRoute = result.route;
     bestDist = result.distance;
@@ -1497,7 +1410,6 @@ function nearestNeighbor(nodes, dist, routeType) {
 function heldKarp(nodes, dist, routeType) {
   const n = nodes.length;
   const allMask = (1 << n) - 1;
-  // dp[mask][i] = min distance to reach node i visiting all in mask, starting from depot(0)
   const INF = 1e15;
   const dp = Array.from({ length: 1 << n }, () => new Float64Array(n).fill(INF));
   const parent = Array.from({ length: 1 << n }, () => new Int8Array(n).fill(-1));
@@ -1541,9 +1453,6 @@ function heldKarp(nodes, dist, routeType) {
   return { route, distance: routeDistance(route, dist) };
 }
 
-// ══════════════════════════════════════════════════
-//  RENDER RESULTS
-// ══════════════════════════════════════════════════
 function renderResults(r) {
   renderStats(r);
   renderRoute(r);
@@ -1614,7 +1523,6 @@ function renderGraph(r) {
   const padding = 60;
   const nodes = [{ x: 0, y: 0, name: 'СКЛАД' }, ...state.stores];
 
-  // Find bounds
   let minX = 0, maxX = 0, minY = 0, maxY = 0;
   nodes.forEach(n => {
     minX = Math.min(minX, n.x); maxX = Math.max(maxX, n.x);
@@ -1627,18 +1535,14 @@ function renderGraph(r) {
     cx: padding + (x - minX) / rangeX * (W - 2 * padding),
     cy: padding + (y - minY) / rangeY * (H - 2 * padding)
   });
-
-  // BG
   ctx.fillStyle = '#141820';
   ctx.fillRect(0, 0, W, H);
 
-  // Grid
   ctx.strokeStyle = '#2a3548';
   ctx.lineWidth = 0.5;
   for (let x = 0; x <= W; x += 40) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke(); }
   for (let y = 0; y <= H; y += 40) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
 
-  // All edges (dim)
   ctx.strokeStyle = '#2a3548';
   ctx.lineWidth = 1;
   for (let i = 0; i < nodes.length; i++) {
@@ -1649,7 +1553,6 @@ function renderGraph(r) {
     }
   }
 
-  // Optimal route edges (highlight)
   const routeNodes = r.route;
   for (let k = 0; k < routeNodes.length - 1; k++) {
     const from = routeNodes[k];
@@ -1658,7 +1561,6 @@ function renderGraph(r) {
     const b = toCanvas(nodes[to].x, nodes[to].y);
     const leg = r.routeDist[k];
 
-    // Glow
     ctx.shadowColor = '#f5a623';
     ctx.shadowBlur = 12;
     ctx.strokeStyle = '#f5a623';
@@ -1666,7 +1568,6 @@ function renderGraph(r) {
     ctx.beginPath(); ctx.moveTo(a.cx, a.cy); ctx.lineTo(b.cx, b.cy); ctx.stroke();
     ctx.shadowBlur = 0;
 
-    // Arrow
     const angle = Math.atan2(b.cy - a.cy, b.cx - a.cx);
     const mx = (a.cx + b.cx) / 2;
     const my = (a.cy + b.cy) / 2;
@@ -1679,17 +1580,14 @@ function renderGraph(r) {
     ctx.fill();
     ctx.restore();
 
-    // Distance label
     ctx.fillStyle = '#f5a623';
     ctx.font = 'bold 10px JetBrains Mono, monospace';
     ctx.textAlign = 'center';
     ctx.fillText(`${leg?.d?.toFixed(1) ?? '?'} км`, mx + 8, my - 8);
   }
 
-  // Non-visited stores
   const visitedSet = new Set(r.storeIndices.map(si => si + 1));
 
-  // Draw nodes
   nodes.forEach((node, idx) => {
     const { cx, cy } = toCanvas(node.x, node.y);
     const isWarehouse = idx === 0;
@@ -1700,12 +1598,9 @@ function renderGraph(r) {
     if (isWarehouse) { color = '#f5a623'; radius = 18; }
     else if (isInRoute) { color = '#3ddc84'; radius = 14; }
     else { color = '#6b7d96'; radius = 10; }
-
-    // Shadow
     ctx.shadowColor = color;
     ctx.shadowBlur = isWarehouse || isInRoute ? 20 : 5;
 
-    // Circle
     ctx.beginPath();
     ctx.arc(cx, cy, radius, 0, Math.PI * 2);
     ctx.fillStyle = isWarehouse ? '#1c2330' : (isInRoute ? '#1c2330' : '#1c2330');
@@ -1715,19 +1610,16 @@ function renderGraph(r) {
     ctx.stroke();
     ctx.shadowBlur = 0;
 
-    // Label
     ctx.fillStyle = color;
     ctx.font = `bold ${isWarehouse ? 11 : 10}px JetBrains Mono, monospace`;
     ctx.textAlign = 'center';
     ctx.fillText(isWarehouse ? '⬡' : (idx).toString(), cx, cy + 4);
 
-    // Name label
     ctx.fillStyle = isInRoute ? '#e0e8f0' : '#6b7d96';
     ctx.font = `10px Space Grotesk, sans-serif`;
     ctx.fillText(node.name.substring(0, 14), cx, cy + radius + 14);
   });
-
-  // Legend
+  
   const legendItems = [
     { color: '#f5a623', label: 'Склад' },
     { color: '#3ddc84', label: 'Посещаемый магазин' },
@@ -1746,7 +1638,6 @@ function renderGraph(r) {
 }
 
 function renderAllocation(r) {
-  // r.allocation is the full object returned by allocateGoods: {allocation, revenue, totalWeight, remainingStock}
   const alloc = r.allocation.allocation;
   let html = `<table class="alloc-table">
     <thead><tr>
@@ -1779,7 +1670,6 @@ function renderAllocation(r) {
     </tr>`;
   });
 
-  // Totals
   const totalDelivered = state.goods.map((_, gi) =>
     r.storeIndices.reduce((s, si) => s + (alloc[si]?.[gi] ?? 0), 0)
   );
@@ -1864,10 +1754,7 @@ function renderTopRoutes(r) {
   html += '</tbody></table>';
   document.getElementById('topRoutes').innerHTML = html;
 }
-
-// ══════════════════════════════════════════════════
-//  EXPORT / IMPORT
-// ══════════════════════════════════════════════════
+  
 function exportData() {
   collectGoods(); collectStores();
   const data = {
